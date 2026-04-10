@@ -448,7 +448,7 @@ router.get('/analytics', async (req, res) => {
   }
 });
 
-import { sendPushNotification } from '../utils/notifications.js';
+import { sendPushNotifications } from '../utils/notifications.js';
 
 // Post Notice
 router.post('/notices', async (req, res) => {
@@ -461,17 +461,17 @@ router.post('/notices', async (req, res) => {
     if (nError) throw nError;
 
     // 2. 🏆 Push Notification Logic
-    // Get all user IDs in this hostel
+    // Get all user IDs (tenants) in this hostel
     const { data: tenants } = await supabase.from('users').select('id').eq('hostel_id', hostelId);
     const userIds = (tenants || []).map(t => t.id);
 
     if (userIds.length > 0) {
-      // Get FCM tokens for these users
-      const { data: tokenData } = await supabase.from('user_fcm_tokens').select('token').in('user_id', userIds);
+      // Get Expo Push Tokens for these users from the new table
+      const { data: tokenData } = await supabase.from('user_push_tokens').select('token').in('user_id', userIds);
       const tokens = (tokenData || []).map(t => t.token);
 
       if (tokens.length > 0) {
-        await sendPushNotification(tokens, `New Notice: ${title}`, message, { type: 'notice', id: notice.id });
+        await sendPushNotifications(tokens, `New Notice: ${title}`, message, { type: 'notice', id: notice.id });
       }
     }
 

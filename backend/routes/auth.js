@@ -186,9 +186,9 @@ router.post('/save-fcm-token', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Token is required' });
     }
 
-    // Upsert token to user_fcm_tokens table
+    // Upsert token to user_push_tokens table
     const { error } = await supabase
-      .from('user_fcm_tokens')
+      .from('user_push_tokens')
       .upsert([
         { user_id: userId, token, device_type: deviceType || 'unknown' }
       ], { onConflict: 'user_id,token' });

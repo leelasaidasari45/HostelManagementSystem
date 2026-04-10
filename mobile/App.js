@@ -6,8 +6,19 @@ import LoginScreen from './src/screens/Auth/LoginScreen';
 import TenantDashboard from './src/screens/Dashboard/TenantDashboard';
 import { Theme } from './src/styles/theme';
 
+import { registerForPushNotificationsAsync, syncTokenWithBackend } from './src/utils/notificationManager';
+
 const NavigationProvider = () => {
   const { user, loading } = useAuth();
+
+  React.useEffect(() => {
+    if (user) {
+      // Register for notifications when user logs in
+      registerForPushNotificationsAsync().then(token => {
+        if (token) syncTokenWithBackend(token);
+      });
+    }
+  }, [user]);
 
   if (loading) {
     return (

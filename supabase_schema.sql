@@ -122,3 +122,13 @@ CREATE TABLE vacate_requests (
   status TEXT NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 12. Push Notification Tokens Table
+CREATE TABLE user_push_tokens (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  token TEXT NOT NULL,
+  device_type TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, token)
+);

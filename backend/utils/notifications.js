@@ -1,63 +1,46 @@
-import admin from 'firebase-admin';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { Expo } from 'expo-server-sdk';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Path to the service account key file
-const serviceAccountPath = path.join(__dirname, '..', 'serviceAccountKey.json');
-
-try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountPath)
-  });
-  console.log('Firebase Admin initialized successfully');
-} catch (error) {
-  console.error('Firebase Admin initialization error:', error);
-}
+let expo = new Expo();
 
 /**
- * Send a push notification to a specific list of FCM tokens
- * @param {string[]} tokens - Array of device FCM tokens
+ * Send push notifications to a list of Expo push tokens
+ * @param {string[]} pushTokens - Array of Expo push tokens
  * @param {string} title - Notification title
  * @param {string} body - Notification body
- * @param {object} data - Optional payload data
+ * @param {object} data - Optional extra data payload
  */
-export const sendPushNotification = async (tokens, title, body, data = {}) => {
-  if (!tokens || tokens.length === 0) return;
-
-  const message = {
-    notification: {
-      title,
-      body,
-    },
-    data: {
-      ...data,
-      click_action: 'FLUTTER_NOTIFICATION_CLICK', // Standard for many plugins
-    },
-    tokens: tokens,
-  };
-
-  try {
-    const response = await admin.messaging().sendEachForMulticast(message);
-    console.log(`Successfully sent ${response.successCount} notifications`);
-    
-    // Cleanup invalid tokens if necessary
-    if (response.failureCount > 0) {
-      const failedTokens = [];
-      response.responses.forEach((resp, idx) => {
-        if (!resp.success) {
-          failedTokens.push(tokens[idx]);
-        }
-      });
-      console.log('Tokens that failed:', failedTokens);
-      // Logic to remove these tokens from DB could go here
+export const sendPushNotifications = async (pushTokens, title, body, data = {}) => {
+  let messages = [];
+  
+  for (let pushToken of pushTokens) {
+    // Check that all your push tokens appear to be valid Expo push tokens
+    if (!Expo.isExpoPushToken(pushToken)) {
+      console.error(`Push token ${pushToken} is not a valid Expo push token`);
+      continue;
     }
-    
-    return response;
-  } catch (error) {
-    console.error('Error sending push notification:', error);
-    throw error;
+
+    // Construct a message
+    messages.push({
+      to: pushToken,
+      sound: 'default',
+      title: title,
+      body: body,
+      data: data,
+    });
   }
+
+  // Batch the messages into chunks as recommended by Expo
+  let chunks = expo.chunkPushNotifications(messages);
+  let tickets = [];
+
+  for (let chunk of chunks) {
+    try {
+      let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+      tickets.push(...ticketChunk);
+    } catch (error) {
+      console.error('Error sending notification chunk:', error);
+    }
+  }
+
+  return tickets;
 };
