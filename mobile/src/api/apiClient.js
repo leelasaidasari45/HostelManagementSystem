@@ -3,10 +3,8 @@ import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 
 // Set the Backend URL
-// During local dev, you must use your machine's LOCAL IP ADDRESS (e.g. 192.168.x.x) 
-// because 'localhost' refers to the phone itself.
-const LOCAL_IP = '10.10.53.40'; // Update this to your machine's IP
-const BASE_URL = `http://${LOCAL_IP}:5001/api`;
+// During production, we use the Render URL.
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://pg-backend-499c.onrender.com/api';
 
 const apiClient = axios.create({
   baseURL: BASE_URL,

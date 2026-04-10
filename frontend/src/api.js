@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://10.10.53.40:5001'
+  baseURL: import.meta.env.VITE_API_URL || 'https://pg-backend-499c.onrender.com/api'
 });
 
 // Setting default credentials so cookies are always passed with requests (fallback)
