@@ -67,7 +67,7 @@ const TenantsPage = () => {
   const handleReject = async (id) => {
     if (!window.confirm("Reject this application?")) return;
     try {
-      await api.delete(`/api/owner/tenants/${id}`);
+      await api.put(`/api/owner/tenants/${id}/reject`);
       toast.success("Application Rejected");
       fetchTenants();
     } catch (err) {
