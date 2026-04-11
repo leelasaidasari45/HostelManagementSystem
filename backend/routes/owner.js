@@ -226,6 +226,11 @@ router.put('/tenants/:id/reject', async (req, res) => {
     const { error } = await supabase.from('allocations').update({ status: 'rejected' }).eq('id', id);
     if (error) throw error;
 
+    // 🛑 Clear hostel_id from user table so they can join elsewhere / are "un-joined"
+    if (alloc && alloc.tenant_id) {
+       await supabase.from('users').update({ hostel_id: null }).eq('id', alloc.tenant_id);
+    }
+
     // 🏆 Push Notification
     if (alloc && alloc.tenant_id) {
        const { data: tokenData } = await supabase.from('user_fcm_tokens').select('token').eq('user_id', alloc.tenant_id);
@@ -244,8 +249,18 @@ router.put('/tenants/:id/reject', async (req, res) => {
 router.put('/tenants/:id/vacate_complete', async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Get tenant_id to clear their hostel association
+    const { data: alloc } = await supabase.from('allocations').select('tenant_id').eq('id', id).single();
+
     const { error } = await supabase.from('allocations').update({ status: 'vacated', end_date: new Date().toISOString() }).eq('id', id);
     if (error) throw error;
+
+    // 🛑 Clear hostel_id so they can join a different hostel in the future
+    if (alloc && alloc.tenant_id) {
+       await supabase.from('users').update({ hostel_id: null }).eq('id', alloc.tenant_id);
+    }
+
     res.json({ message: 'Vacated' });
   } catch (err) {
     res.status(500).json({ error: err.message });
