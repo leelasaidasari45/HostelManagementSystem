@@ -5,15 +5,27 @@ import { useAuth } from '../../context/AuthContext';
 import apiClient from '../../api/apiClient';
 import { Bell, LogOut, Home, IndianRupee, MessageSquare } from 'lucide-react-native';
 
-const TenantDashboard = () => {
-  const { user, logout } = useAuth();
+const TenantDashboard = ({ navigation }) => {
+  const { user, logout, updateUser } = useAuth();
   const [dashData, setDashData] = useState({ hostelName: '', notices: [], menu: null });
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchDashboard = async () => {
     try {
       const res = await apiClient.get('/tenant/dashboard');
+      
+      // 🛑 Critical: If the user has been rejected or un-joined, send them to the Join screen
+      if (res.data.tenant.status === 'rejected' || !res.data.tenant.hostel_id) {
+          updateUser({ hostel_id: null, status: 'new' });
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'JoinHostel' }],
+          });
+          return;
+      }
+
       setDashData(res.data);
+      updateUser(res.data.tenant); // Sync global state
     } catch (err) {
       console.log('Error fetching dashboard', err);
     }

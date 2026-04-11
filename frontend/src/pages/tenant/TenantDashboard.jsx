@@ -65,9 +65,10 @@ const TenantDashboard = () => {
                navigate('/tenant/join'); // Send entirely new tenants to join without strange vacated toasts
                return;
            }
-           if (res.data.tenant.status === 'vacated') {
-               toast('Your previous stay has ended. You can now join a new hostel.', {
-                   icon: 'ℹ️',
+           if (res.data.tenant.status === 'vacated' || res.data.tenant.status === 'rejected') {
+               const isRejected = res.data.tenant.status === 'rejected';
+               toast(isRejected ? 'Your application was not approved. You can try joining another hostel.' : 'Your previous stay has ended. You can now join a new hostel.', {
+                   icon: isRejected ? '❌' : 'ℹ️',
                    style: { background: 'var(--bg-glass)', border: '1px solid var(--accent-primary)', color: '#fff' }
                });
                navigate('/tenant/join');
