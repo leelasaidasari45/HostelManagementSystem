@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { Theme, globalStyles } from '../../styles/theme';
-import { Crown, Check, Zap, ShieldCheck } from 'lucide-react-native';
+import { Crown, Check, Zap, ShieldCheck, LogOut } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import apiClient from '../../api/apiClient';
+import { useAuth } from '../../context/AuthContext';
 
 const SelectPlanScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    // AuthContext state update should trigger navigation back to Login via App.js
+  };
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -30,6 +37,14 @@ const SelectPlanScreen = ({ navigation }) => {
     <LinearGradient colors={['#0f172a', '#1e293b']} style={styles.gradient}>
       <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
+          <TouchableOpacity 
+            style={styles.logoutBtn} 
+            onPress={handleLogout}
+          >
+            <LogOut size={18} color={Theme.colors.danger} />
+            <Text style={styles.logoutText}>Log Out</Text>
+          </TouchableOpacity>
+
           <View style={styles.header}>
             <View style={styles.iconCircle}>
               <Crown size={40} color={Theme.colors.background} />
@@ -107,6 +122,19 @@ const styles = StyleSheet.create({
   gradient: { flex: 1 },
   container: { flex: 1 },
   scrollContent: { padding: Theme.spacing.lg, alignItems: 'center' },
+  logoutBtn: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
+    padding: 8,
+  },
+  logoutText: {
+    color: Theme.colors.danger,
+    fontSize: 14,
+    fontWeight: '600',
+  },
   header: { alignItems: 'center', marginBottom: 30, marginTop: 20 },
   iconCircle: {
     width: 80,

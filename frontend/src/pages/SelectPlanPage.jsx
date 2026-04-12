@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Check, Crown, Zap, ShieldCheck, Loader2 } from 'lucide-react';
+import { Check, Crown, Zap, ShieldCheck, Loader2, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
+import { useAuth } from '../context/AuthContext';
 import './AuthPages.css';
 
 const SelectPlanPage = () => {
@@ -35,6 +36,13 @@ const SelectPlanPage = () => {
     return (
         <div className="auth-container" style={{ padding: '2rem' }}>
             <div className="auth-card glass-panel slide-up" style={{ maxWidth: '800px', width: '100%' }}>
+                <div className="flex justify-between items-center mb-6">
+                    <div className="text-xs text-muted">Awaiting Payment Setup</div>
+                    <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors">
+                        <LogOut size={16} /> Log Out
+                    </button>
+                </div>
+                
                 <div className="text-center mb-8">
                     <div className="icon-wrapper mb-4" style={{ margin: '0 auto', background: 'var(--warning)', color: '#000' }}>
                         <Crown size={32} />
