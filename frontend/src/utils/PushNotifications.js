@@ -1,6 +1,7 @@
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import toast from 'react-hot-toast';
+import api from '../api';
 
 export const setupPushNotifications = async () => {
   // 1. Check if we are running on a Native Device (Android/iOS)
