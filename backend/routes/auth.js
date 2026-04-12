@@ -59,7 +59,6 @@ router.post('/register', async (req, res) => {
       token: token // Passing token for localStorage persistence
     });
   } catch (err) {
-    console.error("Registration Error:", err);
     res.status(500).json({ error: 'Server error during registration' });
   }
 });
@@ -96,7 +95,6 @@ router.post('/login', async (req, res) => {
       token: token
     });
   } catch (err) {
-    console.error("Login Server Error: ", err);
     res.status(500).json({ error: 'Server error during login' });
   }
 });
@@ -179,32 +177,6 @@ router.post('/reset-password', async (req, res) => {
   } catch (err) {
     console.error("Reset Password Error:", err);
     res.status(401).json({ error: 'Invalid or expired reset token' });
-  }
-});
-
-// Save FCM Token for Push Notifications
-router.post('/save-fcm-token', requireAuth, async (req, res) => {
-  try {
-    const { token, deviceType } = req.body;
-    const userId = req.user.id;
-
-    if (!token) {
-      return res.status(400).json({ error: 'Token is required' });
-    }
-
-    // Upsert token to user_fcm_tokens table
-    const { error } = await supabase
-      .from('user_fcm_tokens')
-      .upsert([
-        { user_id: userId, token, device_type: deviceType || 'unknown' }
-      ], { onConflict: 'user_id,token' });
-
-    if (error) throw error;
-
-    res.json({ message: 'Token saved successfully' });
-  } catch (err) {
-    console.error('Error saving FCM token:', err);
-    res.status(500).json({ error: 'Failed to save notification token' });
   }
 });
 

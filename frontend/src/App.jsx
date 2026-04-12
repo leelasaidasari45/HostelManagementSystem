@@ -35,9 +35,9 @@ const ProtectedRoute = ({ children, roleType }) => {
   }
 
   // Mandatory Payment Setup for Owners
-  if (user.role === 'owner' && !user.payment_setup_complete && window.location.pathname !== '/select-plan') {
-    return <Navigate to="/select-plan" replace />;
-  }
+  // if (user.role === 'owner' && !user.payment_setup_complete && window.location.pathname !== '/select-plan') {
+  //   return <Navigate to="/select-plan" replace />;
+  // }
 
   if (roleType && user.role !== roleType) {
     return <Navigate to={user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard'} replace />;
@@ -53,33 +53,7 @@ const LoadingScreen = () => (
   </div>
 );
 
-import { setupPushNotifications } from './utils/PushNotifications';
-import MobileSplash from './components/MobileSplash';
-
 function App() {
-  const [showSplash, setShowSplash] = React.useState(false);
-  const [hasSplashed, setHasSplashed] = React.useState(false);
-
-  React.useEffect(() => {
-    setupPushNotifications();
-    
-    // Check if mobile view and if we haven't splashed in this SESSION (using sessionStorage)
-    const isMobile = window.innerWidth <= 768;
-    const sessionSplashed = sessionStorage.getItem('hasSplashed');
-
-    if (isMobile && !sessionSplashed && !hasSplashed) {
-      setShowSplash(true);
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-        setHasSplashed(true);
-        sessionStorage.setItem('hasSplashed', 'true');
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [hasSplashed]);
-
-  if (showSplash) return <MobileSplash />;
-
   return (
     <AuthProvider>
     <Router>

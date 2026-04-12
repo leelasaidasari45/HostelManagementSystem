@@ -11,6 +11,11 @@ const SelectPlanPage = () => {
     const navigate = useNavigate();
     const { logoutContext } = useAuth();
 
+    // Aggressively bypass Select Plan
+    React.useEffect(() => {
+        navigate('/owner/dashboard', { replace: true });
+    }, [navigate]);
+
     const handleLogout = async () => {
         await logoutContext();
     };

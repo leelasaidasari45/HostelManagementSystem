@@ -203,16 +203,7 @@ router.put('/tenants/:id/approve', async (req, res) => {
     const { error } = await supabase.from('allocations').update({ status: 'active' }).eq('id', id);
     if (error) throw error;
 
-    // 🏆 Push Notification
-    if (alloc && alloc.tenant_id) {
-       const { data: tokenData } = await supabase.from('user_fcm_tokens').select('token').eq('user_id', alloc.tenant_id);
-       const tokens = (tokenData || []).map(t => t.token);
-       if (tokens.length > 0) {
-          await sendPushNotification(tokens, "Application Approved! 🎉", "Welcome! Your hostel application has been approved. You can now access all resident features.");
-       }
-    }
-
-    res.json({ message: 'Approved and tenant notified' });
+    res.json({ message: 'Approved' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -229,15 +220,6 @@ router.put('/tenants/:id/reject', async (req, res) => {
     // 🛑 Clear hostel_id from user table so they can join elsewhere / are "un-joined"
     if (alloc && alloc.tenant_id) {
        await supabase.from('users').update({ hostel_id: null }).eq('id', alloc.tenant_id);
-    }
-
-    // 🏆 Push Notification
-    if (alloc && alloc.tenant_id) {
-       const { data: tokenData } = await supabase.from('user_fcm_tokens').select('token').eq('user_id', alloc.tenant_id);
-       const tokens = (tokenData || []).map(t => t.token);
-       if (tokens.length > 0) {
-          await sendPushNotification(tokens, "Application Update", "We regret to inform you that your hostel application was not approved at this time.");
-       }
     }
 
     res.json({ message: 'Rejected' });
@@ -359,17 +341,7 @@ router.put('/complaints/:id/resolve', async (req, res) => {
     const { error } = await supabase.from('complaints').update({ status: 'resolved' }).eq('id', id);
     if (error) throw error;
 
-    // 3. 🏆 Push Notification
-    if (complaint && complaint.tenant_id) {
-       const { data: tokenData } = await supabase.from('user_fcm_tokens').select('token').eq('user_id', complaint.tenant_id);
-       const tokens = (tokenData || []).map(t => t.token);
-       
-       if (tokens.length > 0) {
-          await sendPushNotification(tokens, "Complaint Resolved ✅", `Your issue regarding "${complaint.title}" has been resolved.`);
-       }
-    }
-
-    res.json({ message: 'Complaint resolved and tenant notified' });
+    res.json({ message: 'Complaint resolved' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -463,8 +435,6 @@ router.get('/analytics', async (req, res) => {
   }
 });
 
-import { sendPushNotification } from '../utils/notifications.js';
-
 // Post Notice
 router.post('/notices', async (req, res) => {
   try {
@@ -475,22 +445,7 @@ router.post('/notices', async (req, res) => {
     const { data: notice, error: nError } = await supabase.from('notices').insert([{ hostel_id: hostelId, title, message }]).select().single();
     if (nError) throw nError;
 
-    // 2. 🏆 Push Notification Logic
-    // Get all user IDs in this hostel
-    const { data: tenants } = await supabase.from('users').select('id').eq('hostel_id', hostelId);
-    const userIds = (tenants || []).map(t => t.id);
-
-    if (userIds.length > 0) {
-      // Get FCM tokens for these users
-      const { data: tokenData } = await supabase.from('user_fcm_tokens').select('token').in('user_id', userIds);
-      const tokens = (tokenData || []).map(t => t.token);
-
-      if (tokens.length > 0) {
-        await sendPushNotification(tokens, `New Notice: ${title}`, message, { type: 'notice', id: notice.id });
-      }
-    }
-
-    res.json({ message: 'Notice posted and notifications sent!' });
+    res.json({ message: 'Notice posted!' });
   } catch (err) {
     console.error('Notice error:', err);
     res.status(500).json({ error: err.message });
