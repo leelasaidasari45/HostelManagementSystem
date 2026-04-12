@@ -9,6 +9,12 @@ import './AuthPages.css';
 const SelectPlanPage = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/login');
+    };
 
     const handleSubscribe = async () => {
         setLoading(true);
@@ -17,10 +23,6 @@ const SelectPlanPage = () => {
             
             if (res.data.isMock) {
                 toast.success('Subscription setup initiated! (Mock Mode)');
-                // In real flow, redirect to Paytm
-                // window.location.href = res.data.paytmUrl;
-                
-                // For now, let's pretend it worked
                 setTimeout(() => {
                     navigate('/owner/dashboard');
                     toast.success('Welcome to Premium! Your dashboard is now active.');
