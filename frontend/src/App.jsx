@@ -53,7 +53,30 @@ const LoadingScreen = () => (
   </div>
 );
 
+import MobileSplash from './components/MobileSplash';
+
 function App() {
+  const [showSplash, setShowSplash] = React.useState(false);
+  const [hasSplashed, setHasSplashed] = React.useState(false);
+
+  React.useEffect(() => {
+    // Check if mobile view and if we haven't splashed in this SESSION (using sessionStorage)
+    const isMobile = window.innerWidth <= 768;
+    const sessionSplashed = sessionStorage.getItem('hasSplashed');
+
+    if (isMobile && !sessionSplashed && !hasSplashed) {
+      setShowSplash(true);
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        setHasSplashed(true);
+        sessionStorage.setItem('hasSplashed', 'true');
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSplashed]);
+
+  if (showSplash) return <MobileSplash />;
+
   return (
     <AuthProvider>
     <Router>
