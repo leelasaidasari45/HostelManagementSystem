@@ -11,6 +11,9 @@ const LandingPage = () => {
   React.useEffect(() => {
     if (user) {
       navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
+    } else if (window.innerWidth <= 768) {
+      // In mobile view, skip landing and go straight to registration
+      navigate('/register');
     }
   }, [user, navigate]);
   return (
@@ -18,7 +21,8 @@ const LandingPage = () => {
       {/* Navbar */}
       <nav className="glass-panel landing-nav slide-up">
         <Link to="/" className="logo flex items-center gap-2" style={{ textDecoration: 'none' }}>
-          <h2 className="text-gradient">easyPG</h2>
+          <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" className="logo-img" style={{ height: '32px', borderRadius: '4px' }} />
+          <h2 className="logo-text" style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#fff', margin: 0 }}>easyPG</h2>
         </Link>
         <div className="nav-links">
           <Link to="/login" className="btn btn-secondary">Login</Link>

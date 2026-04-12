@@ -61,6 +61,14 @@ import { registerForPushNotificationsAsync, syncTokenWithBackend } from './src/u
 
 const NavigationProvider = () => {
   const { user, loading } = useAuth();
+  const [showSplash, setShowSplash] = React.useState(true);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   React.useEffect(() => {
     if (user) {
@@ -70,12 +78,8 @@ const NavigationProvider = () => {
     }
   }, [user]);
 
-  if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Theme.colors.primary} />
-      </View>
-    );
+  if (loading || showSplash) {
+    return <MobileSplash />;
   }
 
   // Custom logic to handle tenant redirection if not in a hostel
@@ -91,7 +95,10 @@ const NavigationProvider = () => {
         initialRouteName={user ? getInitialRoute() : 'Login'}
       >
         {!user ? (
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </>
         ) : user.role === 'owner' ? (
           <Stack.Screen name="OwnerRoot" component={OwnerNavigator} />
         ) : (

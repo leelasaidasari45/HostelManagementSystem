@@ -29,7 +29,11 @@ const LoginScreen = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
-            <Text style={styles.logoText}>EasyPG</Text>
+            <Image 
+              source={{ uri: 'https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg' }} 
+              style={styles.logo} 
+            />
+            <Text style={styles.logoText}>easyPG</Text>
             <Text style={styles.subtitle}>Management System</Text>
           </View>
 
@@ -79,6 +83,16 @@ const LoginScreen = () => {
   );
 };
 
+            <TouchableOpacity style={styles.footer} onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.footerText}>Don't have an account? <Text style={styles.registerLink}>Sign Up</Text></Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
+  );
+};
+
 const styles = StyleSheet.create({
   gradient: { flex: 1 },
   container: { flex: 1 },
@@ -90,6 +104,12 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: Theme.spacing.xl,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 16,
+    marginBottom: 15,
   },
   logoText: {
     fontSize: 42,
@@ -146,6 +166,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  footer: { marginTop: 20, alignItems: 'center' },
+  footerText: { color: Theme.colors.textMuted },
+  registerLink: { color: Theme.colors.primary, fontWeight: 'bold' },
 });
 
 export default LoginScreen;

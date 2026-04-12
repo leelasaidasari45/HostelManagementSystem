@@ -217,8 +217,9 @@ const JoinHostel = () => {
     <div className="app-container" style={{alignItems: 'center', justifyContent: 'center'}}>
       <div className="glass-panel p-8" style={{width: '100%', maxWidth: '500px'}}>
         {/* Logo link at the top */}
-        <Link to="/" className="flex items-center gap-2 mb-6 text-gradient" style={{textDecoration: 'none', fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '1.2rem'}}>
-          <Home size={20} color="var(--accent-primary)" /> easyPG
+        <Link to="/" className="flex items-center gap-3 mb-6" style={{textDecoration: 'none'}}>
+          <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '30px', borderRadius: '4px' }} />
+          <span className="text-gradient" style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '1.2rem' }}>easyPG</span>
         </Link>
         
         {step === 1 && (

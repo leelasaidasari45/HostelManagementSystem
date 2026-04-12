@@ -47,12 +47,28 @@ const LoadingScreen = () => (
   </div>
 );
 
-import { setupPushNotifications } from './utils/PushNotifications';
+import MobileSplash from './components/MobileSplash';
 
 function App() {
+  const [showSplash, setShowSplash] = React.useState(false);
+  const [hasSplashed, setHasSplashed] = React.useState(false);
+
   React.useEffect(() => {
     setupPushNotifications();
-  }, []);
+    
+    // Check if mobile view (Zomato-style splash)
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile && !hasSplashed) {
+      setShowSplash(true);
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        setHasSplashed(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSplashed]);
+
+  if (showSplash) return <MobileSplash />;
 
   return (
     <AuthProvider>
