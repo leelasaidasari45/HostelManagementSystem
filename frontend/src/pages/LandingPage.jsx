@@ -5,17 +5,19 @@ import { useAuth } from '../context/AuthContext';
 import './LandingPage.css';
 
 const LandingPage = () => {
-  const { user } = useAuth();
+  const { user, loadingAuth } = useAuth();
   const navigate = useNavigate();
 
   React.useEffect(() => {
+    if (loadingAuth) return; // Wait for auth check to complete
+
     if (user) {
       navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
     } else if (window.innerWidth <= 768) {
       // In mobile view, skip landing and go straight to registration
       navigate('/register');
     }
-  }, [user, navigate]);
+  }, [user, loadingAuth, navigate]);
   return (
     <div className="landing-page">
       {/* Navbar */}
