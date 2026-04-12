@@ -18,6 +18,9 @@ const LandingPage = () => {
       navigate('/register');
     }
   }, [user, loadingAuth, navigate]);
+  // Completely hide landing page content on mobile to prevent "flashing" before redirect
+  if (loadingAuth || window.innerWidth <= 768) return null;
+
   return (
     <div className="landing-page">
       {/* Navbar */}
