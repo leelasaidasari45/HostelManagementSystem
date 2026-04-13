@@ -38,7 +38,7 @@ const SelectRolePage = () => {
 
   return (
     <div className="auth-container bg-[#0f172a] flex flex-col items-center justify-center" style={{ minHeight: '100vh', padding: '1rem' }}>
-      <div className="max-w-lg w-full mx-auto slide-up">
+      <div className="max-w-md w-full mx-auto slide-up">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Choose Your Path</h1>
           <p className="text-slate-400">Select how you'll use easyPG</p>
