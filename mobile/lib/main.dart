@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'screens/splash_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const EasyPGApp());
 }
 
@@ -15,15 +16,8 @@ class EasyPGApp extends StatelessWidget {
       title: 'easyPG',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4F46E5),
-          primary: const Color(0xFF4F46E5),
-          background: const Color(0xFFF8FAFC),
-        ),
-        textTheme: GoogleFonts.outfitTextTheme(
-          Theme.of(context).textTheme,
-        ),
         useMaterial3: true,
+        primaryColor: const Color(0xFF4F46E5),
       ),
       home: const SplashScreen(),
     );
