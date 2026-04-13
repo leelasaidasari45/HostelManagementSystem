@@ -146,9 +146,10 @@ const CreateHostel = () => {
 
               <div className="flex-col gap-8 py-4">
                 {floorsConfig.map((floor, fIndex) => (
-                  <div key={fIndex} className="p-8 rounded-3xl slide-up" style={{ 
+                  <div key={fIndex} className="p-8 slide-up" style={{ 
                     background: '#f1f5f9', 
                     border: '1px solid #e2e8f0',
+                    borderRadius: '7px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
                   }}>
                     <div className="flex justify-between items-center mb-4">
@@ -180,7 +181,7 @@ const CreateHostel = () => {
 
                         <div className="rooms-grid gap-3">
                           {floor.rooms.map((room, rIndex) => (
-                            <div key={rIndex} className="p-4 rounded-xl text-center flex-col items-center justify-center bg-white shadow-sm border border-slate-100">
+                            <div key={rIndex} className="p-4 text-center flex-col items-center justify-center bg-white shadow-sm border border-slate-100" style={{ borderRadius: '7px' }}>
                               <span className="font-bold block mb-2 text-indigo-500">Room {room.number}</span>
                               <div className="flex items-center justify-center gap-2 text-sm text-slate-500 font-medium">
                                 Beds:
