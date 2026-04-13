@@ -128,18 +128,6 @@ const RegisterPage = () => {
             {loading ? 'Registering...' : 'Register'}
           </button>
 
-          <div className="social-divider">
-            <span>Or continue with</span>
-          </div>
-
-          <button 
-            type="button" 
-            className="btn btn-social w-full" 
-            onClick={handleGoogleLogin}
-          >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
-            Continue with Google
-          </button>
         </form>
 
         <p className="auth-footer text-center mt-6 text-muted">
