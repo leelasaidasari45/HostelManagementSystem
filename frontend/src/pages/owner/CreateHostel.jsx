@@ -146,10 +146,14 @@ const CreateHostel = () => {
 
               <div className="flex-col gap-6">
                 {floorsConfig.map((floor, fIndex) => (
-                  <div key={fIndex} className="p-4 rounded border slide-up" style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
+                  <div key={fIndex} className="p-5 rounded-2xl slide-up" style={{ 
+                    background: '#f1f5f9', 
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+                  }}>
                     <div className="flex justify-between items-center mb-4">
-                      <strong className="text-lg text-accent">Floor {floor.floor}</strong>
-                      <button type="button" onClick={() => removeFloor(fIndex)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}>
+                      <strong className="text-lg text-indigo-600">Floor {floor.floor}</strong>
+                      <button type="button" onClick={() => removeFloor(fIndex)} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}>
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -157,33 +161,33 @@ const CreateHostel = () => {
                     {/* Row Configuration */}
                     {!floor.generated ? (
                       <div className="floor-builder-row">
-                        <div className="flex-1 w-full">
-                          <label className="form-label text-sm">Number of Rooms</label>
-                          <input type="number" min="1" className="form-control" value={floor.baseRooms} onChange={e => updateFloorField(fIndex, 'baseRooms', e.target.value)} placeholder="e.g. 5" />
+                        <div className="flex-1 w-full text-slate-700">
+                          <label className="form-label text-sm font-semibold">Number of Rooms</label>
+                          <input type="number" min="1" className="form-control" style={{ background: '#fff' }} value={floor.baseRooms} onChange={e => updateFloorField(fIndex, 'baseRooms', e.target.value)} placeholder="e.g. 5" />
                         </div>
-                        <div className="flex-1 w-full">
-                          <label className="form-label text-sm">Default Beds per Room</label>
-                          <input type="number" min="1" className="form-control" value={floor.baseCapacity} onChange={e => updateFloorField(fIndex, 'baseCapacity', e.target.value)} placeholder="e.g. 2" />
+                        <div className="flex-1 w-full text-slate-700">
+                          <label className="form-label text-sm font-semibold">Default Beds per Room</label>
+                          <input type="number" min="1" className="form-control" style={{ background: '#fff' }} value={floor.baseCapacity} onChange={e => updateFloorField(fIndex, 'baseCapacity', e.target.value)} placeholder="e.g. 2" />
                         </div>
-                        <button type="button" className="btn btn-secondary generate-btn" onClick={() => autoGenerateRooms(fIndex)}>Generate</button>
+                        <button type="button" className="btn btn-secondary generate-btn" style={{ background: '#4f46e5', color: 'white' }} onClick={() => autoGenerateRooms(fIndex)}>Generate</button>
                       </div>
                     ) : (
                       <div>
-                        <div className="flex justify-between items-center mb-3">
-                          <span className="text-sm text-success flex items-center gap-1"><CheckCircle size={14} /> Layout Generated</span>
-                          <button type="button" className="text-xs text-muted underline cursor-pointer bg-transparent border-none" onClick={() => updateFloorField(fIndex, 'generated', false)}>Reset Floor</button>
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="text-sm font-medium text-emerald-600 flex items-center gap-1"><CheckCircle size={14} /> Layout Ready</span>
+                          <button type="button" className="text-xs text-slate-400 font-medium underline cursor-pointer bg-transparent border-none" onClick={() => updateFloorField(fIndex, 'generated', false)}>Reset Floor</button>
                         </div>
 
                         <div className="rooms-grid gap-3">
                           {floor.rooms.map((room, rIndex) => (
-                            <div key={rIndex} className="p-3 rounded border text-center flex-col items-center justify-center bg-darker" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
-                              <span className="font-medium block mb-2" style={{ color: 'var(--accent-light)' }}>Room {room.number}</span>
-                              <div className="flex items-center justify-center gap-2 text-sm text-muted">
+                            <div key={rIndex} className="p-4 rounded-xl text-center flex-col items-center justify-center bg-white shadow-sm border border-slate-100">
+                              <span className="font-bold block mb-2 text-indigo-500">Room {room.number}</span>
+                              <div className="flex items-center justify-center gap-2 text-sm text-slate-500 font-medium">
                                 Beds:
                                 <input
                                   type="number"
                                   className="form-control text-center p-1"
-                                  style={{ width: '70px', fontSize: '1rem' }}
+                                  style={{ width: '60px', height: '32px', fontSize: '0.9rem', background: '#f8fafc' }}
                                   value={room.capacity}
                                   onChange={e => updateRoomCapacity(fIndex, rIndex, e.target.value)}
                                 />
