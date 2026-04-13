@@ -37,34 +37,34 @@ const SelectRolePage = () => {
   };
 
   return (
-    <div className="auth-container bg-[#0f172a] flex flex-col items-center justify-center" style={{ minHeight: '100vh', padding: '2rem' }}>
-      <div className="max-w-xl w-full mx-auto slide-up">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-white mb-3 tracking-tight">Choose Your Path</h1>
-          <p className="text-slate-400 text-lg">Select how you'll use easyPG</p>
+    <div className="auth-container bg-[#0f172a] flex flex-col items-center justify-center" style={{ minHeight: '100vh', padding: '1rem' }}>
+      <div className="max-w-lg w-full mx-auto slide-up">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-white mb-2 tracking-tight">Choose Your Path</h1>
+          <p className="text-slate-400">Select how you'll use easyPG</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Owner Card */}
           <div 
             onClick={() => setSelectedRole('owner')}
-            className={`role-card glass-panel p-6 cursor-pointer transition-all duration-300 transform flex flex-col items-center text-center ${
+            className={`role-card glass-panel p-5 cursor-pointer transition-all duration-300 transform flex flex-col items-center text-center ${
               selectedRole === 'owner' 
                 ? 'ring-2 ring-indigo-500 scale-[1.05] bg-indigo-500/10 border-indigo-500/50' 
                 : 'hover:scale-[1.02] hover:bg-white/5 border-white/5'
             }`}
-            style={{ minHeight: '320px' }}
+            style={{ minHeight: '240px' }}
           >
-            <div className={`p-5 rounded-2xl mb-6 ${selectedRole === 'owner' ? 'bg-indigo-600 shadow-[0_0_20px_rgba(79,70,229,0.4)]' : 'bg-slate-800 text-indigo-400'}`}>
-              <Building2 size={42} className={selectedRole === 'owner' ? 'text-white' : ''} />
+            <div className={`p-4 rounded-xl mb-4 ${selectedRole === 'owner' ? 'bg-indigo-600 shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-slate-800 text-indigo-400'}`}>
+              <Building2 size={32} className={selectedRole === 'owner' ? 'text-white' : ''} />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Hostel Owner</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Manage rooms, automate rent collection, and handle complaints with ease.
+            <h3 className="text-xl font-bold text-white mb-2">Hostel Owner</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Manage rooms, automate rent, and handle complaints.
             </p>
             {selectedRole === 'owner' && (
-              <div className="mt-auto pt-4 text-indigo-400">
-                <CheckCircle2 size={24} />
+              <div className="mt-auto pt-2 text-indigo-400">
+                <CheckCircle2 size={20} />
               </div>
             )}
           </div>
@@ -72,23 +72,23 @@ const SelectRolePage = () => {
           {/* Tenant Card */}
           <div 
             onClick={() => setSelectedRole('tenant')}
-            className={`role-card glass-panel p-6 cursor-pointer transition-all duration-300 transform flex flex-col items-center text-center ${
+            className={`role-card glass-panel p-5 cursor-pointer transition-all duration-300 transform flex flex-col items-center text-center ${
               selectedRole === 'tenant' 
                 ? 'ring-2 ring-emerald-500 scale-[1.05] bg-emerald-500/10 border-emerald-500/50' 
                 : 'hover:scale-[1.02] hover:bg-white/5 border-white/5'
             }`}
-            style={{ minHeight: '320px' }}
+            style={{ minHeight: '240px' }}
           >
-            <div className={`p-5 rounded-2xl mb-6 ${selectedRole === 'tenant' ? 'bg-emerald-600 shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-slate-800 text-emerald-400'}`}>
-              <User size={42} className={selectedRole === 'tenant' ? 'text-white' : ''} />
+            <div className={`p-4 rounded-xl mb-4 ${selectedRole === 'tenant' ? 'bg-emerald-600 shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-slate-800 text-emerald-400'}`}>
+              <User size={32} className={selectedRole === 'tenant' ? 'text-white' : ''} />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Resident</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Pay rent, track notices, and report issues from your own dashboard.
+            <h3 className="text-xl font-bold text-white mb-2">Resident</h3>
+            <p className="text-slate-400 text-xs leading-relaxed">
+              Pay rent, track notices, and report issues.
             </p>
             {selectedRole === 'tenant' && (
-              <div className="mt-auto pt-4 text-emerald-400">
-                <CheckCircle2 size={24} />
+              <div className="mt-auto pt-2 text-emerald-400">
+                <CheckCircle2 size={20} />
               </div>
             )}
           </div>
@@ -98,11 +98,11 @@ const SelectRolePage = () => {
           <button 
             onClick={handleRoleSelection}
             disabled={!selectedRole || loading}
-            className={`btn btn-primary w-full max-w-xs py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${
-              !selectedRole ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:scale-[1.02]'
+            className={`btn btn-primary w-full max-w-xs py-3 rounded-xl font-bold flex items-center justify-center gap-3 transition-all ${
+              !selectedRole ? 'opacity-50 grayscale cursor-not-allowed' : 'hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:scale-[1.02]'
             }`}
           >
-            {loading ? <Loader2 className="animate-spin" /> : <>Get Started <ArrowRight size={22} /></>}
+            {loading ? <Loader2 className="animate-spin" /> : <>Get Started <ArrowRight size={20} /></>}
           </button>
         </div>
       </div>
