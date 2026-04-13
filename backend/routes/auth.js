@@ -17,7 +17,10 @@ const COOKIE_OPTIONS = {
 // Register Route
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name, role, phone } = req.body;
+    const { email, password, name, phone } = req.body;
+    let { role } = req.body;
+
+    if (!role) role = 'unassigned';
 
     const { data: existingUser } = await supabase.from('users').select('id').eq('email', email).maybeSingle();
     
@@ -38,16 +41,15 @@ router.post('/register', async (req, res) => {
       phone: phone || '',
       trial_end_date: trialEndDate.toISOString(),
       subscription_status: 'trial',
-      payment_setup_complete: role === 'tenant' ? true : false // Tenants are free, owners need setup
+      payment_setup_complete: false // Always false until role is confirmed
     }]).select().single();
+
+    if (error) throw error;
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '7d'
     });
 
-    if (error) throw error;
-
-    // Set auth cookies for fallback
     res.cookie('access_token', token, COOKIE_OPTIONS);
 
     res.status(201).json({ 
@@ -56,10 +58,91 @@ router.post('/register', async (req, res) => {
       email: user.email,
       name: user.name,
       role: user.role,
-      token: token // Passing token for localStorage persistence
+      token: token
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error during registration' });
+  }
+});
+
+// Social Sync Route (for Google Auth)
+router.post('/social-sync', async (req, res) => {
+  try {
+    const { supabaseId, email, name } = req.body;
+
+    // Check if user exists by email or supabaseId
+    let { data: user } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
+
+    if (!user) {
+      // Create new user for social login
+      const trialEndDate = new Date();
+      trialEndDate.setMonth(trialEndDate.getMonth() + 3);
+
+      const { data: newUser, error } = await supabase.from('users').insert([{
+        id: supabaseId,
+        email,
+        name,
+        role: 'unassigned',
+        trial_end_date: trialEndDate.toISOString(),
+        subscription_status: 'trial',
+        payment_setup_complete: false
+      }]).select().single();
+
+      if (error) throw error;
+      user = newUser;
+    }
+
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+
+    res.cookie('access_token', token, COOKIE_OPTIONS);
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      token: token
+    });
+  } catch (err) {
+    console.error('Social sync error:', err);
+    res.status(500).json({ error: 'Failed to sync social account' });
+  }
+});
+
+// Update Role Route
+router.put('/update-role', requireAuth, async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!['owner', 'tenant'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role selection' });
+    }
+
+    const userId = req.user.id;
+    const paymentSetupComplete = role === 'tenant' ? true : false;
+
+    const { data: user, error } = await supabase.from('users').update({ 
+      role,
+      payment_setup_complete: paymentSetupComplete
+    }).eq('id', userId).select().single();
+
+    if (error) throw error;
+
+    // Issue updated token with new role
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+
+    res.cookie('access_token', token, COOKIE_OPTIONS);
+
+    res.json({
+      message: 'Role updated successfully',
+      role: user.role,
+      token: token
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update user role' });
   }
 });
 

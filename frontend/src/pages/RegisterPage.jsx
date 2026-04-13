@@ -4,6 +4,7 @@ import { UserPlus, BuildingIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 import './AuthPages.css';
 
 const RegisterPage = () => {
@@ -11,8 +12,7 @@ const RegisterPage = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    role: 'owner'
+    confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,9 +26,16 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
-      await api.post('/api/auth/register', formData);
-      toast.success('Registration successful! Please sign in.');
-      navigate('/login');
+      const res = await api.post('/api/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+
+      // Auto-login after registration
+      loginContext(res.data);
+      toast.success('Account created successfully!');
+      navigate('/select-role');
     } catch (err) {
       const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'Registration failed';
       toast.error(errorMsg);
@@ -97,18 +104,8 @@ const RegisterPage = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">I am a...</label>
-            <select
-              className="form-control"
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-            >
-              <option value="owner">Hostel Owner</option>
-              <option value="tenant">Tenant</option>
-            </select>
           </div>
-
+          
           <button type="submit" className="btn btn-primary w-full mt-4" disabled={loading}>
             {loading ? <Loader2 size={18} className="animate-spin" /> : <UserPlus size={18} />}
             {loading ? 'Registering...' : 'Register'}
@@ -121,7 +118,19 @@ const RegisterPage = () => {
           <button 
             type="button" 
             className="btn btn-social w-full" 
-            onClick={() => toast.error('Google registration coming soon!')}
+            onClick={async () => {
+              const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: 'https://easypg-zeta.vercel.app/auth/callback',
+                  queryParams: {
+                    access_type: 'offline',
+                    prompt: 'consent',
+                  },
+                },
+              });
+              if (error) toast.error(error.message);
+            }}
           >
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
             Continue with Google
@@ -131,8 +140,8 @@ const RegisterPage = () => {
         <p className="auth-footer text-center mt-6 text-muted">
           Already have an account? <Link to="/login" className="text-gradient">Login</Link>
         </p>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

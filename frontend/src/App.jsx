@@ -18,6 +18,8 @@ const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const TenantDashboard = lazy(() => import('./pages/tenant/TenantDashboard'));
 const JoinHostel = lazy(() => import('./pages/tenant/JoinHostel'));
 const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
+const AuthCallback = lazy(() => import('./pages/AuthCallback'));
+const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 
 import { Navigate } from 'react-router-dom';
 import { HostelProvider } from './context/HostelContext';
@@ -96,6 +98,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/select-role" element={<SelectRolePage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/select-plan" element={<ProtectedRoute roleType="owner"><SelectPlanPage /></ProtectedRoute>} />

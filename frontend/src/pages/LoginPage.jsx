@@ -4,6 +4,7 @@ import { LogIn, BuildingIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 import './AuthPages.css';
 
 const LoginPage = () => {
@@ -92,7 +93,15 @@ const LoginPage = () => {
           <button 
             type="button" 
             className="btn btn-social w-full" 
-            onClick={() => toast.error('Google login coming soon!')}
+            onClick={async () => {
+              const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: 'https://easypg-zeta.vercel.app/auth/callback',
+                },
+              });
+              if (error) toast.error(error.message);
+            }}
           >
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
             Continue with Google
