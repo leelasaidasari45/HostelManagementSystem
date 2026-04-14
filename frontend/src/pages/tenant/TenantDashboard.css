@@ -5,10 +5,17 @@
   position: relative;
 }
 
+.dashboard-content {
+  padding: 2.5rem 3rem;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .header-logout-btn {
