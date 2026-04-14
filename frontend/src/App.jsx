@@ -56,6 +56,7 @@ const LoadingScreen = () => (
 );
 
 import MobileSplash from './components/MobileSplash';
+import { ThemeProvider } from './context/ThemeContext';
 
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
   }, [showSplash]);
 
   return (
+    <ThemeProvider>
     <AuthProvider>
       <Router>
         <HostelProvider>
@@ -116,9 +118,9 @@ function App() {
         </div>
       </HostelProvider>
     </Router>
-    </AuthProvider>
+  </AuthProvider>
+</ThemeProvider>
   );
 }
 
 export default App;
-

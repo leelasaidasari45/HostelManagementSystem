@@ -4,6 +4,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { useHostel } from '../../context/HostelContext';
 import toast from 'react-hot-toast';
+import ThemeToggle from '../ThemeToggle';
 
 const OwnerHeader = ({ title, subtitle }) => {
   const { activeHostel, hostels, switchHostel } = useHostel();
@@ -87,6 +88,8 @@ const OwnerHeader = ({ title, subtitle }) => {
               <Loader2 size={18} className="animate-spin" /> QR
             </button>
           ) : null}
+
+          <ThemeToggle />
 
           <button onClick={logoutContext} className="header-logout-btn">
             <LogOut size={18} /> Logout

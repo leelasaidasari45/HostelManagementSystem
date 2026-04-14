@@ -1,32 +1,41 @@
-# Fix: First-Load White Screen & Splash Optimization
+# Implementation Plan: Dark & Light Mode Support
 
-The current "White Screen" issue is caused by the `App` component unmounting the entire application state during the Splash screen, and the `LandingPage` returning `null` while waiting for redirects on mobile.
+Add a comprehensive theme management system to the web application, allowing users to toggle between Light and Dark modes. The preference will be saved in the browser's local storage.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> **Performance Win**
-> By refactoring the app lifecycle, the website will now verify your login **while** the splash screen is showing. This means as soon as the splash finishes, you'll be exactly where you need to be without a second "loading" spinner.
+> [!NOTE]
+> **Theme Scope**
+> The dark mode will primary affect the Dashboard regions (for both Owners and Tenants). Authentication pages and the Landing page already have specific dark/glass styles that will be preserved.
 
 ## Proposed Changes
 
-### [Frontend] - App Lifecycle Refactor
+### [Frontend] - Theme Engine
+#### [MODIFY] [index.css](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/index.css)
+- Define a `.dark-mode` class that overrides the CSS variables in `:root`.
+- Update standard colors to be more reactive to variable changes.
+
+#### [NEW] [ThemeContext.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/context/ThemeContext.jsx)
+- Create a `ThemeContext` and `ThemeProvider`.
+- Synchronize the `theme` state ('light' or 'dark') with `localStorage`.
+- Toggle the CSS class on the `document.body`.
+
+#### [NEW] [ThemeToggle.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/components/ThemeToggle.jsx)
+- A reusable button with smooth sun/moon icon transitions.
+
+### [Frontend] - Integration
 #### [MODIFY] [App.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/App.jsx)
-- **Persistent Mounting**: Move `AuthProvider` and `Router` to the top level so they never unmount.
-- **Splash Overlay**: Convert `MobileSplash` into a conditional overlay that sits on top of the app content.
-- **State Sync**: Use a simpler state to handle the splash exit.
+- Wrap the entire application tree in the new `ThemeProvider`.
 
-#### [MODIFY] [LandingPage.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/pages/LandingPage.jsx)
-- **Remove White Screen Trap**: Replace `return null;` with the global `LoadingScreen`. This ensures that even for a split second, the user sees a branded loader instead of a blank white page.
-- **Improved Redirect**: Optimize the mobile redirect to happen instantly once auth is verified.
+#### [MODIFY] [OwnerHeader.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/components/owner/OwnerHeader.jsx)
+- Inject the `ThemeToggle` into the header actions area.
 
-### [Frontend] - UI Polish
-#### [MODIFY] [MobileSplash.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/components/MobileSplash.jsx)
-- Add a "Fade Out" animation so the transition from the splash to the app is silky smooth.
+#### [MODIFY] [TenantDashboard.jsx](file:///c:/Users/dasar/OneDrive/Desktop/AntiGravityHMS/frontend/src/pages/tenant/TenantDashboard.jsx)
+- Inject the `ThemeToggle` into the tenant dashboard header.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Clear Site Data**: I will ask you to clear your browser cache/site data and reload.
-- **First Load Test**: Verify that the splash shows, then immediately reveals the Login or Registration page without any white flashing.
-- **Re-open Test**: Verify that opening a new tab skips the splash (as it does now) and works instantly.
+- **Toggle Test**: Click the Sun/Moon icons in both Owner and Tenant dashboards.
+- **Persistence Test**: Switch to Dark mode, refresh the page, and ensure it stays in Dark mode.
+- **Readability Test**: Check contrast in various cards and tables in dark mode.
