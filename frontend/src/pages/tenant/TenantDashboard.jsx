@@ -228,69 +228,72 @@ const TenantDashboard = () => {
              <Loader2 size={48} className="animate-spin" style={{color: 'var(--accent-primary)'}} />
            </div>
         ) : activeTab === 'dashboard' ? (
-           <div className="grid gap-6 slide-up" style={{gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))'}}>
-               <div className="glass-panel p-6">
-                   <h3 className="mb-4">Notice Board</h3>
-                    {dashData?.notices?.length > 0 ? (
-                        <ul className="flex flex-col gap-4">
-                            {dashData.notices.map(n => (
-                                <li key={n._id} className="p-4 rounded-lg slide-up" style={{ 
-                                  background: 'rgba(255,255,255,0.03)',
-                                  border: '1px solid rgba(255,255,255,0.05)',
-                                  borderLeft: '4px solid var(--accent-primary)'
-                                }}>
-                                    <h4 className="font-bold mb-2 text-accent" style={{ color: 'var(--accent-primary)', fontSize: '1rem' }}>{n.title}</h4>
-                                    <p className="text-sm text-muted" style={{ lineHeight: '1.5' }}>{n.message}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : <p className="text-muted">No active notices.</p>}
-               </div>
-               
-               <div className="glass-panel p-6">
-                   <h3 className="mb-4">Today's Menu ({dashData?.menu?.day || 'N/A'})</h3>
-                   {dashData?.menu ? (
-                       <div className="grid gap-2">
-                           <div className="p-2 border-b border-glass"><strong className="text-muted w-24 inline-block">Breakfast:</strong> {dashData.menu.breakfast}</div>
-                           <div className="p-2 border-b border-glass"><strong className="text-muted w-24 inline-block">Lunch:</strong> {dashData.menu.lunch}</div>
-                           <div className="p-2 border-b border-glass"><strong className="text-muted w-24 inline-block">Snacks:</strong> {dashData.menu.snacks}</div>
-                           <div className="p-2"><strong className="text-muted w-24 inline-block">Dinner:</strong> {dashData.menu.dinner}</div>
-                       </div>
-                   ) : <p className="text-muted">Menu not updated for today.</p>}
+           <>
+               <div className="tenant-grid slide-up">
+                   <div className="glass-panel p-6">
+                       <h3 className="mb-4">Notice Board</h3>
+                        {dashData?.notices?.length > 0 ? (
+                            <ul className="flex flex-col gap-4">
+                                {dashData.notices.map(n => (
+                                    <li key={n._id} className="p-4 rounded-lg slide-up" style={{ 
+                                      background: 'rgba(255,255,255,0.03)',
+                                      border: '1px solid rgba(255,255,255,0.05)',
+                                      borderLeft: '4px solid var(--accent-primary)'
+                                    }}>
+                                        <h4 className="font-bold mb-2 text-accent" style={{ color: 'var(--accent-primary)', fontSize: '1rem' }}>{n.title}</h4>
+                                        <p className="text-sm text-muted" style={{ lineHeight: '1.5' }}>{n.message}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : <p className="text-muted">No active notices.</p>}
+                   </div>
+                   
+                   <div className="glass-panel p-6">
+                       <h3 className="mb-4">Today's Menu ({dashData?.menu?.day || 'N/A'})</h3>
+                       {dashData?.menu ? (
+                           <div className="grid gap-2">
+                               <div className="p-2 border-b border-glass"><strong className="text-muted w-24 inline-block">Breakfast:</strong> {dashData.menu.breakfast}</div>
+                               <div className="p-2 border-b border-glass"><strong className="text-muted w-24 inline-block">Lunch:</strong> {dashData.menu.lunch}</div>
+                               <div className="p-2 border-b border-glass"><strong className="text-muted w-24 inline-block">Snacks:</strong> {dashData.menu.snacks}</div>
+                               <div className="p-2"><strong className="text-muted w-24 inline-block">Dinner:</strong> {dashData.menu.dinner}</div>
+                           </div>
+                       ) : <p className="text-muted">Menu not updated for today.</p>}
+                   </div>
                </div>
 
-               <div className="glass-panel p-6 mt-6">
-                   <Link to="/" className="flex items-center gap-3 mb-6" style={{textDecoration: 'none'}}>
-                     <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', width: '36px', borderRadius: '4px', objectFit: 'cover' }} />
-                   </Link>
-                   <ul className="flex flex-col gap-4 text-sm text-muted">
-                       <li className="flex gap-3 items-start">
-                         <span className="text-accent">•</span> 
+               <div className="glass-panel p-6 tenant-rules-card slide-up">
+                   <h3 className="mb-6" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                     <ShieldCheck size={24} style={{ color: 'var(--accent-primary)' }} />
+                     Hostel Rules & Regulations
+                   </h3>
+                   <ul className="grid gap-x-12 gap-y-4 text-sm text-muted" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+                       <li className="flex gap-3 items-start p-4 rounded-lg border border-glass" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                         <span className="text-accent font-bold" style={{ color: 'var(--accent-primary)' }}>01</span> 
                          <span><strong>Rent Payment:</strong> Must be paid by the 5th of every month to avoid late fees.</span>
                        </li>
-                       <li className="flex gap-3 items-start">
-                         <span className="text-accent">•</span> 
+                       <li className="flex gap-3 items-start p-4 rounded-lg border border-glass" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                         <span className="text-accent font-bold" style={{ color: 'var(--accent-primary)' }}>02</span> 
                          <span><strong>Notice Period:</strong> A minimum 10-day notice is required before vacating.</span>
                        </li>
-                       <li className="flex gap-3 items-start">
-                         <span className="text-accent">•</span> 
+                       <li className="flex gap-3 items-start p-4 rounded-lg border border-glass" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                         <span className="text-accent font-bold" style={{ color: 'var(--accent-primary)' }}>03</span> 
                          <span><strong>Cleanliness:</strong> Keep common areas tidy and dispose of waste in designated bins.</span>
                        </li>
-                       <li className="flex gap-3 items-start">
-                         <span className="text-accent">•</span> 
+                       <li className="flex gap-3 items-start p-4 rounded-lg border border-glass" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                         <span className="text-accent font-bold" style={{ color: 'var(--accent-primary)' }}>04</span> 
                          <span><strong>Quiet Hours:</strong> Respect silence between 10:00 PM and 7:00 AM.</span>
                        </li>
-                       <li className="flex gap-3 items-start">
-                         <span className="text-accent">•</span> 
+                       <li className="flex gap-3 items-start p-4 rounded-lg border border-glass" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                         <span className="text-accent font-bold" style={{ color: 'var(--accent-primary)' }}>05</span> 
                          <span><strong>Power Saving:</strong> Turn off lights and fans when leaving your room.</span>
                        </li>
-                       <li className="flex gap-3 items-start">
-                         <span className="text-accent">•</span> 
+                       <li className="flex gap-3 items-start p-4 rounded-lg border border-glass" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                         <span className="text-accent font-bold" style={{ color: 'var(--accent-primary)' }}>06</span> 
                          <span><strong>Safety:</strong> Illegal substances and smoking are strictly prohibited.</span>
                        </li>
                    </ul>
                </div>
-           </div>
+           </>
         ) : activeTab === 'rent' ? (
         <div className="payment-module glass-panel flex-col items-center justify-center p-8 text-center" style={{maxWidth: '500px', margin: '0 auto'}}>
           <div className="icon-wrapper mb-4" style={{width: '64px', height: '64px'}}>

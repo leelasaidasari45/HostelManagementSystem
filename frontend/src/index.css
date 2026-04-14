@@ -290,3 +290,25 @@ a:focus-visible, button:focus-visible {
     font-size: 0.95rem;
   }
 }
+
+/* Tenant Dashboard Layout Improvements */
+.tenant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.tenant-rules-card {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .tenant-grid {
+    grid-template-columns: 1fr 1fr; /* Two columns for Notice and Menu */
+  }
+}
+
+.border-glass {
+  border-bottom: 1px solid var(--border-color);
+}
