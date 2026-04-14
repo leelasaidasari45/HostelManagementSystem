@@ -11,17 +11,23 @@ const ThemeToggle = () => {
       className={`btn theme-toggle-btn ${isDarkMode ? 'dark' : 'light'}`}
       title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       style={{
-        padding: '0.6rem',
-        borderRadius: '12px',
-        background: 'var(--bg-tertiary)',
+        position: 'fixed',
+        bottom: '1.5rem',
+        left: '1.5rem',
+        zIndex: 10000,
+        width: '48px',
+        height: '48px',
+        borderRadius: '16px',
+        background: 'var(--bg-secondary)',
         color: 'var(--text-primary)',
-        border: '1px solid var(--border-color)',
+        border: '2px solid var(--accent-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        position: 'relative',
-        overflow: 'hidden'
+        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',
+        overflow: 'hidden',
+        cursor: 'pointer'
       }}
     >
       <div className="icon-wrapper" style={{ 
