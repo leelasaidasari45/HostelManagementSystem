@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BuildingIcon, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -32,9 +33,10 @@ const LandingPage = () => {
       {/* Navbar */}
       <nav className="glass-panel landing-nav slide-up">
         <Link to="/" className="logo flex items-center gap-2" style={{ textDecoration: 'none' }}>
-          <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" className="logo-img" style={{ height: '32px', borderRadius: '4px' }} />
+          <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" className="logo-img" style={{ height: '36px', width: '36px', borderRadius: '4px', objectFit: 'cover' }} />
         </Link>
-        <div className="nav-links">
+        <div className="nav-links flex items-center gap-4">
+          <ThemeToggle />
           <Link to="/login" className="btn btn-secondary">Login</Link>
           <Link to="/register" className="btn btn-primary">
             Get Started <ArrowRight size={18} />

@@ -45,7 +45,7 @@ const LoginPage = () => {
       <div className="auth-card glass-panel slide-up">
         <div className="auth-header flex-col items-center gap-2">
           <Link to="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-            <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', borderRadius: '4px' }} />
+            <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', width: '36px', borderRadius: '4px', objectFit: 'cover' }} />
           </Link>
           <h2>Welcome Back</h2>
           <p className="text-muted">Login to manage your hostel</p>

@@ -187,7 +187,7 @@ const TenantDashboard = () => {
       {/* Sidebar */}
       <aside className="sidebar glass-panel slide-up">
         <Link to="/" className="logo flex items-center gap-3 mb-10" style={{ textDecoration: 'none' }}>
-          <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', borderRadius: '4px' }} />
+          <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', width: '36px', borderRadius: '4px', objectFit: 'cover' }} />
         </Link>
         
         <nav className="sidebar-nav flex-col gap-2">
@@ -261,7 +261,7 @@ const TenantDashboard = () => {
 
                <div className="glass-panel p-6 mt-6">
                    <Link to="/" className="flex items-center gap-3 mb-6" style={{textDecoration: 'none'}}>
-                     <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '30px', borderRadius: '4px' }} />
+                     <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', width: '36px', borderRadius: '4px', objectFit: 'cover' }} />
                    </Link>
                    <ul className="flex flex-col gap-4 text-sm text-muted">
                        <li className="flex gap-3 items-start">
