@@ -20,11 +20,11 @@ const SelectRolePage = () => {
       
       toast.success(`Welcome aboard!`);
       
-      // Navigate to respective dashboard
+      // Navigate to respective dashboard or setup page
       if (role === 'owner') {
         navigate('/owner/dashboard');
       } else {
-        navigate('/tenant/dashboard');
+        navigate('/tenant/join'); // Send tenants to "Enter Code" page
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update role');

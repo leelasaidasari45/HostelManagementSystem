@@ -36,13 +36,20 @@ const ProtectedRoute = ({ children, roleType }) => {
     return <Navigate to="/login" replace />;
   }
 
+  // Redirect unassigned users to role selection
+  if (user.role === 'unassigned' && window.location.pathname !== '/select-role') {
+    return <Navigate to="/select-role" replace />;
+  }
+
   // Mandatory Payment Setup for Owners
   if (user.role === 'owner' && !user.payment_setup_complete && window.location.pathname !== '/select-plan') {
     return <Navigate to="/select-plan" replace />;
   }
 
   if (roleType && user.role !== roleType) {
-    return <Navigate to={user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard'} replace />;
+    // If owner tries tenant page or vice versa, send to their own landing dashboard
+    const destination = user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard';
+    return <Navigate to={destination} replace />;
   }
 
   return children;
