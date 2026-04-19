@@ -17,7 +17,6 @@ const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const TenantDashboard = lazy(() => import('./pages/tenant/TenantDashboard'));
 const JoinHostel = lazy(() => import('./pages/tenant/JoinHostel'));
-const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 
@@ -39,11 +38,6 @@ const ProtectedRoute = ({ children, roleType }) => {
   // Redirect unassigned users to role selection
   if (user.role === 'unassigned' && window.location.pathname !== '/select-role') {
     return <Navigate to="/select-role" replace />;
-  }
-
-  // Mandatory Payment Setup for Owners
-  if (user.role === 'owner' && !user.payment_setup_complete && window.location.pathname !== '/select-plan') {
-    return <Navigate to="/select-plan" replace />;
   }
 
   if (roleType && user.role !== roleType) {
@@ -114,7 +108,6 @@ function App() {
                     <Route path="/select-role" element={<SelectRolePage />} />
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/select-plan" element={<ProtectedRoute roleType="owner"><SelectPlanPage /></ProtectedRoute>} />
                     <Route path="/owner/dashboard" element={<ProtectedRoute roleType="owner"><OwnerDashboard /></ProtectedRoute>} />
                     <Route path="/owner/create-hostel" element={<ProtectedRoute roleType="owner"><CreateHostel /></ProtectedRoute>} />
                     <Route path="/owner/rooms" element={<ProtectedRoute roleType="owner"><RoomsPage /></ProtectedRoute>} />

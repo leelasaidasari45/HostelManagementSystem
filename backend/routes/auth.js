@@ -40,8 +40,8 @@ router.post('/register', async (req, res) => {
       role,
       phone: phone || '',
       trial_end_date: trialEndDate.toISOString(),
-      subscription_status: 'trial',
-      payment_setup_complete: false // Always false until role is confirmed
+      subscription_status: 'none',
+      payment_setup_complete: true // No longer mandatory
     }]).select().single();
 
     if (error) throw error;
@@ -88,8 +88,8 @@ router.post('/social-sync', async (req, res) => {
         name,
         role: 'unassigned',
         trial_end_date: trialEndDate.toISOString(),
-        subscription_status: 'trial',
-        payment_setup_complete: false
+        subscription_status: 'none',
+        payment_setup_complete: true
       }]).select().single();
 
       if (error) throw error;
@@ -124,7 +124,7 @@ router.put('/update-role', requireAuth, async (req, res) => {
     }
 
     const userId = req.user.id;
-    const paymentSetupComplete = role === 'tenant' ? true : false;
+    const paymentSetupComplete = true; // Set to true to bypass gating
 
     const { data: user, error } = await supabase.from('users').update({ 
       role,
