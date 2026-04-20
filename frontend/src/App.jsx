@@ -51,8 +51,8 @@ const ProtectedRoute = ({ children, roleType }) => {
 
 // Global Loading Fallback
 const LoadingScreen = () => (
-  <div className="flex justify-center items-center h-screen bg-[#0f172a]">
-    <Loader2 size={48} className="animate-spin text-indigo-500" />
+  <div className="flex justify-center items-center h-screen bg-[#f8fafc]">
+    <Loader2 size={48} className="animate-spin text-indigo-600" />
   </div>
 );
 
