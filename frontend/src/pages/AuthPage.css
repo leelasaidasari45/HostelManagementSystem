@@ -22,7 +22,7 @@
 /* Left Side - Branding & Aesthetic */
 .auth-side-branding {
   flex: 1.1;
-  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  background: #000000;
   position: relative;
   padding: 3rem;
   display: flex;
@@ -35,12 +35,12 @@
 .auth-side-branding::before {
   content: '';
   position: absolute;
-  top: -10%;
-  left: -10%;
+  top: -15%;
+  left: -15%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
-  filter: blur(60px);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+  filter: blur(80px);
 }
 
 .branding-content {
@@ -54,8 +54,8 @@
 
 .branding-logo img {
   height: 50px;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.1));
 }
 
 .branding-title {
@@ -64,18 +64,16 @@
   margin-bottom: 1rem;
   letter-spacing: -0.04em;
   font-family: 'Outfit', sans-serif;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .branding-title span {
-  color: #a5b4fc;
+  color: #6366f1;
 }
 
 .branding-subtitle {
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #94a3b8;
   margin-bottom: 3rem;
-  font-weight: 400;
 }
 
 .branding-features {
