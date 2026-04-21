@@ -83,16 +83,16 @@ const OwnerHeader = ({ title, subtitle }) => {
               onClick={() => setShowQrModal(true)}
               title="Show Hostel QR Code"
             >
-              <QrCode size={18} /> QR CODE
+              <QrCode size={18} /> <span className="btn-label">QR CODE</span>
             </button>
           ) : hostels.length > 0 ? (
             <button className="header-logout-btn opacity-50 cursor-wait">
-              <Loader2 size={18} className="animate-spin" /> QR
+              <Loader2 size={18} className="animate-spin" /> <span className="btn-label">QR</span>
             </button>
           ) : null}
 
           <button onClick={logoutContext} className="header-logout-btn">
-            <LogOut size={18} /> Logout
+            <LogOut size={18} /> <span className="btn-label">Logout</span>
           </button>
         </div>
       </header>
