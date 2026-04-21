@@ -192,12 +192,21 @@ const CreateHostel = () => {
                             <div key={rIndex} className="p-4 flex-col items-center justify-center bg-secondary glass-panel border-glass transition-all hover-border-accent" style={{ background: 'var(--bg-secondary)', borderRadius: '12px' }}>
                               <span className="text-xs uppercase tracking-widest text-muted mb-2 font-bold">Room</span>
                               <span className="text-xl font-bold text-center block mb-3" style={{ color: 'var(--text-primary)' }}>{room.number}</span>
-                              <div className="flex items-center justify-center gap-2 w-full pt-3 border-t border-glass">
-                                <Users size={14} className="text-muted" />
+                              <div className="flex items-center justify-center gap-3 w-full pt-4 border-t border-glass">
+                                <div className="flex items-center gap-1.5 opacity-80">
+                                  <Users size={16} />
+                                </div>
                                 <input
                                   type="number"
-                                  className="form-control text-center p-1 font-bold"
-                                  style={{ width: '50px', height: '32px', fontSize: '0.9rem', background: 'var(--bg-primary)', border: 'none' }}
+                                  className="form-control text-center p-0 font-bold"
+                                  style={{ 
+                                    width: '65px', 
+                                    height: '36px', 
+                                    fontSize: '1rem', 
+                                    background: 'var(--bg-tertiary)', 
+                                    border: '1px solid var(--border-color)',
+                                    borderRadius: '8px'
+                                  }}
                                   value={room.capacity}
                                   onChange={e => updateRoomCapacity(fIndex, rIndex, e.target.value)}
                                 />
