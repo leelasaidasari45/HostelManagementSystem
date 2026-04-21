@@ -10,8 +10,8 @@
 .auth-card-unified {
   display: flex;
   width: 100%;
-  max-width: 750px;
-  min-height: 480px;
+  max-width: 950px;
+  min-height: 450px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 24px;
