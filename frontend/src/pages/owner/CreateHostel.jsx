@@ -9,16 +9,10 @@ import './OwnerDashboard.css';
 
 const CreateHostel = () => {
   const [loading, setLoading] = useState(false);
-  const [basicDetails, setBasicDetails] = useState(null);
-
-  React.useEffect(() => {
-    const pendingSetup = sessionStorage.getItem('pendingHostelSetup');
-    if (!pendingSetup) {
-      window.location.href = '/owner/setup-basic';
-      return;
-    }
-    setBasicDetails(JSON.parse(pendingSetup));
-  }, []);
+  const [formData, setFormData] = useState({
+    name: '',
+    mobile: ''
+  });
 
   const [floorsConfig, setFloorsConfig] = useState([
     { floor: 1, baseRooms: '', baseCapacity: '', rooms: [], generated: false }
@@ -83,8 +77,8 @@ const CreateHostel = () => {
 
     try {
       const res = await api.post('/api/owner/hostels', {
-        name: basicDetails.name,
-        mobile: basicDetails.mobile,
+        name: formData.name,
+        mobile: formData.mobile,
         floorsConfig
       });
 
@@ -104,20 +98,45 @@ const CreateHostel = () => {
 
       <main className="dashboard-content fade-in" style={{ padding: '2rem' }}>
         <OwnerHeader 
-          title="Deploy Architecture" 
-          subtitle="Step 3 of 3: Layout Configuration" 
+          title="Create Property" 
+          subtitle="Configure new hostel" 
         />
 
         <div className="glass-panel p-8" style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
           <div className="flex items-center gap-4 mb-8">
             <div className="icon-wrapper m-0"><BuildingIcon size={28} /></div>
             <div>
-              <h2 className="mb-1">{basicDetails?.name || 'Property'} Layout</h2>
-              <p className="text-muted">Design your property floors and room capacities exactly how they are structured.</p>
+              <h2 className="mb-1">Hostel Builder</h2>
+              <p className="text-muted">Design your property layout and room capacities exactly how they are structured.</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="flex-col gap-6">
+            {/* Basic Info */}
+            <div className="grid gap-4 mb-8 form-grid-2">
+              <div className="form-group mb-0">
+                <label className="form-label">Hostel Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="e.g. Prestige Boys Hostel"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="form-group mb-0">
+                <label className="form-label">Contact Number</label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  value={formData.mobile}
+                  onChange={e => setFormData({ ...formData, mobile: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
 
 
             {/* Dynamic Floor Builder */}
