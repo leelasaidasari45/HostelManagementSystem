@@ -8,9 +8,10 @@ const OwnerSidebar = () => {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <aside className="sidebar glass-panel slide-up">
+        <aside className="sidebar">
             <Link to="/" className="logo flex items-center gap-3 mb-8" style={{ textDecoration: 'none' }}>
-                <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', width: '36px', borderRadius: '4px', objectFit: 'cover' }} />
+                <img src="https://i.pinimg.com/736x/1d/31/58/1d315807fbdbf074612825fcdaa7c9b8.jpg" alt="easyPG Logo" style={{ height: '36px', width: '36px', borderRadius: '8px', objectFit: 'cover' }} />
+                <span style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>easyPG</span>
             </Link>
 
             <nav className="sidebar-nav flex-col gap-2">

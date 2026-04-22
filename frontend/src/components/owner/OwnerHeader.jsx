@@ -4,7 +4,6 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { useHostel } from '../../context/HostelContext';
 import toast from 'react-hot-toast';
-import ThemeToggle from '../ThemeToggle';
 
 const OwnerHeader = ({ title, subtitle }) => {
   const { activeHostel, hostels, switchHostel } = useHostel();
@@ -48,7 +47,7 @@ const OwnerHeader = ({ title, subtitle }) => {
 
   return (
     <>
-      <header className="dashboard-header flex items-center justify-between glass-panel mb-8">
+      <header className="dashboard-header mb-8">
         <div>
           <h1>{title}</h1>
           <p className="text-muted">
@@ -68,8 +67,6 @@ const OwnerHeader = ({ title, subtitle }) => {
               ))}
             </select>
           )}
-          
-          <ThemeToggle />
           
           {activeHostel ? (
             <button 
