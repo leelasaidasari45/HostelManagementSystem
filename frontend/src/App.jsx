@@ -7,8 +7,6 @@ import { Toaster } from 'react-hot-toast';
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const OwnerDashboard = lazy(() => import('./pages/owner/OwnerDashboard'));
-const BasicHostelSetup = lazy(() => import('./pages/owner/BasicHostelSetup'));
-const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
 const CreateHostel = lazy(() => import('./pages/owner/CreateHostel'));
 const RoomsPage = lazy(() => import('./pages/owner/RoomsPage'));
 const TenantsPage = lazy(() => import('./pages/owner/TenantsPage'));
@@ -121,8 +119,6 @@ function AppContent() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/owner/dashboard" element={<ProtectedRoute roleType="owner"><OwnerDashboard /></ProtectedRoute>} />
-          <Route path="/owner/setup-basic" element={<ProtectedRoute roleType="owner"><BasicHostelSetup /></ProtectedRoute>} />
-          <Route path="/owner/select-plan" element={<ProtectedRoute roleType="owner"><SelectPlanPage /></ProtectedRoute>} />
           <Route path="/owner/create-hostel" element={<ProtectedRoute roleType="owner"><CreateHostel /></ProtectedRoute>} />
           <Route path="/owner/rooms" element={<ProtectedRoute roleType="owner"><RoomsPage /></ProtectedRoute>} />
           <Route path="/owner/complaints" element={<ProtectedRoute roleType="owner"><ComplaintsPage /></ProtectedRoute>} />
