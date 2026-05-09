@@ -12,14 +12,7 @@ const LandingPage = () => {
   React.useEffect(() => {
     if (loadingAuth) return;
     if (user) navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
-    else if (window.innerWidth <= 768) navigate('/register');
   }, [user, loadingAuth, navigate]);
-
-  // Don't block the page while auth is loading — just show content.
-  // The useEffect above will redirect once auth state is known.
-  if (window.innerWidth <= 768 && !loadingAuth && !user) {
-    return null; // Will redirect to /register via useEffect
-  }
 
   return (
     <div className="landing-page">
