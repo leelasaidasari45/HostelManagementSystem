@@ -662,7 +662,10 @@
   letter-spacing: 1.5px;
   text-transform: uppercase;
   margin-bottom: 1.5rem;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
   padding: 0.4rem 1.2rem;
   border-radius: 20px;
   background: rgba(124, 58, 237, 0.1);
@@ -680,6 +683,10 @@
   color: var(--text-dim);
   font-size: 1.05rem;
   line-height: 1.6;
+  min-height: 80px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 /* Footer */

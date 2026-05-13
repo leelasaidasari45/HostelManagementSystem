@@ -195,8 +195,8 @@ const LandingPage = () => {
             </div>
             <div className="founder-info">
               <h3>Leela Sai Dasari</h3>
-              <span className="founder-role text-gradient">Founder & CEO</span>
-              <p className="founder-bio">Passionate about simplifying hostel management through intelligent automation and user-first design.</p>
+              <span className="founder-role">Project Idea, Designer, Building Project & Team Lead</span>
+              <p className="founder-bio">Driving the core vision, crafting intuitive user experiences, leading the development, and architecting the technology behind easyPG.</p>
             </div>
           </div>
           <div className="founder-card reveal-up delay-200">
@@ -205,17 +205,17 @@ const LandingPage = () => {
             </div>
             <div className="founder-info">
               <h3>Vamshi Krishna</h3>
-              <span className="founder-role text-gradient">Co-Founder</span>
-              <p className="founder-bio">Dedicated to building a secure, blazing-fast, and highly scalable platform for property owners.</p>
+              <span className="founder-role">Building Project & Searching Clients</span>
+              <p className="founder-bio">Focused on engineering a robust, scalable platform while actively driving business growth and onboarding new property owners.</p>
             </div>
           </div>
           <div className="founder-card special-thanks-card reveal-up delay-300">
             <div className="founder-avatar-container">
-              <img src="/thanks.png" alt="Special Thanks" className="founder-img" />
+              <img src="/thanks.png" alt="Ram Charan" className="founder-img" />
             </div>
             <div className="founder-info">
               <h3>Ram Charan</h3>
-              <span className="founder-role text-gradient-gold">Special Thanks</span>
+              <span className="founder-role">Special Thank You</span>
               <p className="founder-bio">A massive thank you for the incredible support, motivation, and guidance that made starting this project a reality.</p>
             </div>
           </div>
