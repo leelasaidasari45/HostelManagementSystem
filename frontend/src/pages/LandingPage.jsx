@@ -187,7 +187,7 @@ const LandingPage = () => {
       </section>
       {/* Founders Section */}
       <section id="founders" className="landing-section">
-        <h2 className="section-title">Meet the <span className="text-gradient">Team</span></h2>
+        <h2 className="section-title">Behind the <span className="text-gradient">Success</span></h2>
         <div className="founders-grid">
           <div className="founder-card reveal-up delay-100">
             <div className="founder-avatar-container">
