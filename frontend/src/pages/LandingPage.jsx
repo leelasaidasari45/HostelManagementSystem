@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
@@ -12,47 +12,60 @@ const LandingPage = () => {
   React.useEffect(() => {
     if (loadingAuth) return;
     if (user) navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
+    else if (window.innerWidth <= 768) navigate('/register');
   }, [user, loadingAuth, navigate]);
+
+  // Don't block the page while auth is loading — just show content.
+  // The useEffect above will redirect once auth state is known.
+  if (window.innerWidth <= 768 && !loadingAuth && !user) {
+    return null; // Will redirect to /register via useEffect
+  }
 
   return (
     <div className="landing-page">
-      {/* Ambient orbs */}
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-
-      {/* Nav */}
-      <nav className="landing-nav">
-        <Link to="/" className="landing-logo" style={{ textDecoration: 'none' }}>
-          <img src="/logo.png" alt="easyPG" className="logo-img-full" />
-        </Link>
-        <div className="nav-actions">
-          <ThemeToggle />
-          <Link to="/login" className="btn btn-ghost">Login</Link>
-          <Link to="/register" className="btn btn-primary">
-            Get Started <ArrowRight size={16} />
+      {/* Header Nav */}
+      <header className="landing-header slide-up">
+        <nav className="landing-nav">
+          <Link to="/" className="landing-logo" style={{ textDecoration: 'none' }}>
+            <img src="/logo.png" alt="easyPG" className="logo-img-full" />
           </Link>
-        </div>
-      </nav>
+
+          <div className="nav-links">
+            <a href="#features" className="nav-link">Features</a>
+            <a href="#how-it-works" className="nav-link">How it Works</a>
+            <a href="#testimonials" className="nav-link">Testimonials</a>
+            <a href="#pricing" className="nav-link">Pricing</a>
+          </div>
+
+          <div className="nav-actions">
+            <ThemeToggle />
+            <Link to="/login" className="btn btn-ghost">Login</Link>
+            <Link to="/register" className="btn btn-primary">
+              Get Started <ArrowRight size={16} />
+            </Link>
+          </div>
+        </nav>
+      </header>
 
       {/* Hero */}
       <main className="hero-section">
-        <div className="hero-badge fade-in">
-          <Zap size={14} style={{ color: '#fbbf24' }} />
-          <span>Next-Gen Hostel SaaS Platform</span>
+        <div className="hero-badge reveal-up">
+          <Rocket size={14} style={{ color: '#7c3aed' }} />
+          <span>Hostel Management System</span>
         </div>
 
-        <h1 className="hero-title slide-up">
+        <h1 className="hero-title reveal-up delay-100">
           Manage Your Properties<br />
           with <span className="text-gradient">Intelligent Automation</span>
         </h1>
 
-        <p className="hero-subtitle slide-up delay-100">
+        <p className="hero-subtitle reveal-up delay-200">
           From QR-based tenant onboarding to automated payments and issue tracking.
           Everything you need in one powerful platform.
         </p>
 
-        <div className="hero-cta slide-up delay-200">
-          <Link to="/register" className="btn btn-primary btn-lg">
+        <div className="hero-cta reveal-up delay-300">
+          <Link to="/register" className="btn btn-primary btn-lg pulse-glow">
             Start Free Trial <ArrowRight size={18} />
           </Link>
           <Link to="/login" className="btn btn-secondary btn-lg">
@@ -61,7 +74,7 @@ const LandingPage = () => {
         </div>
 
         {/* Stats bar */}
-        <div className="stats-bar fade-in delay-300">
+        <div className="stats-bar reveal-up delay-400">
           <div className="stat-pill"><strong>500+</strong> <span>Properties</span></div>
           <div className="stat-divider" />
           <div className="stat-pill"><strong>12k+</strong> <span>Tenants</span></div>
@@ -71,7 +84,11 @@ const LandingPage = () => {
           <div className="stat-pill"><strong>₹2Cr+</strong> <span>Processed</span></div>
         </div>
 
-        {/* Feature Cards */}
+      </main>
+
+      {/* Features Section */}
+      <section id="features" className="landing-section">
+        <h2 className="section-title">Powerful <span className="text-gradient">Features</span></h2>
         <div className="features-grid">
           {[
             { icon: <Building2 size={22} />, title: 'Multi-Property', desc: 'Manage all hostels from a single unified dashboard.' },
@@ -88,7 +105,122 @@ const LandingPage = () => {
             </div>
           ))}
         </div>
-      </main>
+      </section>
+
+      {/* How it Works Section */}
+      <section id="how-it-works" className="landing-section bg-alt">
+        <h2 className="section-title">How It <span className="text-gradient">Works</span></h2>
+        <div className="steps-grid">
+          {[
+            { step: '01', title: 'Register Property', desc: 'Add your hostel details and configure your rooms and pricing in minutes.' },
+            { step: '02', title: 'Generate QR', desc: 'Print your unique QR code and stick it at your reception desk.' },
+            { step: '03', title: 'Tenants Scan & Join', desc: 'Tenants scan the QR to fill their details, upload ID, and pay deposit.' },
+            { step: '04', title: 'Manage Effortlessly', desc: 'Track everything from a single dashboard. Automated reminders do the rest.' },
+          ].map((s, i) => (
+            <div key={i} className="step-card reveal-up delay-100">
+              <div className="step-number-large">{s.step}</div>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="landing-section">
+        <h2 className="section-title">Trusted By <span className="text-gradient">Owners</span></h2>
+        <div className="testimonials-grid">
+          {[
+            { quote: "easyPG completely transformed how we run our 5 hostels. The QR onboarding alone saved us hundreds of hours.", name: "Sarah Jenkins", role: "Property Manager", avatar: "SJ" },
+            { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Rahul Verma", role: "Hostel Owner", avatar: "RV" },
+            { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Priya Sharma", role: "Admin", avatar: "PS" }
+          ].map((t, i) => (
+            <div key={i} className="testimonial-card glass-panel reveal-up delay-200">
+              <div className="stars">★★★★★</div>
+              <p className="quote">"{t.quote}"</p>
+              <div className="author-info">
+                <div className="author-avatar">{t.avatar}</div>
+                <div className="author-details">
+                  <h4>{t.name}</h4>
+                  <span>{t.role}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="landing-section bg-alt">
+        <h2 className="section-title">Simple <span className="text-gradient">Pricing</span></h2>
+        <div className="pricing-grid">
+          <div className="pricing-card glass-panel reveal-up delay-100">
+            <h3>Free Trial</h3>
+            <div className="price">Free<span> / 7 days</span></div>
+            <p className="pricing-desc">Experience the full power of easyPG risk-free for a week.</p>
+            <ul className="pricing-features">
+              <li>✓ Unlimited Tenants</li>
+              <li>✓ Multi-Property Management</li>
+              <li>✓ Full Analytics Access</li>
+              <li>✓ Community Support</li>
+            </ul>
+            <Link to="/register" className="btn btn-secondary btn-full">Start 7-Day Trial</Link>
+          </div>
+          
+          <div className="pricing-card premium glass-panel reveal-up delay-200">
+            <div className="popular-badge">Special Offer</div>
+            <h3>Annual Pro</h3>
+            <div className="price">₹40,000<span> / year</span></div>
+            <div className="offer-banner mt-2 mb-2 p-2 text-center text-sm" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', color: '#10b981' }}>
+              🔥 Subscribe within 7 days and get <strong style={{color: '#34d399'}}>+5 Months FREE</strong>!
+            </div>
+            <p className="pricing-desc">Complete hostel management solution. Best value for serious owners.</p>
+            <ul className="pricing-features">
+              <li>✓ Everything in Free Trial</li>
+              <li>✓ Automated Rent Collection</li>
+              <li>✓ Dedicated Account Manager</li>
+              <li>✓ Priority 24/7 Support</li>
+            </ul>
+            <Link to="/register" className="btn btn-primary btn-full">Get Annual Pro <ArrowRight size={16} /></Link>
+          </div>
+        </div>
+      </section>
+      {/* Founders Section */}
+      <section id="founders" className="landing-section">
+        <h2 className="section-title">Meet the <span className="text-gradient">Team</span></h2>
+        <div className="founders-grid">
+          <div className="founder-card reveal-up delay-100">
+            <div className="founder-avatar-container">
+              <img src="/founder.png" alt="Leela Sai Dasari" className="founder-img" style={{ objectPosition: 'center 25%' }} />
+            </div>
+            <div className="founder-info">
+              <h3>Leela Sai Dasari</h3>
+              <span className="founder-role text-gradient">Founder & CEO</span>
+              <p className="founder-bio">Passionate about simplifying hostel management through intelligent automation and user-first design.</p>
+            </div>
+          </div>
+          <div className="founder-card reveal-up delay-200">
+            <div className="founder-avatar-container">
+              <img src="/cofounder.png" alt="Vamshi Krishna" className="founder-img" />
+            </div>
+            <div className="founder-info">
+              <h3>Vamshi Krishna</h3>
+              <span className="founder-role text-gradient">Co-Founder</span>
+              <p className="founder-bio">Dedicated to building a secure, blazing-fast, and highly scalable platform for property owners.</p>
+            </div>
+          </div>
+          <div className="founder-card special-thanks-card reveal-up delay-300">
+            <div className="founder-avatar-container">
+              <img src="/thanks.png" alt="Special Thanks" className="founder-img" />
+            </div>
+            <div className="founder-info">
+              <h3>Ram Charan</h3>
+              <span className="founder-role text-gradient-gold">Special Thanks</span>
+              <p className="founder-bio">A massive thank you for the incredible support, motivation, and guidance that made starting this project a reality.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="landing-footer">

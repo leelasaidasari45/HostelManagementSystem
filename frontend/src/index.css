@@ -55,26 +55,32 @@
 }
 
 .light-mode {
-  --bg-void: #f0f4ff;
-  --bg-base: #f8fafc;
+  --bg-void: #f1f4f9;
+  --bg-base: #f7f9fc;
   --bg-surface: #ffffff;
-  --bg-elevated: #f1f5f9;
-  --bg-glass: rgba(255,255,255,0.8);
-  --bg-glass-hover: rgba(248,250,252,0.9);
+  --bg-elevated: #edf1f7;
+  --bg-glass: rgba(255, 255, 255, 0.75);
+  --bg-glass-hover: rgba(255, 255, 255, 0.9);
+
   --aurora-1: #6d28d9;
-  --text-bright: #0f172a;
-  --text-dim: #475569;
+  --aurora-2: #3b82f6;
+  --aurora-3: #10b981;
+
+  --text-bright: #1e293b;
+  --text-dim: #64748b;
   --text-ghost: #94a3b8;
-  --border-subtle: rgba(0,0,0,0.06);
-  --border-muted: rgba(0,0,0,0.1);
-  --accent-glow: rgba(109,40,217,0.12);
-  --bg-primary: var(--bg-base);
-  --bg-secondary: var(--bg-surface);
-  --bg-tertiary: var(--bg-elevated);
-  --text-primary: var(--text-bright);
-  --text-secondary: var(--text-dim);
-  --text-muted: var(--text-ghost);
-  --border-color: var(--border-muted);
+
+  --border-subtle: rgba(15, 23, 42, 0.05);
+  --border-muted: rgba(15, 23, 42, 0.08);
+  --border-active: rgba(109, 40, 217, 0.3);
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 20px rgba(109, 40, 217, 0.1);
+
+  --accent-glow: rgba(109, 40, 217, 0.08);
+  --ticker-invert: 1; /* Invert logos for light mode */
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -194,7 +200,10 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
   transition: all var(--transition);
   white-space:nowrap;
 }
-.btn:active { transform:scale(0.97); }
+.btn:active { 
+  transform: scale(0.96); 
+  opacity: 0.9;
+}
 .btn:disabled { opacity:.5; cursor:not-allowed; }
 
 .btn-primary {
@@ -541,23 +550,25 @@ a:focus-visible, button:focus-visible {
     grid-template-columns:1fr !important;
   }
   .sidebar {
-    position:fixed; bottom:0; top:auto; left:0; right:0;
-    width:100%; height:68px; flex-direction:row;
-    padding:0; border-right:none; border-top:1px solid var(--border-subtle);
-    background:var(--bg-surface); z-index:1000;
-    box-shadow:0 -4px 20px rgba(0,0,0,0.4);
-    align-items:center; justify-content:space-around;
+    display: none !important; /* Will be shown by the consolidated rule at the bottom */
   }
-  .sidebar .logo-wrap { display:none; }
-  .sidebar-divider { display:none; }
-  .sidebar-nav {
-    flex-direction:row; width:100%; height:100%;
-    justify-content:space-around; padding:0;
-    align-items:center;
+  .nav-item { 
+    flex-direction:column; padding:.5rem .2rem; 
+    font-size:.65rem; flex:1; 
+    justify-content:center; border:none !important; 
+    background:transparent !important; 
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .nav-item { flex-direction:column; padding:.4rem .2rem; font-size:.62rem; flex:1; justify-content:center; border:none !important; background:transparent !important; }
-  .nav-item.active { background:transparent !important; color:var(--aurora-1) !important; box-shadow:none !important; }
-  .nav-item span.nav-label { display:inline; font-size:.6rem; margin-top:.15rem; }
+  .nav-item.active { 
+    background:transparent !important; 
+    color:var(--aurora-1) !important; 
+    box-shadow:none !important; 
+    transform: translateY(-2px);
+  }
+  .nav-item span.nav-label { 
+    display:inline; font-size:.65rem; 
+    margin-top:.2rem; font-weight: 600;
+  }
   .nav-item-create { border:none !important; background:transparent !important; color:var(--text-dim) !important; }
   .nav-item-create.active { color:var(--aurora-1) !important; }
   .dashboard-content { padding:1rem .75rem; }
@@ -602,6 +613,12 @@ body {
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  user-select: none; /* Prevent accidental text selection on UI elements */
+}
+
+/* Allow selection only in inputs and specific content */
+input, textarea, [contenteditable="true"], .selectable {
+  user-select: text;
 }
 
 /* Safe area insets for notches and home bars */
@@ -616,19 +633,53 @@ body {
 }
 
 /* Bottom nav safe area */
+/* Consolidated Mobile Bottom Navigation */
 @media (max-width:768px) {
   .sidebar {
-    padding-bottom: max(.5rem, env(safe-area-inset-bottom));
-    height: calc(68px + env(safe-area-inset-bottom));
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    height: calc(68px + env(safe-area-inset-bottom)) !important;
+    padding: 0 10px env(safe-area-inset-bottom) !important;
+    flex-direction: row !important;
+    border-right: none !important;
+    border-top: 1px solid var(--border-subtle) !important;
+    background: var(--bg-glass) !important;
+    backdrop-filter: blur(20px) !important;
+    z-index: 99999 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    pointer-events: auto !important;
   }
+  
+  .sidebar .logo-wrap, .sidebar-divider, .sidebar-toggle { 
+    display: none !important; 
+  }
+  
+  .sidebar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    height: 100% !important;
+    justify-content: space-around !important;
+    padding: 0 !important;
+    align-items: center !important;
+  }
+
   .dashboard-layout {
-    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+    display: block !important; /* Prevent flex-column issues */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+    min-height: 100vh !important;
   }
+
   /* Prevent content hiding behind status bar */
-  .landing-nav,
-  .auth-page,
-  .join-page {
-    padding-top: max(1rem, env(safe-area-inset-top));
+  .landing-nav, .auth-page, .join-page, .dashboard-header {
+    padding-top: max(1rem, env(safe-area-inset-top)) !important;
   }
 }
 
@@ -659,10 +710,10 @@ body {
 }
 
 /* Active states for native feel */
-.btn:active     { transform: scale(0.96); }
-.nav-item:active { opacity: .7; }
-.icon-btn:active { transform: scale(0.92); }
-.glass-panel:active { opacity: .97; }
+.btn:active     { transform: scale(0.96); opacity: 0.9; }
+.nav-item:active { background: var(--bg-glass-hover) !important; opacity: 0.8; }
+.icon-btn:active { transform: scale(0.92); opacity: 0.8; }
+.glass-panel:active { transform: scale(0.995); transition: transform 0.1s; }
 
 /* Mobile typography tightening */
 @media (max-width: 480px) {
