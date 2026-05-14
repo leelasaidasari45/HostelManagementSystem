@@ -764,8 +764,12 @@
     border-radius: var(--r-lg);
   }
   .landing-nav { padding: 0 1.25rem; }
-  .hero-cta { flex-direction: column; width: 100%; }
-  .hero-cta .btn { width: 100%; }
+  .hero-cta { flex-direction: column; width: 100%; gap: 1rem; }
+  .hero-cta .btn { 
+    width: 100%; 
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
   .features-grid { grid-template-columns: 1fr; }
   .steps-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
   .stats-bar { gap: 1rem; padding: .75rem 1rem; }
