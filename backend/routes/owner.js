@@ -59,11 +59,12 @@ router.post('/hostels', async (req, res) => {
             }]).select().single();
             if (fError) throw fError;
             
-            // Insert Rooms
+            // Insert Rooms — now includes rent_amount
             const roomsParams = fConf.rooms.map(r => ({
                 floor_id: floor.id,
                 room_number: String(r.number),
-                capacity: Number(r.capacity)
+                capacity: Number(r.capacity),
+                rent_amount: Number(r.rent_amount || 0),
             }));
             
             const { data: rooms, error: rError } = await supabase.from('rooms').insert(roomsParams).select();
@@ -294,12 +295,29 @@ router.get('/rooms', async (req, res) => {
              number: room.room_number,
              floor: String(floor.floor_number),
              capacity: room.capacity,
+             rent_amount: room.rent_amount || 0,
              occupants: occupants
           });
        });
     });
     
     res.json(mappedRooms);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Payment history for a specific tenant (owner view)
+router.get('/tenant-payments/:tenantId', async (req, res) => {
+  try {
+    const { tenantId } = req.params;
+    const { data: payments, error } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('tenant_id', tenantId)
+      .order('paid_at', { ascending: false });
+    if (error) throw error;
+    res.json(payments || []);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

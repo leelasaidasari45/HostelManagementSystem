@@ -85,12 +85,29 @@ CREATE TABLE complaints (
 CREATE TABLE payments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   tenant_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  hostel_id UUID REFERENCES hostels(id) ON DELETE SET NULL,
   amount NUMERIC NOT NULL,
   month TEXT NOT NULL,
   year TEXT,
   utr_id TEXT,
+  order_id TEXT,
+  payment_type TEXT DEFAULT 'rent',
   status TEXT NOT NULL DEFAULT 'completed',
   paid_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 12. Platform Subscriptions Table (Owners to easyPG)
+CREATE TABLE platform_subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  plan_name TEXT NOT NULL,
+  amount NUMERIC NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  start_date TIMESTAMPTZ DEFAULT NOW(),
+  end_date TIMESTAMPTZ,
+  order_id TEXT UNIQUE,
+  transaction_id TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

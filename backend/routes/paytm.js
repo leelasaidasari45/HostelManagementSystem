@@ -45,6 +45,19 @@ router.post('/initiate', requireAuth, requireTenant, async (req, res) => {
       },
     };
 
+    // Step 0: Create a pending payment record in Supabase
+    const { error: dbError } = await supabase.from('payments').insert([{
+      tenant_id: tenantId,
+      hostel_id: req.user.hostel_id,
+      amount: parseFloat(amount),
+      month: month || new Date().toLocaleString('default', { month: 'long' }),
+      year: year || new Date().getFullYear(),
+      order_id: orderId,
+      status: 'pending'
+    }]);
+
+    if (dbError) throw dbError;
+
     // Generate signature
     const checksum = await PaytmChecksum.generateSignature(
       JSON.stringify(paytmParams.body),
@@ -116,21 +129,20 @@ router.post('/callback', async (req, res) => {
       return res.status(400).send('Invalid checksum - potential tampering detected');
     }
 
-    const { ORDERID, TXNID, STATUS, TXNAMOUNT, RESPMSG, CUSTID } = paytmParams;
+    const { ORDERID, TXNID, STATUS, TXNAMOUNT, RESPMSG } = paytmParams;
+    const finalStatus = STATUS === 'TXN_SUCCESS' ? 'completed' : 'failed';
+    
+    // Update existing payment record in Supabase
+    await supabase
+      .from('payments')
+      .update({
+        status: finalStatus,
+        utr_id: TXNID,
+        paid_at: STATUS === 'TXN_SUCCESS' ? new Date().toISOString() : null,
+      })
+      .eq('order_id', ORDERID);
 
     if (STATUS === 'TXN_SUCCESS') {
-      // Save payment record to Supabase
-      await supabase.from('payments').insert([{
-        tenant_id: CUSTID,
-        amount: parseFloat(TXNAMOUNT),
-        month: new Date().toLocaleString('default', { month: 'long' }),
-        year: new Date().getFullYear(),
-        utr_id: TXNID,
-        order_id: ORDERID,
-        status: 'completed',
-        paid_at: new Date().toISOString(),
-      }]);
-
       // Redirect back to tenant dashboard with success flag
       return res.redirect(`${FRONTEND_URL}/tenant/dashboard?payment=success&txn=${TXNID}`);
     } else {

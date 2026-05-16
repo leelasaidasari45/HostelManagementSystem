@@ -1,56 +1,114 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { QrCode, FileText, CheckCircle2, Loader2, XCircle, Camera, ChevronRight, User, Phone, Home, Hash, Car, Calendar, Upload, ArrowLeft } from 'lucide-react';
+import {
+  QrCode, FileText, CheckCircle2, Loader2, XCircle, Camera,
+  ChevronRight, User, Phone, Home, Hash, Car, Calendar,
+  Upload, ArrowLeft, IndianRupee, CreditCard, ShieldCheck, Sparkles
+} from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import './JoinHostel.css';
 
+const CF_ENV = import.meta.env.VITE_CASHFREE_ENV || 'sandbox';
+
+// Load Cashfree JS SDK dynamically
+const loadCashfreeSDK = () => new Promise((resolve, reject) => {
+  if (window.Cashfree) { resolve(window.Cashfree); return; }
+  const script = document.createElement('script');
+  script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+  script.onload = () => resolve(window.Cashfree);
+  script.onerror = () => reject(new Error('Failed to load Cashfree SDK'));
+  document.body.appendChild(script);
+});
+
+
 const JoinHostel = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [step, setStep] = useState(null);
-  const [hostelCode, setHostelCode] = useState('');
-  const [hostelName, setHostelName] = useState('');
+  const navigate    = useNavigate();
+  const location    = useLocation();
+  // steps: 1 = enter code/scan, 1.5 = payment, 2 = join form, 3 = pending
+  const [step, setStep]               = useState(null);
+  const [hostelCode, setHostelCode]   = useState('');
+  const [hostelName, setHostelName]   = useState('');
+  const [hostelData, setHostelData]   = useState(null);
   const [loadingCode, setLoadingCode] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const [isScanning, setIsScanning] = useState(false);
+  const [loadingPayment, setLoadingPayment] = useState(false);
+  const [roomRent, setRoomRent]       = useState(null); // { room_number, rent_amount }
+  const [isScanning, setIsScanning]   = useState(false);
   const scannerRef = useRef(null);
-  const { user, logoutContext } = useAuth();
+  const { user, logoutContext }       = useAuth();
+
+  // The admission payment amount
+  const [admissionAmount, setAdmissionAmount] = useState('');
+  const [showUpiModal, setShowUpiModal]       = useState(false);
+  const [selectedUpiApp, setSelectedUpiApp]   = useState(null);
+  const [upiId, setUpiId]                     = useState('');
+  const [payTab, setPayTab]                   = useState('upi'); // 'upi' | 'card'
+  const [cardData, setCardData]               = useState({ number: '', name: '', expiry: '', cvv: '' });
+  const [confirmingPay, setConfirmingPay]     = useState(false);
 
   const [formData, setFormData] = useState({
-    tenantName: user?.name || '',
-    fatherName: '',
-    address: '',
-    mobile: '',
-    roomNumber: '',
+    tenantName:    user?.name || '',
+    fatherName:    '',
+    address:       '',
+    mobile:        '',
+    roomNumber:    '',
     vehicleNumber: '',
     admissionDate: new Date().toISOString().split('T')[0],
-    aadhaarFile: null,
+    aadhaarFile:   null,
   });
 
-  // URL code auto-fill + status check
+  // URL code auto-fill + status check — runs ONCE on mount only
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
-    if (code) { setHostelCode(code.toUpperCase()); toast.success('Hostel Code Applied!'); }
+    if (code) setHostelCode(code.toUpperCase());
 
     const check = async () => {
       try {
         const res = await api.get('/api/tenant/dashboard');
-        if (res.data?.tenant) {
-          const st = res.data.tenant.status;
-          if (st === 'vacated' || st === 'new' || st === 'rejected') setStep(1);
-          else if (st === 'pending') setStep(3);
-          else { navigate('/tenant/dashboard'); return; }
-        } else setStep(1);
-      } catch { setStep(1); }
+        const tenant = res.data?.tenant;
+        if (!tenant) { code ? autoVerifyCode(code.toUpperCase()) : setStep(1); return; }
+
+        const st = tenant.status;
+
+        if (st === 'active' || st === 'vacating') {
+          // Already joined & approved — send to dashboard, replace history so back button doesn't loop
+          navigate('/tenant/dashboard', { replace: true });
+          return;
+        }
+        if (st === 'pending') {
+          setStep(3); // Show "waiting for approval" step
+          return;
+        }
+        // new / vacated / rejected — show join flow
+        if (code) await autoVerifyCode(code.toUpperCase());
+        else setStep(1);
+      } catch {
+        // API error — just show the join flow
+        if (code) autoVerifyCode(code.toUpperCase());
+        else setStep(1);
+      }
     };
     check();
 
     return () => { if (scannerRef.current) scannerRef.current.stop().catch(console.error); };
-  }, [navigate, location.search]);
+  }, []); // ← empty array: run once only, never re-trigger
+
+
+  // Auto-verify code from URL (go straight to payment step)
+  const autoVerifyCode = async (code) => {
+    try {
+      const res = await api.get(`/api/tenant/verify-hostel/${code}`);
+      setHostelName(res.data.name);
+      setHostelData(res.data);
+      setStep(1.5); // Go directly to payment step
+    } catch {
+      setStep(1);
+    }
+  };
 
   // QR scanner lifecycle
   useEffect(() => {
@@ -77,7 +135,7 @@ const JoinHostel = () => {
           },
           () => {}
         );
-      } catch (err) {
+      } catch {
         toast.error('Camera error. Check permissions.');
         setIsScanning(false);
       }
@@ -90,8 +148,7 @@ const JoinHostel = () => {
 
   const stopScanner = async () => {
     if (scannerRef.current) {
-      try { await scannerRef.current.stop(); scannerRef.current = null; }
-      catch {}
+      try { await scannerRef.current.stop(); scannerRef.current = null; } catch {}
     }
     setIsScanning(false);
   };
@@ -104,18 +161,103 @@ const JoinHostel = () => {
     try {
       const res = await api.get(`/api/tenant/verify-hostel/${code}`);
       setHostelName(res.data.name);
+      setHostelData(res.data);
       toast.success(`Found: ${res.data.name}`);
-      setStep(2);
+      setStep(1.5); // → Payment step
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid hostel code');
     } finally { setLoadingCode(false); }
   };
 
+  // Auto-fetch room rent when room number changes in the form
+  const handleRoomNumberChange = async (roomNo) => {
+    setFormData(prev => ({ ...prev, roomNumber: roomNo }));
+    setRoomRent(null);
+    if (roomNo.length >= 2 && hostelCode) {
+      try {
+        const res = await api.get(`/api/tenant/room-rent/${hostelCode}/${roomNo}`);
+        setRoomRent(res.data);
+      } catch {
+        // Room not found yet, that's fine — user might still be typing
+      }
+    }
+  };
+
+  // Launch real Cashfree checkout
+  const handlePayment = async () => {
+    if (!admissionAmount || parseFloat(admissionAmount) <= 0) {
+      return toast.error('Please enter a valid amount');
+    }
+    setLoadingPayment(true);
+    try {
+      // Step 1: Create order on backend
+      const res = await api.post('/api/cashfree/create-order', {
+        amount: parseFloat(admissionAmount),
+        month:  new Date().toLocaleString('default', { month: 'long' }),
+        year:   new Date().getFullYear(),
+        type:   'admission',
+      });
+      const { payment_session_id, order_id } = res.data;
+
+      // Step 2: Load Cashfree SDK
+      await loadCashfreeSDK();
+      const cashfree = await window.Cashfree({ mode: CF_ENV });
+
+      // Step 3: Launch drop-in checkout (shows UPI, cards, netbanking)
+      const result = await cashfree.checkout({
+        paymentSessionId: payment_session_id,
+        redirectTarget:   '_modal',  // opens as overlay modal
+      });
+
+      if (result.error) {
+        toast.error(result.error.message || 'Payment failed');
+        setLoadingPayment(false);
+        return;
+      }
+
+      if (result.paymentDetails?.paymentStatus === 'SUCCESS' || result.redirect) {
+        // Step 4: Verify payment on backend
+        toast.loading('Verifying payment...', { id: 'verify' });
+        const verifyRes = await api.post('/api/cashfree/verify', {
+          order_id,
+          amount: parseFloat(admissionAmount),
+          month:  new Date().toLocaleString('default', { month: 'long' }),
+          year:   new Date().getFullYear(),
+        });
+        toast.dismiss('verify');
+        if (verifyRes.data.success) {
+          toast.success('Payment successful! 🎉');
+          setStep(2);
+        } else {
+          toast.error('Payment verification failed. Contact support.');
+        }
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Payment failed. Try again.');
+    } finally {
+      setLoadingPayment(false);
+    }
+  };
+
+  // confirmPayment is no longer used (Cashfree handles it natively)
+  const confirmPayment = async () => {};
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    Object.entries({ hostelCode, tenantName: formData.tenantName, fatherName: formData.fatherName, address: formData.address, mobile: formData.mobile, roomNumber: formData.roomNumber, vehicleNumber: formData.vehicleNumber, admissionDate: formData.admissionDate }).forEach(([k, v]) => data.append(k, v));
+    Object.entries({
+      hostelCode,
+      tenantName:    formData.tenantName,
+      fatherName:    formData.fatherName,
+      address:       formData.address,
+      mobile:        formData.mobile,
+      roomNumber:    formData.roomNumber,
+      vehicleNumber: formData.vehicleNumber,
+      admissionDate: formData.admissionDate,
+    }).forEach(([k, v]) => data.append(k, v));
     if (formData.aadhaarFile) data.append('aadhaar', formData.aadhaarFile);
+
     setLoadingSubmit(true);
     try {
       const res = await api.post('/api/tenant/join', data, { headers: { 'Content-Type': 'multipart/form-data' } });
@@ -126,16 +268,18 @@ const JoinHostel = () => {
     } finally { setLoadingSubmit(false); }
   };
 
-  // Full-screen spinner while checking
   if (step === null) return (
     <div className="join-page">
       <Loader2 size={36} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
     </div>
   );
 
+  // Step labels for progress bar
+  const stepLabels = ['Hostel Code', 'Payment', 'Your Details', 'Done'];
+  const currentStepIndex = step === 1 ? 0 : step === 1.5 ? 1 : step === 2 ? 2 : 3;
+
   return (
     <div className="join-page">
-      {/* Aurora orbs */}
       <div className="join-orb join-orb-1" />
       <div className="join-orb join-orb-2" />
 
@@ -145,8 +289,8 @@ const JoinHostel = () => {
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <img src="/logo.png" alt="easyPG" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
           </Link>
-          {step === 2 && (
-            <button onClick={() => setStep(1)} className="join-back-btn">
+          {(step === 1.5 || step === 2) && (
+            <button onClick={() => setStep(step === 2 ? 1.5 : 1)} className="join-back-btn">
               <ArrowLeft size={16} /> Back
             </button>
           )}
@@ -154,16 +298,16 @@ const JoinHostel = () => {
 
         {/* Step indicators */}
         <div className="join-steps">
-          {['Hostel Code', 'Your Details', 'Done'].map((label, i) => (
-            <div key={i} className={`join-step ${step >= i + 1 ? 'active' : ''}`}>
-              <div className="join-step-dot">{step > i + 1 ? '✓' : i + 1}</div>
+          {stepLabels.map((label, i) => (
+            <div key={i} className={`join-step ${currentStepIndex >= i ? 'active' : ''}`}>
+              <div className="join-step-dot">{currentStepIndex > i ? '✓' : i + 1}</div>
               <span>{label}</span>
             </div>
           ))}
           <div className="join-step-line" />
         </div>
 
-        {/* ───── STEP 1: Enter Code ───── */}
+        {/* ───── STEP 1: Enter Code / Scan ───── */}
         {step === 1 && (
           <div className="join-body slide-up">
             <div className="join-icon-wrap">
@@ -184,7 +328,6 @@ const JoinHostel = () => {
                   required
                 />
               </div>
-
               <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loadingCode}>
                 {loadingCode ? <Loader2 size={18} className="animate-spin" /> : <ChevronRight size={18} />}
                 {loadingCode ? 'Verifying...' : 'Verify Code'}
@@ -199,12 +342,80 @@ const JoinHostel = () => {
           </div>
         )}
 
+        {/* ───── STEP 1.5: Payment Page ───── */}
+        {step === 1.5 && (
+          <div className="join-body slide-up">
+            {/* Hostel found banner */}
+            <div className="hostel-found-banner">
+              <CheckCircle2 size={18} style={{ color: 'var(--success)', flexShrink: 0 }} />
+              <span>Paying for <strong>{hostelName}</strong></span>
+            </div>
+
+            <div className="join-icon-wrap" style={{ background: 'rgba(124,58,237,0.1)' }}>
+              <IndianRupee size={28} style={{ color: 'var(--aurora-1)' }} />
+            </div>
+            <h2>Admission Payment</h2>
+            <p className="join-subtitle">
+              Your owner has specified the amount to be paid. Please enter the amount below and complete the payment to proceed.
+            </p>
+
+            {/* Amount input */}
+            <div className="form-group">
+              <label className="form-label"><IndianRupee size={15} />&nbsp;Amount to Pay (₹)</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Enter amount e.g. 5000"
+                value={admissionAmount}
+                onChange={e => setAdmissionAmount(e.target.value)}
+                min="1"
+                style={{ fontSize: '1.25rem', fontWeight: 700, textAlign: 'center', letterSpacing: '0.05em' }}
+              />
+              <p style={{ fontSize: '.78rem', color: 'var(--text-ghost)', marginTop: '.4rem', textAlign: 'center' }}>
+                Ask your hostel owner for the exact amount to pay.
+              </p>
+            </div>
+
+            {/* Payment features */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem', marginBottom: '1.25rem' }}>
+              {[
+                ['Secured by Paytm', 'UPI, Cards, Net Banking accepted'],
+                ['Instant confirmation', 'Receipt sent to your registered number'],
+              ].map(([title, desc]) => (
+                <div key={title} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem', background: 'var(--bg-elevated)', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                  <ShieldCheck size={16} style={{ color: '#34d399', flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontSize: '.85rem', fontWeight: 600, color: 'var(--text-bright)' }}>{title}</div>
+                    <div style={{ fontSize: '.75rem', color: 'var(--text-ghost)' }}>{desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              className="btn btn-primary w-full btn-lg"
+              onClick={handlePayment}
+              disabled={loadingPayment || !admissionAmount}
+              id="pay-now-btn"
+            >
+              {loadingPayment
+                ? <><Loader2 size={18} className="animate-spin" /> Opening Paytm...</>
+                : <><CreditCard size={18} /> Pay ₹{admissionAmount || '---'} via Paytm</>
+              }
+            </button>
+
+            <p style={{ fontSize: '.75rem', color: 'var(--text-ghost)', textAlign: 'center', marginTop: '.75rem' }}>
+              After payment, you'll fill your details and submit the application.
+            </p>
+          </div>
+        )}
+
         {/* ───── STEP 2: Application Form ───── */}
         {step === 2 && (
           <div className="join-body slide-up">
-            <div className="hostel-found-banner">
-              <CheckCircle2 size={18} style={{ color: 'var(--success)', flexShrink: 0 }} />
-              <span>Joining <strong>{hostelName}</strong></span>
+            <div className="hostel-found-banner" style={{ background: 'rgba(52,211,153,0.1)', borderColor: 'rgba(52,211,153,0.2)' }}>
+              <Sparkles size={18} style={{ color: '#34d399', flexShrink: 0 }} />
+              <span>Payment done! Now joining <strong>{hostelName}</strong></span>
             </div>
 
             <h2 style={{ marginBottom: '.3rem' }}>Your Details</h2>
@@ -212,9 +423,9 @@ const JoinHostel = () => {
 
             <form onSubmit={handleSubmit}>
               {[
-                { icon: <User size={16} />, label: 'Full Name', key: 'tenantName', type: 'text', placeholder: 'John Doe', required: true },
-                { icon: <Phone size={16} />, label: 'Phone Number', key: 'mobile', type: 'tel', placeholder: '+91 9876543210', required: true },
-                { icon: <User size={16} />, label: "Father's Name", key: 'fatherName', type: 'text', placeholder: "Father's full name", required: true },
+                { icon: <User size={16} />, label: 'Full Name',      key: 'tenantName',  type: 'text', placeholder: 'John Doe',         required: true },
+                { icon: <Phone size={16} />, label: 'Phone Number',  key: 'mobile',      type: 'tel',  placeholder: '+91 9876543210',    required: true },
+                { icon: <User size={16} />, label: "Father's Name",  key: 'fatherName',  type: 'text', placeholder: "Father's full name", required: true },
               ].map(({ icon, label, key, type, placeholder, required }) => (
                 <div className="form-group" key={key}>
                   <label className="form-label">{icon}&nbsp;{label}</label>
@@ -229,11 +440,27 @@ const JoinHostel = () => {
                   value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} required />
               </div>
 
+              {/* Room number with auto rent lookup */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group">
                   <label className="form-label"><Hash size={16} />&nbsp;Room No.</label>
-                  <input type="text" className="form-control" placeholder="e.g. 101"
-                    value={formData.roomNumber} onChange={e => setFormData({ ...formData, roomNumber: e.target.value })} required />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. 101"
+                    value={formData.roomNumber}
+                    onChange={e => handleRoomNumberChange(e.target.value)}
+                    required
+                  />
+                  {/* Rent auto-display */}
+                  {roomRent && (
+                    <div style={{ marginTop: '.4rem', padding: '.4rem .7rem', background: 'rgba(124,58,237,0.1)', borderRadius: '8px', border: '1px solid rgba(124,58,237,0.2)', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+                      <IndianRupee size={13} style={{ color: 'var(--aurora-1)' }} />
+                      <span style={{ fontSize: '.82rem', color: 'var(--aurora-1)', fontWeight: 700 }}>
+                        Monthly Rent: ₹{roomRent.rent_amount.toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="form-group">
                   <label className="form-label"><Car size={16} />&nbsp;Vehicle (opt.)</label>
@@ -246,9 +473,14 @@ const JoinHostel = () => {
                 <label className="form-label"><Calendar size={16} />&nbsp;Expected Joining Date</label>
                 <input type="date" className="form-control"
                   value={formData.admissionDate} onChange={e => setFormData({ ...formData, admissionDate: e.target.value })} required />
+                {formData.admissionDate && (
+                  <p style={{ fontSize: '.75rem', color: 'var(--text-ghost)', marginTop: '.3rem' }}>
+                    💡 Your rent will be due on the <strong>{new Date(formData.admissionDate).getDate()}</strong> of every month.
+                  </p>
+                )}
               </div>
 
-              {/* File upload */}
+              {/* Aadhaar upload */}
               <div className="form-group">
                 <label className="form-label"><Upload size={16} />&nbsp;Aadhaar Card (PDF / Image)</label>
                 <label className="file-upload-zone">
@@ -325,6 +557,162 @@ const JoinHostel = () => {
             <button className="btn btn-secondary w-full" style={{ marginTop: '1rem' }} onClick={stopScanner}>
               Cancel
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ───── UPI Payment Modal ───── */}
+      {showUpiModal && (
+        <div className="modal-backdrop fade-in" onClick={() => setShowUpiModal(false)}>
+          <div className="modal-card slide-up" onClick={e => e.stopPropagation()}
+            style={{ maxWidth: 440, padding: '1.75rem', borderRadius: 20 }}>
+
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div>
+                <p style={{ fontSize: '.78rem', color: 'var(--text-ghost)', marginBottom: '.2rem' }}>Paying to</p>
+                <h3 style={{ fontSize: '1.1rem', margin: 0 }}>{hostelName}</h3>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ fontSize: '.78rem', color: 'var(--text-ghost)', marginBottom: '.2rem' }}>Amount</p>
+                <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--aurora-1)' }}>₹{parseFloat(admissionAmount).toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+
+            {/* Tab switcher */}
+            <div style={{ display: 'flex', background: 'var(--bg-elevated)', borderRadius: 12, padding: 4, marginBottom: '1.25rem', gap: 4 }}>
+              {[['upi', '📱 UPI'], ['card', '💳 Card']].map(([tab, label]) => (
+                <button key={tab} onClick={() => setPayTab(tab)} style={{
+                  flex: 1, padding: '.55rem', borderRadius: 9, border: 'none', cursor: 'pointer', fontSize: '.88rem', fontWeight: 600,
+                  background: payTab === tab ? 'var(--bg-surface)' : 'transparent',
+                  color: payTab === tab ? 'var(--text-bright)' : 'var(--text-ghost)',
+                  boxShadow: payTab === tab ? '0 1px 4px rgba(0,0,0,0.15)' : 'none',
+                  transition: 'all 180ms',
+                }}>{label}</button>
+              ))}
+            </div>
+
+            {/* UPI Tab */}
+            {payTab === 'upi' && (
+              <div>
+                {/* UPI App Icons */}
+                <p style={{ fontSize: '.8rem', color: 'var(--text-dim)', marginBottom: '.75rem', fontWeight: 600 }}>
+                  Select UPI App
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '.6rem', marginBottom: '1.25rem' }}>
+                  {[
+                    { id: 'phonepe', label: 'PhonePe', bg: '#5f259f', emoji: '📲', short: 'PP' },
+                    { id: 'gpay',    label: 'GPay',    bg: '#1a73e8', emoji: '🔵', short: 'G' },
+                    { id: 'paytm',   label: 'Paytm',   bg: '#00b9f1', emoji: '💠', short: 'PT' },
+                    { id: 'bhim',    label: 'BHIM',    bg: '#ff6b00', emoji: '🟠', short: 'BI' },
+                    { id: 'amazon',  label: 'Amazon',  bg: '#ff9900', emoji: '🟡', short: 'AP' },
+                  ].map(app => (
+                    <button key={app.id} onClick={() => { setSelectedUpiApp(app.id); setUpiId(''); }}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.35rem',
+                        padding: '.6rem .3rem', borderRadius: 14, border: `2px solid ${selectedUpiApp === app.id ? app.bg : 'var(--border-muted)'}`,
+                        background: selectedUpiApp === app.id ? `${app.bg}18` : 'var(--bg-elevated)',
+                        cursor: 'pointer', transition: 'all 180ms',
+                      }}>
+                      {/* App circle icon */}
+                      <div style={{
+                        width: 40, height: 40, borderRadius: '50%', background: app.bg,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '.75rem', fontWeight: 800, color: '#fff', letterSpacing: '-.02em',
+                        boxShadow: selectedUpiApp === app.id ? `0 4px 12px ${app.bg}66` : 'none',
+                        transition: 'box-shadow 180ms',
+                      }}>{app.short}</div>
+                      <span style={{ fontSize: '.68rem', color: 'var(--text-dim)', fontWeight: 600 }}>{app.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Divider */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', margin: '1rem 0' }}>
+                  <div style={{ flex: 1, height: 1, background: 'var(--border-muted)' }} />
+                  <span style={{ fontSize: '.78rem', color: 'var(--text-ghost)' }}>or enter UPI ID</span>
+                  <div style={{ flex: 1, height: 1, background: 'var(--border-muted)' }} />
+                </div>
+
+                <div style={{ position: 'relative' }}>
+                  <input
+                    className="form-control"
+                    placeholder="yourname@upi"
+                    value={upiId}
+                    onChange={e => { setUpiId(e.target.value); setSelectedUpiApp(null); }}
+                    style={{ paddingRight: '3.5rem' }}
+                  />
+                  <span style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', fontSize: '.75rem', color: 'var(--text-ghost)' }}>@upi</span>
+                </div>
+              </div>
+            )}
+
+            {/* Card Tab */}
+            {payTab === 'card' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '.9rem' }}>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ fontSize: '.8rem' }}>Card Number</label>
+                  <input className="form-control" placeholder="1234 5678 9012 3456" maxLength={19}
+                    value={cardData.number}
+                    onChange={e => {
+                      const v = e.target.value.replace(/\D/g, '').slice(0, 16);
+                      setCardData(d => ({ ...d, number: v.replace(/(.{4})/g, '$1 ').trim() }));
+                    }}
+                    style={{ letterSpacing: '0.1em', fontFamily: 'monospace', fontSize: '.95rem' }}
+                  />
+                </div>
+                <div className="form-group" style={{ margin: 0 }}>
+                  <label className="form-label" style={{ fontSize: '.8rem' }}>Name on Card</label>
+                  <input className="form-control" placeholder="JOHN DOE"
+                    value={cardData.name}
+                    onChange={e => setCardData(d => ({ ...d, name: e.target.value.toUpperCase() }))}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.75rem' }}>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label" style={{ fontSize: '.8rem' }}>Expiry</label>
+                    <input className="form-control" placeholder="MM/YY" maxLength={5}
+                      value={cardData.expiry}
+                      onChange={e => {
+                        let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+                        setCardData(d => ({ ...d, expiry: v }));
+                      }}
+                    />
+                  </div>
+                  <div className="form-group" style={{ margin: 0 }}>
+                    <label className="form-label" style={{ fontSize: '.8rem' }}>CVV</label>
+                    <input className="form-control" placeholder="•••" maxLength={4} type="password"
+                      value={cardData.cvv}
+                      onChange={e => setCardData(d => ({ ...d, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pay Now button */}
+            <button
+              className="btn btn-primary w-full btn-lg"
+              style={{ marginTop: '1.5rem', fontSize: '1rem' }}
+              onClick={confirmPayment}
+              disabled={confirmingPay}
+              id="confirm-pay-btn"
+            >
+              {confirmingPay
+                ? <><Loader2 size={18} className="animate-spin" /> Processing...</>
+                : <>
+                    <ShieldCheck size={18} />
+                    Pay ₹{parseFloat(admissionAmount || 0).toLocaleString('en-IN')} Securely
+                  </>
+              }
+            </button>
+
+            {/* Secure notice */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.4rem', marginTop: '.85rem' }}>
+              <ShieldCheck size={13} style={{ color: '#34d399' }} />
+              <span style={{ fontSize: '.74rem', color: 'var(--text-ghost)' }}>256-bit SSL Encrypted · PCI DSS Compliant</span>
+            </div>
           </div>
         </div>
       )}

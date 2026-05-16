@@ -16,9 +16,16 @@ const SelectRolePage = () => {
     setLoading(true);
     try {
       const res = await api.put('/api/auth/update-role', { role });
-      loginContext({ ...user, role: res.data.role, token: res.data.token });
+      loginContext({
+        ...user,
+        role: res.data.role,
+        token: res.data.token,
+        payment_setup_complete: true,
+        subscription_status: res.data.subscription_status,
+      });
       toast.success('Welcome aboard!');
-      navigate(role === 'owner' ? '/owner/dashboard' : '/tenant/join');
+      // TRIAL MODE: go directly to dashboard for all roles
+      navigate(role === 'owner' ? '/owner/dashboard' : '/tenant/join', { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update role');
       setSelected(null);

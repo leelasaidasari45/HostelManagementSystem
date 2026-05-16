@@ -8,6 +8,7 @@ import ownerRoutes from './routes/owner.js';
 import tenantRoutes from './routes/tenant.js';
 import paytmRoutes from './routes/paytm.js';
 import subscriptionRoutes from './routes/subscription.js';
+import cashfreeRoutes from './routes/cashfree.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use('/api/owner', ownerRoutes);
 app.use('/api/tenant', tenantRoutes);
 app.use('/api/paytm', paytmRoutes);
 app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/cashfree', cashfreeRoutes);
 
 // ✅ Error handler
 app.use((err, req, res, next) => {

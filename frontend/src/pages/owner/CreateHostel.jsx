@@ -33,7 +33,8 @@ const CreateHostel = () => {
     for (let i = 1; i <= count; i++) {
       genRooms.push({
         number: `${fl.floor}${i.toString().padStart(2, '0')}`,
-        capacity: cap
+        capacity: cap,
+        rent_amount: 0,
       });
     }
     fl.rooms = genRooms;
@@ -45,6 +46,12 @@ const CreateHostel = () => {
   const updateRoomCapacity = (floorIndex, roomIndex, newCap) => {
     let newFloors = [...floorsConfig];
     newFloors[floorIndex].rooms[roomIndex].capacity = newCap;
+    setFloorsConfig(newFloors);
+  };
+
+  const updateRoomRent = (floorIndex, roomIndex, newRent) => {
+    let newFloors = [...floorsConfig];
+    newFloors[floorIndex].rooms[roomIndex].rent_amount = newRent;
     setFloorsConfig(newFloors);
   };
 
@@ -196,24 +203,31 @@ const CreateHostel = () => {
                             <div key={rIndex} className="p-4 flex-col items-center justify-center bg-secondary glass-panel border-glass transition-all hover-border-accent" style={{ background: 'var(--bg-secondary)', borderRadius: '12px' }}>
                               <span className="text-xs uppercase tracking-widest text-muted mb-2 font-bold">Room</span>
                               <span className="text-xl font-bold text-center block mb-3" style={{ color: 'var(--text-primary)' }}>{room.number}</span>
-                              <div className="flex items-center justify-center gap-3 w-full pt-4 border-t border-glass">
-                                <div className="flex items-center gap-1.5 opacity-80">
-                                  <Users size={16} />
+                              <div className="flex flex-col gap-2 w-full pt-3 border-t border-glass">
+                                <div className="flex items-center gap-2">
+                                  <Users size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                                  <input
+                                    type="number"
+                                    className="form-control text-center p-0 font-bold"
+                                    style={{ width: '100%', height: '32px', fontSize: '.9rem', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '8px' }}
+                                    value={room.capacity}
+                                    onChange={e => updateRoomCapacity(fIndex, rIndex, e.target.value)}
+                                    title="Beds"
+                                    placeholder="Beds"
+                                  />
                                 </div>
-                                <input
-                                  type="number"
-                                  className="form-control text-center p-0 font-bold"
-                                  style={{ 
-                                    width: '65px', 
-                                    height: '36px', 
-                                    fontSize: '1rem', 
-                                    background: 'var(--bg-tertiary)', 
-                                    border: '1px solid var(--border-color)',
-                                    borderRadius: '8px'
-                                  }}
-                                  value={room.capacity}
-                                  onChange={e => updateRoomCapacity(fIndex, rIndex, e.target.value)}
-                                />
+                                <div className="flex items-center gap-2">
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', flexShrink: 0, fontWeight: 600 }}>₹</span>
+                                  <input
+                                    type="number"
+                                    className="form-control text-center p-0 font-bold"
+                                    style={{ width: '100%', height: '32px', fontSize: '.9rem', background: 'var(--bg-tertiary)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '8px', color: 'var(--accent-primary)' }}
+                                    value={room.rent_amount}
+                                    onChange={e => updateRoomRent(fIndex, rIndex, e.target.value)}
+                                    placeholder="Rent"
+                                    title="Monthly Rent (₹)"
+                                  />
+                                </div>
                               </div>
                             </div>
                           ))}

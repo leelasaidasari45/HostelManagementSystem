@@ -1,113 +1,460 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Check, Crown, Zap, ShieldCheck, Loader2, LogOut } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, LogOut, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-import './AuthPages.css';
+
+const PAYTM_BASE_URL = import.meta.env.VITE_PAYTM_BASE_URL || 'https://securegw-stage.paytm.in';
 
 const SelectPlanPage = () => {
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-    const { logoutContext } = useAuth();
+  const [loadingTrial, setLoadingTrial]   = useState(false);
+  const [loadingAnnual, setLoadingAnnual] = useState(false);
+  const navigate   = useNavigate();
+  const { logoutContext, user, loginContext } = useAuth();
 
-    // Aggressively bypass Select Plan
-    React.useEffect(() => {
-        navigate('/owner/dashboard', { replace: true });
-    }, [navigate]);
+  // Handle Paytm callback redirect params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const s = params.get('status');
+    if (s === 'failed') {
+      toast.error('Payment failed. Please try again.');
+      window.history.replaceState({}, '', '/select-plan');
+    } else if (s === 'error') {
+      toast.error('Payment error. Please retry.');
+      window.history.replaceState({}, '', '/select-plan');
+    }
+  }, []);
 
-    const handleLogout = async () => {
-        await logoutContext();
-    };
+  // Already paid → skip
+  useEffect(() => {
+    if (user?.payment_setup_complete) {
+      navigate('/owner/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
-    const handleSubscribe = async () => {
-        setLoading(true);
-        try {
-            const res = await api.post('/api/subscription/create-subscription');
-            
-            if (res.data.isMock) {
-                toast.success('Subscription setup initiated! (Mock Mode)');
-                setTimeout(() => {
-                    navigate('/owner/dashboard');
-                    toast.success('Welcome to Premium! Your dashboard is now active.');
-                }, 2000);
-            }
-        } catch (err) {
-            toast.error('Failed to initiate subscription. Please try again.');
-        } finally {
-            setLoading(false);
+  const handleLogout = async () => {
+    await logoutContext();
+  };
+
+  // ── Free Trial: 7 days, no payment ──────────────────────
+  const handleFreeTrial = async () => {
+    setLoadingTrial(true);
+    try {
+      await api.post('/api/subscription/start-trial');
+      // Update local user cache so ProtectedRoute lets them through
+      loginContext({ ...user, payment_setup_complete: true, subscription_status: 'trial' });
+      toast.success('🎉 7-day free trial activated!');
+      navigate('/owner/dashboard', { replace: true });
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to start trial');
+    } finally {
+      setLoadingTrial(false);
+    }
+  };
+
+  // ── Annual Pro: ₹40,000/year via Paytm ──────────────────
+  const handleAnnualPro = async () => {
+    setLoadingAnnual(true);
+    try {
+      const res = await api.post('/api/subscription/create-subscription', {
+        planName: 'Annual Pro',
+        amount: 40000,
+      });
+      const { txnToken, orderId, mid, amount } = res.data;
+
+      const existingScript = document.getElementById('paytm-plan-script');
+      if (existingScript) existingScript.remove();
+
+      const script = document.createElement('script');
+      script.id = 'paytm-plan-script';
+      script.src = `${PAYTM_BASE_URL}/merchantpgpui/checkoutjs/merchants/${mid}.js`;
+      script.crossOrigin = 'anonymous';
+      script.type = 'application/javascript';
+
+      script.onload = () => {
+        const config = {
+          root: '',
+          data: { orderId, token: txnToken, tokenType: 'TXN_TOKEN', amount: String(amount) },
+          website: 'WEBSTAGING',
+          flow: 'SUBSCRIPTION',
+          merchant: { mid, redirect: true },
+          handler: {
+            notifyMerchant: (eventName) => {
+              if (eventName === 'APP_CLOSED') setLoadingAnnual(false);
+            },
+          },
+        };
+        if (window.Paytm?.CheckoutJS) {
+          window.Paytm.CheckoutJS.onLoad(() =>
+            window.Paytm.CheckoutJS.init(config)
+              .then(() => window.Paytm.CheckoutJS.invoke())
+              .catch(() => { toast.error('Checkout failed. Try again.'); setLoadingAnnual(false); })
+          );
         }
-    };
+      };
 
-    return (
-        <div className="auth-container" style={{ padding: '2rem' }}>
-            <div className="auth-card glass-panel slide-up" style={{ maxWidth: '800px', width: '100%' }}>
-                <div className="flex justify-between items-center mb-6">
-                    <div className="text-xs text-muted">Awaiting Payment Setup</div>
-                    <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors">
-                        <LogOut size={16} /> Log Out
-                    </button>
-                </div>
-                
-                <div className="text-center mb-8">
-                    <div className="icon-wrapper mb-4" style={{ margin: '0 auto', background: 'var(--warning)', color: '#000' }}>
-                        <Crown size={32} />
-                    </div>
-                    <h1 className="hero-title" style={{ fontSize: '2.5rem' }}>The Future of <span className="text-gradient">Hostel Management</span></h1>
-                    <p className="text-muted mt-4">Start your 3-month free trial today. Set up Autopay now and experience effortless management.</p>
-                </div>
+      script.onerror = () => {
+        toast.error('Failed to load payment gateway');
+        setLoadingAnnual(false);
+      };
+      document.body.appendChild(script);
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to initiate payment');
+      setLoadingAnnual(false);
+    }
+  };
 
-                <div className="grid gap-8 mt-10" style={{ gridTemplateColumns: 'minmax(300px, 1fr)' }}>
-                    <div className="price-card glass-panel p-8 relative overflow-hidden" style={{ border: '2px solid var(--accent-primary)', position: 'relative' }}>
-                        <div className="premium-badge" style={{ position: 'absolute', top: '1rem', right: '-2rem', background: 'var(--accent-primary)', color: '#fff', padding: '0.5rem 3rem', transform: 'rotate(45deg)', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                            BEST VALUE
-                        </div>
-                        
-                        <div className="flex justify-between items-start mb-6">
-                            <div>
-                                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Premium SaaS Plan</h3>
-                                <p className="text-muted">Complete automation suite</p>
-                            </div>
-                            <div className="text-right">
-                                <span style={{ fontSize: '2.5rem', fontWeight: '800' }}>₹999</span>
-                                <span className="text-muted">/month</span>
-                            </div>
-                        </div>
+  return (
+    <div style={styles.page}>
+      {/* Top bar */}
+      <div style={styles.topbar}>
+        <img src="/logo.png" alt="easyPG" style={{ height: 36, objectFit: 'contain' }} />
+        <button onClick={handleLogout} style={styles.logoutBtn}>
+          <LogOut size={14} /> Log out
+        </button>
+      </div>
 
-                        <div className="trial-badge p-3 mb-8 text-center" style={{ background: 'rgba(14, 165, 233, 0.1)', borderRadius: '12px', border: '1px dashed var(--accent-primary)' }}>
-                            <Zap size={16} className="inline mr-2" style={{ color: 'var(--accent-primary)' }} />
-                            <span style={{ color: 'var(--accent-primary)', fontWeight: 'bold' }}>3 MONTHS FREE TRIAL</span>
-                        </div>
+      {/* Title */}
+      <div style={styles.titleBlock}>
+        <h1 style={styles.title}>
+          Simple{' '}
+          <span style={styles.titleGradient}>Pricing</span>
+        </h1>
+      </div>
 
-                        <ul className="flex flex-col gap-4 mb-8">
-                            <li className="flex gap-3"><Check size={20} color="var(--accent-primary)" /> Unlimited Hostels & Rooms</li>
-                            <li className="flex gap-3"><Check size={20} color="var(--accent-primary)" /> QR-Based Instant Onboarding</li>
-                            <li className="flex gap-3"><Check size={20} color="var(--accent-primary)" /> Automatic Rent Reminders (WA)</li>
-                            <li className="flex gap-3"><Check size={20} color="var(--accent-primary)" /> Advanced Analytics & Reports</li>
-                            <li className="flex gap-3"><Check size={20} color="var(--accent-primary)" /> Complaint Management & Tracking</li>
-                        </ul>
+      {/* Cards */}
+      <div style={styles.cardsRow}>
 
-                        <button 
-                            onClick={handleSubscribe} 
-                            disabled={loading}
-                            className="btn btn-primary w-full p-4" 
-                            style={{ fontSize: '1.1rem', fontWeight: 'bold', height: 'auto' }}
-                        >
-                            {loading ? <Loader2 className="animate-spin" /> : 'Set Up Autopay with Paytm'}
-                        </button>
-                        
-                        <p className="text-xs text-muted text-center mt-4 flex items-center justify-center gap-1">
-                            <ShieldCheck size={14} /> Secured by Paytm Subscriptions. Cancel anytime.
-                        </p>
-                    </div>
-                </div>
+        {/* ── Free Trial Card ── */}
+        <div style={styles.freeCard}>
+          <p style={styles.planLabel}>Free Trial</p>
+          <div style={styles.freePrice}>
+            Free <span style={styles.freeDays}>/ 7 days</span>
+          </div>
+          <p style={styles.planDesc}>
+            Experience the full power of easyPG risk-free for a week.
+          </p>
 
-                <div className="mt-8 text-center">
-                    <p className="text-sm text-muted">By setting up Autopay, you agree to our Terms of Service. No charges will be made until your 3-month trial ends.</p>
-                </div>
-            </div>
+          <ul style={styles.featureList}>
+            {[
+              'Unlimited Tenants',
+              'Multi-Property Management',
+              'Full Analytics Access',
+              'Community Support',
+            ].map((f) => (
+              <li key={f} style={styles.featureItem}>
+                <span style={styles.check}>✓</span> {f}
+              </li>
+            ))}
+          </ul>
+
+          <button
+            style={styles.trialBtn}
+            onClick={handleFreeTrial}
+            disabled={loadingTrial}
+            id="start-trial-btn"
+          >
+            {loadingTrial
+              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Activating...</>
+              : <>Start 7-Day Trial <ArrowRight size={15} /></>
+            }
+          </button>
         </div>
-    );
+
+        {/* ── Annual Pro Card ── */}
+        <div style={styles.proCard}>
+          {/* Special offer badge */}
+          <div style={styles.specialBadge}>SPECIAL OFFER</div>
+
+          <p style={styles.planLabelPro}>Annual Pro</p>
+          <div style={styles.proPrice}>
+            ₹40,000 <span style={styles.proYear}>/ year</span>
+          </div>
+
+          {/* Promo banner */}
+          <div style={styles.promoBanner}>
+            🔥 Subscribe within 7 days and get <strong>+5 Months FREE!</strong>
+          </div>
+
+          <p style={styles.planDescPro}>
+            Complete hostel management solution.{' '}
+            Best value for serious owners.
+          </p>
+
+          <ul style={styles.featureList}>
+            {[
+              'Everything in Free Trial',
+              'Automated Rent Collection',
+              'Dedicated Account Manager',
+              'Priority 24/7 Support',
+            ].map((f) => (
+              <li key={f} style={styles.featureItem}>
+                <span style={styles.checkPro}>✓</span> {f}
+              </li>
+            ))}
+          </ul>
+
+          <button
+            style={styles.proBtn}
+            onClick={handleAnnualPro}
+            disabled={loadingAnnual}
+            id="get-annual-pro-btn"
+          >
+            {loadingAnnual
+              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Opening Paytm...</>
+              : <><u>Get Annual Pro</u> <ArrowRight size={15} /></>
+            }
+          </button>
+        </div>
+      </div>
+
+      <p style={styles.footerNote}>
+        No hidden charges. Cancel anytime. Secured by Paytm.
+      </p>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #start-trial-btn:hover:not(:disabled) {
+          background: #e5e7eb !important;
+          transform: translateY(-1px);
+        }
+        #get-annual-pro-btn:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+        #start-trial-btn, #get-annual-pro-btn {
+          transition: all 180ms ease;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+/* ─── Inline styles to exactly match the image design ─── */
+const styles = {
+  page: {
+    minHeight: '100vh',
+    background: '#f8f9ff',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '2rem 1.5rem 4rem',
+    fontFamily: "'Inter', 'Space Grotesk', system-ui, sans-serif",
+  },
+  topbar: {
+    width: '100%',
+    maxWidth: 900,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '2.5rem',
+  },
+  logoutBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.35rem',
+    background: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    color: '#6b7280',
+    fontSize: '0.85rem',
+  },
+  titleBlock: {
+    textAlign: 'center',
+    marginBottom: '2.5rem',
+  },
+  title: {
+    fontSize: 'clamp(2rem, 5vw, 2.75rem)',
+    fontWeight: 700,
+    color: '#111827',
+    margin: 0,
+    letterSpacing: '-0.02em',
+  },
+  titleGradient: {
+    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+  },
+  cardsRow: {
+    display: 'flex',
+    gap: '1.5rem',
+    width: '100%',
+    maxWidth: 860,
+    alignItems: 'stretch',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+
+  /* ── Free Trial card ── */
+  freeCard: {
+    flex: '1 1 340px',
+    maxWidth: 400,
+    background: '#ffffff',
+    border: '1.5px solid #e5e7eb',
+    borderRadius: 20,
+    padding: '2.25rem 2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.1rem',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+  },
+  planLabel: {
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    color: '#111827',
+    margin: 0,
+  },
+  freePrice: {
+    fontSize: '2.8rem',
+    fontWeight: 800,
+    color: '#111827',
+    lineHeight: 1.1,
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '0.4rem',
+  },
+  freeDays: {
+    fontSize: '1rem',
+    fontWeight: 400,
+    color: '#6b7280',
+  },
+  planDesc: {
+    fontSize: '0.88rem',
+    color: '#6b7280',
+    margin: 0,
+    lineHeight: 1.6,
+  },
+  featureList: {
+    listStyle: 'none',
+    padding: 0,
+    margin: '0.25rem 0',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.6rem',
+    flex: 1,
+  },
+  featureItem: {
+    fontSize: '0.88rem',
+    color: '#374151',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+  },
+  check: {
+    color: '#374151',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+  },
+  trialBtn: {
+    marginTop: '0.5rem',
+    width: '100%',
+    padding: '0.9rem 1.5rem',
+    background: '#f3f4f6',
+    border: '1.5px solid #e5e7eb',
+    borderRadius: 12,
+    cursor: 'pointer',
+    fontSize: '0.95rem',
+    fontWeight: 600,
+    color: '#374151',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+  },
+
+  /* ── Annual Pro card ── */
+  proCard: {
+    flex: '1 1 340px',
+    maxWidth: 400,
+    background: 'linear-gradient(145deg, #f0f0ff 0%, #ebe8ff 100%)',
+    border: '1.5px solid #d8d4ff',
+    borderRadius: 20,
+    padding: '2.25rem 2rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.1rem',
+    position: 'relative',
+    boxShadow: '0 4px 20px rgba(124,58,237,0.12)',
+  },
+  specialBadge: {
+    position: 'absolute',
+    top: -16,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+    color: '#fff',
+    fontSize: '0.72rem',
+    fontWeight: 800,
+    letterSpacing: '0.1em',
+    padding: '0.35rem 1.1rem',
+    borderRadius: 99,
+    whiteSpace: 'nowrap',
+  },
+  planLabelPro: {
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    color: '#111827',
+    margin: 0,
+  },
+  proPrice: {
+    fontSize: '2.8rem',
+    fontWeight: 800,
+    color: '#111827',
+    lineHeight: 1.1,
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '0.4rem',
+  },
+  proYear: {
+    fontSize: '1rem',
+    fontWeight: 400,
+    color: '#6b7280',
+  },
+  promoBanner: {
+    padding: '0.65rem 1rem',
+    background: 'rgba(52, 211, 153, 0.15)',
+    border: '1.5px solid rgba(52,211,153,0.4)',
+    borderRadius: 10,
+    fontSize: '0.85rem',
+    color: '#065f46',
+    textAlign: 'center',
+    lineHeight: 1.5,
+  },
+  planDescPro: {
+    fontSize: '0.88rem',
+    color: '#4b5563',
+    margin: 0,
+    lineHeight: 1.6,
+  },
+  checkPro: {
+    color: '#374151',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+  },
+  proBtn: {
+    marginTop: '0.5rem',
+    width: '100%',
+    padding: '0.9rem 1.5rem',
+    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+    border: 'none',
+    borderRadius: 12,
+    cursor: 'pointer',
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    boxShadow: '0 4px 16px rgba(124,58,237,0.35)',
+  },
+  footerNote: {
+    marginTop: '2rem',
+    fontSize: '0.78rem',
+    color: '#9ca3af',
+    textAlign: 'center',
+  },
 };
 
 export default SelectPlanPage;

@@ -124,11 +124,13 @@ router.put('/update-role', requireAuth, async (req, res) => {
     }
 
     const userId = req.user.id;
-    const paymentSetupComplete = true; // Set to true to bypass gating
+    // TRIAL MODE: bypass payment gate for all roles
+    const paymentSetupComplete = true;
 
     const { data: user, error } = await supabase.from('users').update({ 
       role,
-      payment_setup_complete: paymentSetupComplete
+      payment_setup_complete: paymentSetupComplete,
+      subscription_status: role === 'tenant' ? 'none' : 'pending'
     }).eq('id', userId).select().single();
 
     if (error) throw error;
@@ -143,6 +145,8 @@ router.put('/update-role', requireAuth, async (req, res) => {
     res.json({
       message: 'Role updated successfully',
       role: user.role,
+      payment_setup_complete: user.payment_setup_complete,
+      subscription_status: user.subscription_status,
       token: token
     });
   } catch (err) {
@@ -198,16 +202,17 @@ router.post('/logout', (req, res) => {
 
 // Get Current User Profile
 router.get('/me', requireAuth, async (req, res) => {
-  res.json({
-    id: req.user.id,
-    email: req.user.email,
-    name: req.user.name,
-    role: req.user.role,
-    phone: req.user.phone,
-    hostel_id: req.user.hostel_id,
-    join_date: req.user.join_date,
-    aadhaar_url: req.user.aadhaar_url
-  });
+  // Always fetch fresh from DB so payment_setup_complete is up-to-date
+  try {
+    const { data: user } = await supabase.from('users')
+      .select('id, email, name, role, phone, hostel_id, join_date, aadhaar_url, payment_setup_complete, subscription_status, trial_end_date')
+      .eq('id', req.user.id)
+      .single();
+    
+    res.json(user || req.user);
+  } catch {
+    res.json(req.user);
+  }
 });
 
 // Forgot Password - Generates a reset token and returns a link (MOCK email)

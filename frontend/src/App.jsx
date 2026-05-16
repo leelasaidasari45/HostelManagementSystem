@@ -16,12 +16,14 @@ const RoomsPage = lazy(() => import('./pages/owner/RoomsPage'));
 const TenantsPage = lazy(() => import('./pages/owner/TenantsPage'));
 const PastTenantsPage = lazy(() => import('./pages/owner/PastTenantsPage'));
 const ComplaintsPage = lazy(() => import('./pages/owner/ComplaintsPage'));
+const BillingPage = lazy(() => import('./pages/owner/BillingPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const TenantDashboard = lazy(() => import('./pages/tenant/TenantDashboard'));
 const JoinHostel = lazy(() => import('./pages/tenant/JoinHostel'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
+const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
 
 import { Navigate } from 'react-router-dom';
 import { HostelProvider } from './context/HostelContext';
@@ -58,6 +60,15 @@ const ProtectedRoute = ({ children, roleType }) => {
     return <Navigate to="/select-role" replace />;
   }
 
+  // Gate: owner hasn't completed payment setup → force to /select-plan
+  if (
+    user.role === 'owner' &&
+    !user.payment_setup_complete &&
+    window.location.pathname !== '/select-plan'
+  ) {
+    return <Navigate to="/select-plan" replace />;
+  }
+
   if (roleType && user.role !== roleType) {
     const destination = user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard';
     return <Navigate to={destination} replace />;
@@ -87,13 +98,21 @@ const LoadingScreen = () => (
 import MobileSplash from './components/MobileSplash';
 import { ThemeProvider } from './context/ThemeContext';
 
+// Detect Capacitor native platform
+const isNative = typeof window !== 'undefined' &&
+  (window.Capacitor?.isNativePlatform?.() ||
+   window.cordova !== undefined ||
+   /android/i.test(navigator.userAgent) && window.location.protocol === 'file:');
 
 function AppContent() {
-  // Check if we already splashed this session
+  // Show splash: always on native app, or on mobile browser first visit
   const [showSplash, setShowSplash] = React.useState(() => {
-    const isMobile = window.innerWidth <= 768;
     const sessionSplashed = sessionStorage.getItem('hasSplashed');
-    return isMobile && !sessionSplashed;
+    if (sessionSplashed) return false;
+    // Always show splash on native Capacitor app
+    if (isNative) return true;
+    // On mobile browser, only show on first visit
+    return window.innerWidth <= 900;
   });
 
   React.useEffect(() => {
@@ -105,6 +124,30 @@ function AppContent() {
       return () => clearTimeout(timer);
     }
   }, [showSplash]);
+
+  // Android hardware back button — navigate back or show exit prompt
+  React.useEffect(() => {
+    if (!isNative) return;
+    let App;
+    const setup = async () => {
+      try {
+        const cap = await import('@capacitor/app');
+        App = cap.App;
+        App.addListener('backButton', ({ canGoBack }) => {
+          if (canGoBack) {
+            window.history.back();
+          } else {
+            // At root — ask user if they want to exit
+            if (window.confirm('Exit easyPG?')) {
+              App.exitApp();
+            }
+          }
+        });
+      } catch (e) {}
+    };
+    setup();
+    return () => { if (App) App.removeAllListeners(); };
+  }, []);
 
   if (showSplash) return <MobileSplash />;
 
@@ -137,12 +180,14 @@ function AppContent() {
           <Route path="/register" element={<AuthPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/select-role" element={<SelectRolePage />} />
+          <Route path="/select-plan" element={<ProtectedRoute roleType="owner"><SelectPlanPage /></ProtectedRoute>} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/owner/dashboard" element={<ProtectedRoute roleType="owner"><OwnerDashboard /></ProtectedRoute>} />
           <Route path="/owner/create-hostel" element={<ProtectedRoute roleType="owner"><CreateHostel /></ProtectedRoute>} />
           <Route path="/owner/rooms" element={<ProtectedRoute roleType="owner"><RoomsPage /></ProtectedRoute>} />
           <Route path="/owner/complaints" element={<ProtectedRoute roleType="owner"><ComplaintsPage /></ProtectedRoute>} />
+          <Route path="/owner/billing" element={<ProtectedRoute roleType="owner"><BillingPage /></ProtectedRoute>} />
           <Route path="/owner/tenants" element={<ProtectedRoute roleType="owner"><TenantsPage /></ProtectedRoute>} />
           <Route path="/owner/past-tenants" element={<ProtectedRoute roleType="owner"><PastTenantsPage /></ProtectedRoute>} />
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
