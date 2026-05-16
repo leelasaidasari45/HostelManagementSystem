@@ -39,6 +39,9 @@ router.post('/create-order', requireAuth, async (req, res) => {
 
     const orderId = `easypg_${type}_${Date.now()}`;
 
+    const FRONTEND = process.env.FRONTEND_URL || 'https://easypg-zeta.vercel.app';
+    const returnPath = type === 'subscription' ? '/owner/dashboard' : '/tenant/dashboard';
+
     const body = {
       order_id:       orderId,
       order_amount:   parseFloat(amount),
@@ -50,8 +53,8 @@ router.post('/create-order', requireAuth, async (req, res) => {
         customer_phone: (user?.phone || '9999999999').replace(/\D/g, '').slice(0, 10) || '9999999999',
       },
       order_meta: {
-        return_url: `${process.env.FRONTEND_URL}/tenant/dashboard?payment=success&order_id=${orderId}`,
-        notify_url: `${process.env.BACKEND_URL}/api/cashfree/webhook`,
+        return_url: `${FRONTEND}${returnPath}?payment=success&order_id=${orderId}`,
+        notify_url: `${process.env.BACKEND_URL || 'https://pg-backend-499c.onrender.com'}/api/cashfree/webhook`,
       },
     };
 
