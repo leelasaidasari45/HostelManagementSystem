@@ -197,11 +197,11 @@ const JoinHostel = () => {
         year:   new Date().getFullYear(),
         type:   'admission',
       });
-      const { payment_session_id, order_id } = res.data;
+      const { payment_session_id, order_id, environment } = res.data;
 
-      // Step 2: Load Cashfree SDK
+      // Step 2: Load Cashfree SDK — mode from backend response to guarantee match
       await loadCashfreeSDK();
-      const cashfree = await window.Cashfree({ mode: CF_ENV });
+      const cashfree = await window.Cashfree({ mode: environment || 'production' });
 
       // Step 3: Launch drop-in checkout (shows UPI, cards, netbanking)
       const result = await cashfree.checkout({

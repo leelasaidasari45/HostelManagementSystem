@@ -67,10 +67,10 @@ const SelectPlanPage = () => {
         year: new Date().getFullYear(),
         type: 'subscription',
       });
-      const { payment_session_id, order_id } = res.data;
+      const { payment_session_id, order_id, environment } = res.data;
 
-      // Step 2: Load Cashfree SDK
-      const CF_ENV = import.meta.env.VITE_CASHFREE_ENV || 'sandbox';
+      // Step 2: Load Cashfree SDK — use environment FROM backend response (not frontend env var)
+      const CF_MODE = environment || 'production';
       const loadSDK = () => new Promise((resolve, reject) => {
         if (window.Cashfree) { resolve(window.Cashfree); return; }
         const s = document.createElement('script');
@@ -80,7 +80,7 @@ const SelectPlanPage = () => {
         document.body.appendChild(s);
       });
       await loadSDK();
-      const cashfree = await window.Cashfree({ mode: CF_ENV });
+      const cashfree = await window.Cashfree({ mode: CF_MODE });
 
       // Step 3: Launch Cashfree drop-in checkout
       const result = await cashfree.checkout({

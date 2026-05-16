@@ -105,11 +105,11 @@ const TenantDashboard = () => {
     try {
       // Step 1: Create Cashfree order
       const res = await api.post('/api/cashfree/create-order', { amount, month, year, type: 'rent' });
-      const { payment_session_id, order_id } = res.data;
+      const { payment_session_id, order_id, environment } = res.data;
 
-      // Step 2: Load SDK
+      // Step 2: Load SDK — mode from backend response to guarantee match
       await loadCashfreeSDK();
-      const cashfree = await window.Cashfree({ mode: CF_ENV });
+      const cashfree = await window.Cashfree({ mode: environment || 'production' });
 
       // Step 3: Launch drop-in checkout
       const result = await cashfree.checkout({
