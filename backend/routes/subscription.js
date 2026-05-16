@@ -56,7 +56,63 @@ router.post('/start-trial', requireAuth, requireOwner, async (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────
-// 1. Create Subscription — ₹40,000/year via Paytm
+// 1b. Verify Cashfree Subscription Payment
+// ─────────────────────────────────────────────────────────
+router.post('/verify-cashfree', requireAuth, requireOwner, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { order_id, amount, plan_name } = req.body;
+
+    if (!order_id) return res.status(400).json({ error: 'order_id required' });
+
+    // Verify with Cashfree
+    const { Cashfree } = await import('cashfree-pg');
+    Cashfree.XClientId     = process.env.CASHFREE_APP_ID;
+    Cashfree.XClientSecret = process.env.CASHFREE_SECRET_KEY;
+    Cashfree.XEnvironment  = process.env.CASHFREE_ENV === 'production' ? 'PRODUCTION' : 'SANDBOX';
+
+    const response = await Cashfree.PGOrderFetchPayments('2023-08-01', order_id);
+    const payments = response.data;
+    const success  = Array.isArray(payments)
+      ? payments.find(p => p.payment_status === 'SUCCESS')
+      : payments?.payment_status === 'SUCCESS' ? payments : null;
+
+    if (!success) {
+      return res.status(400).json({ error: 'Payment not confirmed yet' });
+    }
+
+    // Calculate subscription end date (1 year from now)
+    const endDate = new Date();
+    endDate.setFullYear(endDate.getFullYear() + 1);
+
+    // Record in platform_subscriptions
+    await supabase.from('platform_subscriptions').insert([{
+      owner_id:   userId,
+      plan_name:  plan_name || 'Annual Pro',
+      amount:     parseFloat(amount || 40000),
+      status:     'active',
+      order_id:   order_id,
+      txn_id:     String(success.cf_payment_id),
+      start_date: new Date().toISOString(),
+      end_date:   endDate.toISOString(),
+    }]);
+
+    // Activate owner subscription
+    await supabase.from('users').update({
+      subscription_status:    'active',
+      payment_setup_complete: true,
+      trial_end_date:         endDate.toISOString(),
+    }).eq('id', userId);
+
+    res.json({ success: true, message: 'Subscription activated!', end_date: endDate });
+  } catch (err) {
+    console.error('verify-cashfree error:', err?.response?.data || err.message);
+    res.status(500).json({ error: err?.response?.data?.message || 'Verification failed' });
+  }
+});
+
+// ─────────────────────────────────────────────────────────
+// 1. Create Subscription — ₹40,000/year via Paytm (legacy)
 // ─────────────────────────────────────────────────────────
 router.post('/create-subscription', requireAuth, requireOwner, async (req, res) => {
   try {

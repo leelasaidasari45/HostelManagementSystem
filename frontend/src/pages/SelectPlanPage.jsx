@@ -56,57 +56,68 @@ const SelectPlanPage = () => {
     }
   };
 
-  // ── Annual Pro: ₹40,000/year via Paytm ──────────────────
+  // ── Annual Pro: ₹40,000/year via Cashfree ───────────────
   const handleAnnualPro = async () => {
     setLoadingAnnual(true);
     try {
-      const res = await api.post('/api/subscription/create-subscription', {
-        planName: 'Annual Pro',
+      // Step 1: Create Cashfree order for subscription
+      const res = await api.post('/api/cashfree/create-order', {
         amount: 40000,
+        month: 'Annual',
+        year: new Date().getFullYear(),
+        type: 'subscription',
       });
-      const { txnToken, orderId, mid, amount } = res.data;
+      const { payment_session_id, order_id } = res.data;
 
-      const existingScript = document.getElementById('paytm-plan-script');
-      if (existingScript) existingScript.remove();
+      // Step 2: Load Cashfree SDK
+      const CF_ENV = import.meta.env.VITE_CASHFREE_ENV || 'sandbox';
+      const loadSDK = () => new Promise((resolve, reject) => {
+        if (window.Cashfree) { resolve(window.Cashfree); return; }
+        const s = document.createElement('script');
+        s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+        s.onload = () => resolve(window.Cashfree);
+        s.onerror = () => reject(new Error('Failed to load Cashfree'));
+        document.body.appendChild(s);
+      });
+      await loadSDK();
+      const cashfree = await window.Cashfree({ mode: CF_ENV });
 
-      const script = document.createElement('script');
-      script.id = 'paytm-plan-script';
-      script.src = `${PAYTM_BASE_URL}/merchantpgpui/checkoutjs/merchants/${mid}.js`;
-      script.crossOrigin = 'anonymous';
-      script.type = 'application/javascript';
+      // Step 3: Launch Cashfree drop-in checkout
+      const result = await cashfree.checkout({
+        paymentSessionId: payment_session_id,
+        redirectTarget: '_modal',
+      });
 
-      script.onload = () => {
-        const config = {
-          root: '',
-          data: { orderId, token: txnToken, tokenType: 'TXN_TOKEN', amount: String(amount) },
-          website: 'WEBSTAGING',
-          flow: 'SUBSCRIPTION',
-          merchant: { mid, redirect: true },
-          handler: {
-            notifyMerchant: (eventName) => {
-              if (eventName === 'APP_CLOSED') setLoadingAnnual(false);
-            },
-          },
-        };
-        if (window.Paytm?.CheckoutJS) {
-          window.Paytm.CheckoutJS.onLoad(() =>
-            window.Paytm.CheckoutJS.init(config)
-              .then(() => window.Paytm.CheckoutJS.invoke())
-              .catch(() => { toast.error('Checkout failed. Try again.'); setLoadingAnnual(false); })
-          );
-        }
-      };
-
-      script.onerror = () => {
-        toast.error('Failed to load payment gateway');
+      if (result.error) {
+        toast.error(result.error.message || 'Payment failed');
         setLoadingAnnual(false);
-      };
-      document.body.appendChild(script);
+        return;
+      }
+
+      if (result.paymentDetails?.paymentStatus === 'SUCCESS' || result.redirect) {
+        toast.loading('Activating your subscription...', { id: 'sub-verify' });
+        // Step 4: Verify + activate subscription on backend
+        const verifyRes = await api.post('/api/subscription/verify-cashfree', {
+          order_id,
+          amount: 40000,
+          plan_name: 'Annual Pro',
+        });
+        toast.dismiss('sub-verify');
+        if (verifyRes.data.success) {
+          loginContext({ ...user, payment_setup_complete: true, subscription_status: 'active' });
+          toast.success('🎉 Annual Pro activated!');
+          navigate('/owner/dashboard', { replace: true });
+        } else {
+          toast.error('Verification failed. Contact support.');
+        }
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to initiate payment');
+    } finally {
       setLoadingAnnual(false);
     }
   };
+
 
   return (
     <div style={styles.page}>
