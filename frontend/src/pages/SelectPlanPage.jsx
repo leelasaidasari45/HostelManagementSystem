@@ -26,9 +26,12 @@ const SelectPlanPage = () => {
     }
   }, []);
 
-  // Already paid → skip
+  // Only skip plan page if owner has an ACTIVE subscription (not just flag=true from old trial bypass)
   useEffect(() => {
-    if (user?.payment_setup_complete) {
+    if (
+      user?.payment_setup_complete &&
+      (user?.subscription_status === 'active' || user?.subscription_status === 'trial')
+    ) {
       navigate('/owner/dashboard', { replace: true });
     }
   }, [user, navigate]);
