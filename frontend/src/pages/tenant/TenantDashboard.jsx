@@ -117,12 +117,14 @@ const TenantDashboard = () => {
         redirectTarget:   '_modal',
       });
 
-      if (result.error) {
-        toast.error(result.error.message || 'Payment failed'); return;
-      }
+      // Only skip if user explicitly cancelled
+      const cancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
+                        result?.error?.type === 'user_cancelled';
+      if (cancelled) { toast('Payment cancelled.', { icon: 'ℹ️' }); return; }
 
-      if (result.paymentDetails?.paymentStatus === 'SUCCESS' || result.redirect) {
-        toast.loading('Verifying...', { id: 'vrfy' });
+      // Always verify with backend — SDK result varies by payment method
+      toast.loading('Verifying...', { id: 'vrfy' });
+      try {
         const vRes = await api.post('/api/cashfree/verify', { order_id, amount, month, year });
         toast.dismiss('vrfy');
         if (vRes.data.success) {
@@ -131,6 +133,9 @@ const TenantDashboard = () => {
         } else {
           toast.error('Verification failed. Contact support.');
         }
+      } catch {
+        toast.dismiss('vrfy');
+        toast.error('Verification error. If payment was deducted, contact support.');
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Payment failed');

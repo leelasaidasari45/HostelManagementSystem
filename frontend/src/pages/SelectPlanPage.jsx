@@ -88,15 +88,19 @@ const SelectPlanPage = () => {
         redirectTarget: '_modal',
       });
 
-      if (result.error) {
-        toast.error(result.error.message || 'Payment failed');
+      // Only skip verification if user explicitly cancelled/closed
+      const userCancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
+                            result?.error?.type === 'user_cancelled';
+      if (userCancelled) {
+        toast('Payment cancelled.', { icon: 'ℹ️' });
         setLoadingAnnual(false);
         return;
       }
 
-      if (result.paymentDetails?.paymentStatus === 'SUCCESS' || result.redirect) {
-        toast.loading('Activating your subscription...', { id: 'sub-verify' });
-        // Step 4: Verify + activate subscription on backend
+      // For ALL other outcomes (success, redirect, unknown) — verify with backend
+      // Cashfree JS SDK result structure varies by payment method, so don't rely on it
+      toast.loading('Verifying payment...', { id: 'sub-verify' });
+      try {
         const verifyRes = await api.post('/api/subscription/verify-cashfree', {
           order_id,
           amount: 1, // TEST: change back to 40000 for production
@@ -108,7 +112,16 @@ const SelectPlanPage = () => {
           toast.success('🎉 Annual Pro activated!');
           navigate('/owner/dashboard', { replace: true });
         } else {
-          toast.error('Verification failed. Contact support.');
+          toast.error('Payment done but verification failed. Contact support.');
+        }
+      } catch (verifyErr) {
+        toast.dismiss('sub-verify');
+        // If verify fails, could be payment still pending — redirect anyway
+        if (verifyErr.response?.status === 400) {
+          toast('Payment may still be processing. Check dashboard in a moment.', { icon: '⏳' });
+          setTimeout(() => navigate('/owner/dashboard', { replace: true }), 2000);
+        } else {
+          toast.error('Verification error. Contact support.');
         }
       }
     } catch (err) {
@@ -117,6 +130,7 @@ const SelectPlanPage = () => {
       setLoadingAnnual(false);
     }
   };
+
 
 
   return (

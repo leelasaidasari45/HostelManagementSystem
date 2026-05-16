@@ -209,15 +209,18 @@ const JoinHostel = () => {
         redirectTarget:   '_modal',  // opens as overlay modal
       });
 
-      if (result.error) {
-        toast.error(result.error.message || 'Payment failed');
+      // Only skip if user explicitly cancelled
+      const cancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
+                        result?.error?.type === 'user_cancelled';
+      if (cancelled) {
+        toast('Payment cancelled.', { icon: 'ℹ️' });
         setLoadingPayment(false);
         return;
       }
 
-      if (result.paymentDetails?.paymentStatus === 'SUCCESS' || result.redirect) {
-        // Step 4: Verify payment on backend
-        toast.loading('Verifying payment...', { id: 'verify' });
+      // Always verify with backend — SDK result varies by payment method
+      toast.loading('Verifying payment...', { id: 'verify' });
+      try {
         const verifyRes = await api.post('/api/cashfree/verify', {
           order_id,
           amount: parseFloat(admissionAmount),
@@ -231,6 +234,9 @@ const JoinHostel = () => {
         } else {
           toast.error('Payment verification failed. Contact support.');
         }
+      } catch {
+        toast.dismiss('verify');
+        toast.error('Verification error. If payment was deducted, contact support.');
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Payment failed. Try again.');
