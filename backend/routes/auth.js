@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
       phone: phone || '',
       trial_end_date: trialEndDate.toISOString(),
       subscription_status: 'none',
-      payment_setup_complete: true // No longer mandatory
+      payment_setup_complete: false // Owner must select plan first
     }]).select().single();
 
     if (error) throw error;
@@ -89,7 +89,7 @@ router.post('/social-sync', async (req, res) => {
         role: 'unassigned',
         trial_end_date: trialEndDate.toISOString(),
         subscription_status: 'none',
-        payment_setup_complete: true
+        payment_setup_complete: false // Must select plan after role selection
       }]).select().single();
 
       if (error) throw error;
@@ -124,8 +124,8 @@ router.put('/update-role', requireAuth, async (req, res) => {
     }
 
     const userId = req.user.id;
-    // TRIAL MODE: bypass payment gate for all roles
-    const paymentSetupComplete = true;
+    // Owners must complete plan selection; tenants have no subscription requirement
+    const paymentSetupComplete = role === 'tenant' ? true : false;
 
     const { data: user, error } = await supabase.from('users').update({ 
       role,

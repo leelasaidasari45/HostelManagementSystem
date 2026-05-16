@@ -20,12 +20,17 @@ const SelectRolePage = () => {
         ...user,
         role: res.data.role,
         token: res.data.token,
-        payment_setup_complete: true,
+        payment_setup_complete: res.data.payment_setup_complete,
         subscription_status: res.data.subscription_status,
       });
       toast.success('Welcome aboard!');
-      // TRIAL MODE: go directly to dashboard for all roles
-      navigate(role === 'owner' ? '/owner/dashboard' : '/tenant/join', { replace: true });
+      if (role === 'owner') {
+        // Owner must select a subscription plan first
+        navigate('/select-plan', { replace: true });
+      } else {
+        // Tenant goes directly to join
+        navigate('/tenant/join', { replace: true });
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update role');
       setSelected(null);
