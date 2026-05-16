@@ -1,22 +1,26 @@
 import express from 'express';
-import { Cashfree } from 'cashfree-pg';
-import { requireAuth, requireTenant } from '../middleware/auth.js';
+import { requireAuth } from '../middleware/auth.js';
 import { supabase } from '../supabaseClient.js';
 
 const router = express.Router();
 
-// ─── Init Cashfree SDK ────────────────────────────────────────
-Cashfree.XClientId     = process.env.CASHFREE_APP_ID;
-Cashfree.XClientSecret = process.env.CASHFREE_SECRET_KEY;
-Cashfree.XEnvironment  =
+const CF_VERSION = '2023-08-01';
+
+// ─── Build Cashfree REST API base URL ─────────────────────────
+const getCFBase = () =>
   process.env.CASHFREE_ENV === 'production'
-    ? 'PRODUCTION'
-    : 'SANDBOX';
+    ? 'https://api.cashfree.com/pg'
+    : 'https://sandbox.cashfree.com/pg';
 
-const CF_API_VERSION = '2023-08-01';
+// ─── Helper: Cashfree headers ─────────────────────────────────
+const cfHeaders = () => ({
+  'Content-Type':    'application/json',
+  'x-api-version':   CF_VERSION,
+  'x-client-id':     process.env.CASHFREE_APP_ID,
+  'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+});
 
-// ─── POST /api/cashfree/create-order ─────────────────────────
-// Creates a Cashfree payment order and returns payment_session_id
+// ─── POST /api/cashfree/create-order ──────────────────────────
 router.post('/create-order', requireAuth, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -35,101 +39,121 @@ router.post('/create-order', requireAuth, async (req, res) => {
 
     const orderId = `easypg_${type}_${Date.now()}`;
 
-    const orderRequest = {
+    const body = {
       order_id:       orderId,
       order_amount:   parseFloat(amount),
       order_currency: 'INR',
       customer_details: {
-        customer_id:    userId,
-        customer_name:  user?.name  || 'Tenant',
-        customer_email: user?.email || 'tenant@easypg.com',
-        customer_phone: user?.phone || '9999999999',
+        customer_id:    String(userId).slice(0, 50),
+        customer_name:  (user?.name  || 'User').slice(0, 100),
+        customer_email: user?.email || 'user@easypg.com',
+        customer_phone: (user?.phone || '9999999999').replace(/\D/g, '').slice(0, 10) || '9999999999',
       },
       order_meta: {
         return_url: `${process.env.FRONTEND_URL}/tenant/dashboard?payment=success&order_id=${orderId}`,
         notify_url: `${process.env.BACKEND_URL}/api/cashfree/webhook`,
       },
-      order_note: `EasyPG ${type} payment - ${month} ${year}`,
     };
 
-    const response = await Cashfree.PGCreateOrder(CF_API_VERSION, orderRequest);
-    const orderData = response.data;
+    const response = await fetch(`${getCFBase()}/orders`, {
+      method:  'POST',
+      headers: cfHeaders(),
+      body:    JSON.stringify(body),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Cashfree create-order error:', data);
+      return res.status(400).json({ error: data.message || 'Failed to create order' });
+    }
 
     res.json({
-      order_id:           orderData.order_id,
-      payment_session_id: orderData.payment_session_id,
-      order_status:       orderData.order_status,
+      order_id:           data.order_id,
+      payment_session_id: data.payment_session_id,
+      order_status:       data.order_status,
       environment:        process.env.CASHFREE_ENV || 'sandbox',
     });
   } catch (err) {
-    console.error('Cashfree create-order error:', err?.response?.data || err.message);
-    res.status(500).json({ error: err?.response?.data?.message || 'Failed to create order' });
+    console.error('Cashfree create-order exception:', err.message);
+    res.status(500).json({ error: 'Failed to create order' });
   }
 });
 
 // ─── POST /api/cashfree/verify ────────────────────────────────
-// Verifies payment after checkout and records it in DB
 router.post('/verify', requireAuth, async (req, res) => {
   try {
-    const userId  = req.user.id;
+    const userId = req.user.id;
     const { order_id, amount, month, year } = req.body;
 
     if (!order_id) return res.status(400).json({ error: 'order_id required' });
 
-    // Verify with Cashfree
-    const response = await Cashfree.PGOrderFetchPayments(CF_API_VERSION, order_id);
-    const payments  = response.data;
+    // Fetch payments for the order
+    const response = await fetch(`${getCFBase()}/orders/${order_id}/payments`, {
+      headers: cfHeaders(),
+    });
 
-    // Find the successful payment
-    const success = Array.isArray(payments)
-      ? payments.find(p => p.payment_status === 'SUCCESS')
-      : payments?.payment_status === 'SUCCESS' ? payments : null;
+    const payments = await response.json();
 
-    if (!success) {
-      return res.status(400).json({ error: 'Payment not successful', payments });
+    if (!response.ok) {
+      console.error('Cashfree verify error:', payments);
+      return res.status(400).json({ error: payments.message || 'Failed to verify' });
     }
 
-    // Record payment in DB
+    const successPayment = Array.isArray(payments)
+      ? payments.find(p => p.payment_status === 'SUCCESS')
+      : null;
+
+    if (!successPayment) {
+      return res.status(400).json({ error: 'Payment not successful yet' });
+    }
+
+    // Record in payments table
     const { error: dbErr } = await supabase.from('payments').insert([{
       tenant_id: userId,
-      amount:    parseFloat(amount || success.order_amount),
-      month:     month  || new Date().toLocaleString('default', { month: 'long' }),
-      year:      year   || new Date().getFullYear(),
+      amount:    parseFloat(amount || successPayment.order_amount),
+      month:     month || new Date().toLocaleString('default', { month: 'long' }),
+      year:      year  || new Date().getFullYear(),
       status:    'completed',
       paid_at:   new Date().toISOString(),
-      utr_id:    success.cf_payment_id || order_id,
+      utr_id:    String(successPayment.cf_payment_id || order_id),
     }]);
 
     if (dbErr) throw dbErr;
 
     res.json({ success: true, message: 'Payment verified and recorded!' });
   } catch (err) {
-    console.error('Cashfree verify error:', err?.response?.data || err.message);
-    res.status(500).json({ error: err?.response?.data?.message || 'Verification failed' });
+    console.error('Cashfree verify exception:', err.message);
+    res.status(500).json({ error: 'Verification failed' });
+  }
+});
+
+// ─── GET /api/cashfree/order/:orderId — check order status ───
+router.get('/order/:orderId', requireAuth, async (req, res) => {
+  try {
+    const response = await fetch(`${getCFBase()}/orders/${req.params.orderId}`, {
+      headers: cfHeaders(),
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch order' });
   }
 });
 
 // ─── POST /api/cashfree/webhook ───────────────────────────────
-// Cashfree server-to-server notification (backup verification)
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
     const webhookData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    console.log('Cashfree webhook received:', webhookData?.data?.order?.order_id);
-
     if (webhookData?.type === 'PAYMENT_SUCCESS_WEBHOOK') {
-      const order   = webhookData.data?.order;
-      const payment = webhookData.data?.payment;
+      const order      = webhookData.data?.order;
+      const payment    = webhookData.data?.payment;
+      const customerId = webhookData.data?.customer_details?.customer_id;
 
-      if (order && payment) {
-        // Extract tenant_id from order_id: easypg_rent_<timestamp> — use customer_id
-        const customerId = webhookData.data?.customer_details?.customer_id;
-
-        // Avoid duplicate records
+      if (order && payment && customerId) {
         const { data: existing } = await supabase
-          .from('payments')
-          .select('id')
-          .eq('utr_id', String(payment.cf_payment_id))
-          .maybeSingle();
+          .from('payments').select('id')
+          .eq('utr_id', String(payment.cf_payment_id)).maybeSingle();
 
         if (!existing) {
           await supabase.from('payments').insert([{
@@ -145,7 +169,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
     res.status(200).json({ status: 'ok' });
   } catch (err) {
     console.error('Webhook error:', err.message);
-    res.status(200).json({ status: 'ok' }); // Always 200 for webhooks
+    res.status(200).json({ status: 'ok' });
   }
 });
 

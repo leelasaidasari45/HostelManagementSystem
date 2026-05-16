@@ -65,17 +65,21 @@ router.post('/verify-cashfree', requireAuth, requireOwner, async (req, res) => {
 
     if (!order_id) return res.status(400).json({ error: 'order_id required' });
 
-    // Verify with Cashfree
-    const { Cashfree } = await import('cashfree-pg');
-    Cashfree.XClientId     = process.env.CASHFREE_APP_ID;
-    Cashfree.XClientSecret = process.env.CASHFREE_SECRET_KEY;
-    Cashfree.XEnvironment  = process.env.CASHFREE_ENV === 'production' ? 'PRODUCTION' : 'SANDBOX';
+    // Verify with Cashfree REST API directly
+    const cfBase = process.env.CASHFREE_ENV === 'production'
+      ? 'https://api.cashfree.com/pg'
+      : 'https://sandbox.cashfree.com/pg';
+    const cfHeaders = {
+      'x-api-version':   '2023-08-01',
+      'x-client-id':     process.env.CASHFREE_APP_ID,
+      'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+    };
 
-    const response = await Cashfree.PGOrderFetchPayments('2023-08-01', order_id);
-    const payments = response.data;
-    const success  = Array.isArray(payments)
+    const cfRes  = await fetch(`${cfBase}/orders/${order_id}/payments`, { headers: cfHeaders });
+    const payments = await cfRes.json();
+    const success = Array.isArray(payments)
       ? payments.find(p => p.payment_status === 'SUCCESS')
-      : payments?.payment_status === 'SUCCESS' ? payments : null;
+      : null;
 
     if (!success) {
       return res.status(400).json({ error: 'Payment not confirmed yet' });
