@@ -62,7 +62,7 @@ const SelectPlanPage = () => {
     try {
       // Step 1: Create Cashfree order for subscription
       const res = await api.post('/api/cashfree/create-order', {
-        amount: 40000,
+        amount: 1, // TEST: change back to 40000 for production
         month: 'Annual',
         year: new Date().getFullYear(),
         type: 'subscription',
@@ -99,7 +99,7 @@ const SelectPlanPage = () => {
         // Step 4: Verify + activate subscription on backend
         const verifyRes = await api.post('/api/subscription/verify-cashfree', {
           order_id,
-          amount: 40000,
+          amount: 1, // TEST: change back to 40000 for production
           plan_name: 'Annual Pro',
         });
         toast.dismiss('sub-verify');
@@ -183,7 +183,7 @@ const SelectPlanPage = () => {
 
           <p style={styles.planLabelPro}>Annual Pro</p>
           <div style={styles.proPrice}>
-            ₹40,000 <span style={styles.proYear}>/ year</span>
+            ₹1 <span style={styles.proYear}>/ year (TEST)</span>
           </div>
 
           {/* Promo banner */}
