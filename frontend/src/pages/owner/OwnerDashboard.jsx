@@ -6,6 +6,7 @@ import api from '../../api';
 import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import OwnerHeader from '../../components/owner/OwnerHeader';
+import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import MobileBottomNav from '../../components/owner/MobileBottomNav';
 import MobileDashboardSections from '../../components/owner/MobileDashboardSections';
@@ -45,8 +46,11 @@ const OwnerDashboard = () => {
       <div className="desktop-sidebar-wrapper">
         <OwnerSidebar />
       </div>
+      <MobileOwnerHeader />
       <main className="dashboard-content fade-in mobile-pb">
-        <OwnerHeader title="Overview" subtitle="Managing" />
+        <div className="desktop-only-widgets">
+          <OwnerHeader title="Overview" subtitle="Managing" />
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -65,8 +69,8 @@ const OwnerDashboard = () => {
           </div>
         ) : (
           <>
-            {/* KPI Stats */}
-            <div className="stats-grid slide-up">
+            {/* KPI Stats (Desktop Only) */}
+            <div className="stats-grid slide-up desktop-only-widgets">
               <div className="stat-card">
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <p>Total Collection</p>
@@ -97,7 +101,7 @@ const OwnerDashboard = () => {
             </div>
 
             {/* Mobile Specific Sections (Hidden on Desktop) */}
-            <MobileDashboardSections />
+            <MobileDashboardSections analytics={analytics} />
 
             {/* Widget row (Hidden on Mobile) */}
             <div className="grid gap-6 desktop-only-widgets" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>

@@ -19,14 +19,90 @@
     margin-bottom: 1rem;
   }
   
+  /* Summary Section */
+  .summary-section {
+    background: #ffffff;
+    margin: -1.5rem -1rem 2rem -1rem; /* Negative margin to pull it up to the header */
+    padding: 1.5rem 1rem 1.5rem 1rem;
+    border-bottom: 8px solid var(--bg-base);
+  }
+
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .summary-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin: 0;
+  }
+
+  .summary-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #4b5563;
+    font-weight: 600;
+  }
+
+  .summary-cards-scroll {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .summary-cards-scroll::-webkit-scrollbar { display: none; }
+
+  .summary-card {
+    min-width: 120px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 12px;
+    padding: 0.8rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 85px;
+  }
+
+  .sc-top { margin-bottom: auto; }
+  .sc-value { font-size: 1.1rem; font-weight: 700; }
+  .sc-value.green { color: #16a34a; }
+  .sc-value.red { color: #dc2626; }
+
+  .sc-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .sc-label {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    line-height: 1.2;
+    font-weight: 500;
+  }
+  
+  .sc-icon { opacity: 0.7; }
+  .sc-icon.green { color: #16a34a; }
+  .sc-icon.red { color: #dc2626; }
+
   /* Quick Actions */
   .quick-actions-scroll {
     display: flex;
     overflow-x: auto;
     gap: 1rem;
     padding-bottom: 0.5rem;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .quick-actions-scroll::-webkit-scrollbar {
     display: none;
@@ -42,9 +118,12 @@
   }
   
   .qa-icon {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     border-radius: 16px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -57,9 +136,9 @@
   }
   
   .qa-item span {
-    font-size: 0.75rem;
-    color: var(--text-ghost);
-    font-weight: 500;
+    font-size: 0.72rem;
+    color: #4b5563;
+    font-weight: 600;
     text-align: center;
   }
   

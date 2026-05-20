@@ -35,6 +35,10 @@ body.hide-sidebar-all .dashboard-layout { grid-template-columns: 1fr !important;
 }
 
 @media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+
   .desktop-sidebar-wrapper {
     display: none;
   }
@@ -47,7 +51,7 @@ body.hide-sidebar-all .dashboard-layout { grid-template-columns: 1fr !important;
     padding-bottom: 90px !important; /* Space for MobileBottomNav */
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: 1.5rem;
+    padding-top: 0; /* Header provides top padding */
   }
 }
 

@@ -1,41 +1,87 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, TrendingUp, Smartphone, ShieldCheck, Zap } from 'lucide-react';
+import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, TrendingUp, Smartphone, ShieldCheck, Zap, ChevronDown, Coins, ClipboardList } from 'lucide-react';
 import './MobileDashboardSections.css';
 
-const MobileDashboardSections = () => {
+const MobileDashboardSections = ({ analytics }) => {
+  const currentMonth = new Date().toLocaleString('default', { month: 'short' });
+
   return (
     <div className="mobile-only-sections">
+      
+      {/* Summary Section */}
+      <section className="dashboard-section summary-section">
+        <div className="summary-header">
+          <h2 className="summary-title">{currentMonth} Summary for</h2>
+          <div className="summary-dropdown">
+            <span>All 1 Properties</span>
+            <ChevronDown size={14} />
+          </div>
+        </div>
+        
+        <div className="summary-cards-scroll">
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value green">₹0</span>
+            </div>
+            <div className="sc-bottom">
+              <span className="sc-label">Today's<br/>Collection</span>
+              <Coins size={14} className="sc-icon green" />
+            </div>
+          </div>
+
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value green">₹{analytics?.metrics?.totalCollection?.toLocaleString() || 0}</span>
+            </div>
+            <div className="sc-bottom">
+              <span className="sc-label">{currentMonth}'s<br/>Collection</span>
+              <Coins size={14} className="sc-icon green" />
+            </div>
+          </div>
+
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value red">₹0</span>
+            </div>
+            <div className="sc-bottom">
+              <span className="sc-label">{currentMonth}'s<br/>Dues</span>
+              <ClipboardList size={14} className="sc-icon red" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Quick Actions */}
       <section className="dashboard-section mt-4">
         <h2 className="section-title">Quick Actions</h2>
         <div className="quick-actions-scroll">
           <Link to="/owner/tenants" className="qa-item">
-            <div className="qa-icon" style={{ color: '#3b82f6', background: 'rgba(59, 130, 246, 0.1)' }}>
+            <div className="qa-icon" style={{ color: '#3b82f6' }}>
               <Users size={24} />
             </div>
             <span>Tenants</span>
           </Link>
           <Link to="/owner/rooms" className="qa-item">
-            <div className="qa-icon" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>
+            <div className="qa-icon" style={{ color: '#10b981' }}>
               <DoorOpen size={24} />
             </div>
             <span>Rooms</span>
           </Link>
           <div className="qa-item" onClick={() => document.getElementById('notice-form')?.scrollIntoView({ behavior: 'smooth' })}>
-            <div className="qa-icon" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }}>
+            <div className="qa-icon" style={{ color: '#f59e0b' }}>
               <Bell size={24} />
             </div>
             <span>Notice</span>
           </div>
           <div className="qa-item" onClick={() => document.getElementById('menu-form')?.scrollIntoView({ behavior: 'smooth' })}>
-            <div className="qa-icon" style={{ color: '#8b5cf6', background: 'rgba(139, 92, 246, 0.1)' }}>
+            <div className="qa-icon" style={{ color: '#8b5cf6' }}>
               <Utensils size={24} />
             </div>
             <span>Add Menu</span>
           </div>
           <Link to="/owner/complaints" className="qa-item">
-            <div className="qa-icon" style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)' }}>
+            <div className="qa-icon" style={{ color: '#ef4444' }}>
               <MessageSquare size={24} />
             </div>
             <span>Complaints</span>
