@@ -8,16 +8,45 @@ import { useTheme } from '../context/ThemeContext';
 import { supabase } from '../supabaseClient';
 import './AuthPage.css';
 
+const languages = [
+  { id: 'en', native: 'English', english: 'English' },
+  { id: 'hi', native: 'हिंदी', english: 'Hindi' },
+  { id: 'gu', native: 'ગુજરાતી', english: 'Gujarati' },
+  { id: 'kn', native: 'ಕನ್ನಡ', english: 'Kannada' },
+  { id: 'ta', native: 'தமிழ்', english: 'Tamil' },
+  { id: 'te', native: 'తెలుగు', english: 'Telugu' },
+  { id: 'bn', native: 'বাংলা', english: 'Bangla' },
+  { id: 'mr', native: 'मراठी', english: 'Marathi' },
+];
+
 const AuthPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { loginContext, user: authUser } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
+  
+  // Layout and Flow States
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [mobileStep, setMobileStep] = useState(() => {
+    const savedLang = localStorage.getItem('easyPG_lang');
+    return savedLang ? 'email' : 'language';
+  });
+  const [selectedLang, setSelectedLang] = useState('en');
+  const [emailInput, setEmailInput] = useState('');
+  const [mobileRole, setMobileRole] = useState('owner'); // default registration role
+
   const [isLogin, setIsLogin] = useState(location.pathname !== '/register');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+
+  // Handle mobile detection resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (authUser) navigate(authUser.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
@@ -58,6 +87,321 @@ const AuthPage = () => {
     } catch (err) { toast.error(err.message || 'Google login failed'); }
   };
 
+  // ==================== MOBILE AUTH LAYOUTS ====================
+  if (isMobile) {
+    return (
+      <div className={`mobile-auth-wrapper ${!isDarkMode ? 'light' : ''}`}>
+        
+        {/* Step 1: Language selection */}
+        {mobileStep === 'language' && (
+          <div className="mobile-auth-container lang-selection-screen">
+            <div className="mobile-auth-header-row">
+              <h2>Choose Language</h2>
+              <button className="close-btn" onClick={() => setMobileStep('email')}>&times;</button>
+            </div>
+            <p className="lang-note">
+              Note: Some translations are still in progress. We appreciate your patience as we work to improve the app's language support.
+            </p>
+            
+            <div className="lang-grid">
+              {languages.map((lang) => {
+                const isSelected = selectedLang === lang.id;
+                return (
+                  <div 
+                    key={lang.id} 
+                    className={`lang-card ${isSelected ? 'selected' : ''}`}
+                    onClick={() => setSelectedLang(lang.id)}
+                  >
+                    <div className="lang-card-main">
+                      <span className="lang-native">{lang.native}</span>
+                      <span className="lang-english">{lang.english}</span>
+                    </div>
+                    {isSelected && (
+                      <div className="lang-tick">
+                        <CheckCircle2 size={18} fill="#2563eb" color="#ffffff" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="bottom-btn-container">
+              <button 
+                className="mobile-continue-btn"
+                onClick={() => {
+                  localStorage.setItem('easyPG_lang', selectedLang);
+                  setMobileStep('email');
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Email input screen */}
+        {mobileStep === 'email' && (
+          <div className="mobile-auth-container email-entry-screen">
+            <div className="mobile-auth-top-actions">
+              <button className="lang-select-btn" onClick={() => setMobileStep('language')}>
+                🌐 {languages.find(l => l.id === selectedLang)?.english || 'English'}
+              </button>
+            </div>
+            
+            <div className="mobile-auth-hero">
+              <div className="app-circle-logo">
+                <span>easyPG</span>
+              </div>
+              <h1 className="app-super-title">easyPG</h1>
+              <p className="app-super-subtitle">India's Renting SuperApp 🚀</p>
+            </div>
+            
+            <div className="mobile-auth-form-card">
+              <label className="mobile-input-label">Login with email</label>
+              <div className="mobile-input-field">
+                <Mail size={18} className="mobile-input-icon" />
+                <input 
+                  type="email" 
+                  placeholder="name@company.com"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  className="mobile-email-input"
+                />
+              </div>
+              
+              <button 
+                className="mobile-continue-btn"
+                disabled={loading}
+                onClick={async () => {
+                  if (!emailInput || !emailInput.includes('@')) {
+                    toast.error('Please enter a valid email address');
+                    return;
+                  }
+                  setLoading(true);
+                  try {
+                    // Check if user exists
+                    const { data, error } = await supabase
+                      .from('users')
+                      .select('id, name')
+                      .eq('email', emailInput.trim().toLowerCase())
+                      .maybeSingle();
+                    
+                    if (error) throw error;
+                    
+                    if (data) {
+                      // User exists -> go to password login
+                      setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
+                      setMobileStep('password_login');
+                    } else {
+                      // New user -> go to register
+                      setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
+                      setMobileStep('register');
+                    }
+                  } catch (err) {
+                    toast.error(err.message || 'Error checking user account');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                {loading ? <Loader2 size={20} className="animate-spin" /> : 'Continue'}
+              </button>
+              
+              <p className="mobile-disclaimer">
+                By continuing you agree to our <br/>
+                <a href="/terms" target="_blank" rel="noreferrer">Terms of Service</a> & <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>
+              </p>
+            </div>
+            
+            <div className="mobile-auth-footer-toggle">
+              {mobileRole === 'owner' ? (
+                <p>Are you a tenant? <span className="toggle-role-link" onClick={() => setMobileRole('tenant')}>Go To Tenant App</span></p>
+              ) : (
+                <p>Are you an owner? <span className="toggle-role-link" onClick={() => setMobileRole('owner')}>Go To Owner App</span></p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Password Login screen */}
+        {mobileStep === 'password_login' && (
+          <div className="mobile-auth-container password-entry-screen">
+            <div className="mobile-auth-hero">
+              <div className="app-circle-logo">
+                <span>easyPG</span>
+              </div>
+              <h1 className="app-super-title">Welcome Back</h1>
+              <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
+                Enter password for <strong style={{color: 'var(--text-bright)'}}>{emailInput}</strong>
+              </p>
+            </div>
+            
+            <div className="mobile-auth-form-card">
+              <div className="mobile-input-field">
+                <Lock size={18} className="mobile-input-icon" />
+                <input 
+                  type={showPassword ? 'text' : 'password'} 
+                  placeholder="Enter password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="mobile-email-input"
+                />
+                <button 
+                  type="button" 
+                  className="mobile-eye-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              
+              <button 
+                className="mobile-continue-btn"
+                disabled={loading}
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const res = await api.post('/api/auth/login', { email: formData.email, password: formData.password });
+                    loginContext(res.data);
+                    toast.success('Welcome back!');
+                    navigate(res.data.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
+                  } catch (err) {
+                    toast.error(err.response?.data?.details || err.response?.data?.error || err.message || 'Login failed');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                {loading ? <Loader2 size={20} className="animate-spin" /> : 'Log In'}
+              </button>
+              
+              <div className="password-links">
+                <Link to="/forgot-password" style={{ color: '#2563eb', fontSize: '.85rem', textDecoration: 'none' }}>Forgot password?</Link>
+                <span className="back-link" onClick={() => setMobileStep('email')}>Change email</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Register Profile screen */}
+        {mobileStep === 'register' && (
+          <div className="mobile-auth-container register-screen">
+            <div className="mobile-auth-hero">
+              <div className="app-circle-logo">
+                <span>easyPG</span>
+              </div>
+              <h1 className="app-super-title">Create Account</h1>
+              <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
+                Setting up profile for <strong style={{color: 'var(--text-bright)'}}>{emailInput}</strong>
+              </p>
+            </div>
+            
+            <div className="mobile-auth-form-card">
+              <div className="mobile-input-field" style={{ marginBottom: '0.2rem' }}>
+                <User size={18} className="mobile-input-icon" />
+                <input 
+                  type="text" 
+                  placeholder="Your Full Name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="mobile-email-input"
+                />
+              </div>
+              
+              <div className="mobile-input-field" style={{ marginBottom: '0.2rem' }}>
+                <Lock size={18} className="mobile-input-icon" />
+                <input 
+                  type={showPassword ? 'text' : 'password'} 
+                  placeholder="Create Password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="mobile-email-input"
+                />
+                <button 
+                  type="button" 
+                  className="mobile-eye-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              
+              <div className="mobile-input-field">
+                <Lock size={18} className="mobile-input-icon" />
+                <input 
+                  type={showConfirmPassword ? 'text' : 'password'} 
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  className="mobile-email-input"
+                />
+                <button 
+                  type="button" 
+                  className="mobile-eye-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              
+              <button 
+                className="mobile-continue-btn"
+                disabled={loading}
+                onClick={async () => {
+                  if (!formData.name.trim()) {
+                    toast.error('Please enter your name');
+                    return;
+                  }
+                  if (formData.password.length < 6) {
+                    toast.error('Password must be at least 6 characters');
+                    return;
+                  }
+                  if (formData.password !== formData.confirmPassword) {
+                    toast.error('Passwords do not match');
+                    return;
+                  }
+                  setLoading(true);
+                  try {
+                    // Register with the chosen role preference
+                    const res = await api.post('/api/auth/register', { 
+                      name: formData.name, 
+                      email: formData.email, 
+                      password: formData.password,
+                      role: mobileRole 
+                    });
+                    loginContext(res.data);
+                    toast.success('Account created successfully!');
+                    
+                    if (res.data.role === 'owner') {
+                      navigate('/select-plan');
+                    } else if (res.data.role === 'tenant') {
+                      navigate('/tenant/join');
+                    } else {
+                      navigate('/select-role');
+                    }
+                  } catch (err) {
+                    toast.error(err.response?.data?.details || err.response?.data?.error || err.message || 'Registration failed');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                {loading ? <Loader2 size={20} className="animate-spin" /> : 'Register'}
+              </button>
+              
+              <div className="password-links" style={{ justifyContent: 'center' }}>
+                <span className="back-link" onClick={() => setMobileStep('email')}>Back</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    );
+  }
+
+  // ==================== DESKTOP AUTH LAYOUT ====================
   return (
     <div className={`auth-page-v2 ${!isDarkMode ? 'light' : ''}`}>
       <div className="auth-wrapper">

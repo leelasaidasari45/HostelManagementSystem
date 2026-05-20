@@ -493,3 +493,336 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ========== Mobile Authentication Experience ========== */
+.mobile-auth-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: var(--bg-void);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-bright);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mobile-auth-wrapper.light {
+  background: #ffffff;
+  color: #1e293b;
+}
+
+.mobile-auth-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Language Selection Step */
+.lang-selection-screen {
+  padding-bottom: 5.5rem; /* Room for bottom button */
+}
+
+.mobile-auth-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-auth-header-row h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.75rem;
+  cursor: pointer;
+  color: var(--text-dim);
+  padding: 0.5rem;
+}
+
+.lang-note {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.lang-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.lang-card {
+  border: 1.5px solid var(--border-muted);
+  border-radius: 14px;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  position: relative;
+  background: var(--bg-surface);
+}
+
+.light .lang-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.lang-card.selected {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.lang-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.lang-native {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.light .lang-native {
+  color: #0f172a;
+}
+
+.lang-english {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+}
+
+.lang-tick {
+  display: flex;
+  align-items: center;
+  color: #2563eb;
+}
+
+.bottom-btn-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
+  background: var(--bg-void);
+  border-top: 1px solid var(--border-subtle);
+  z-index: 100;
+}
+
+.light .bottom-btn-container {
+  background: #ffffff;
+  border-color: #f1f5f9;
+}
+
+.mobile-continue-btn {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 0.95rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.mobile-continue-btn:hover:not(:disabled) {
+  opacity: 0.95;
+}
+
+.mobile-continue-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Email/Form Screens */
+.mobile-auth-top-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.lang-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-muted);
+  border-radius: 99px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  cursor: pointer;
+}
+
+.light .lang-select-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.mobile-auth-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.app-circle-logo {
+  width: 72px;
+  height: 72px;
+  background: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 1.15rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+  border: 4px solid #ffffff;
+}
+
+.app-super-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.app-super-subtitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.mobile-auth-form-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.mobile-input-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: -0.5rem;
+}
+
+.mobile-input-field {
+  position: relative;
+  width: 100%;
+}
+
+.mobile-input-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-ghost);
+  pointer-events: none;
+}
+
+.mobile-email-input {
+  width: 100%;
+  padding: 0.9rem 1.1rem 0.9rem 3rem;
+  border: 1.5px solid var(--border-muted);
+  border-radius: 14px;
+  background: var(--bg-surface);
+  color: var(--text-bright);
+  font-size: 1.05rem;
+  transition: all 0.2s ease;
+}
+
+.light .mobile-email-input {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.mobile-email-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.mobile-eye-toggle {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-ghost);
+  cursor: pointer;
+  padding: 0.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.mobile-disclaimer {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.mobile-disclaimer a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.mobile-auth-footer-toggle {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin-top: auto;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+.toggle-role-link {
+  color: #2563eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.password-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -0.25rem;
+}
+
+.back-link {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
