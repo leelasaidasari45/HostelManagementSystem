@@ -412,6 +412,7 @@ router.get('/analytics', async (req, res) => {
 
     let totalCollection = 0;
     let lastMonthCollection = 0;
+    let totalDues = 0;
 
     if (tenantIds.length > 0) {
       const { data: thisMonthPayments } = await supabase
@@ -431,6 +432,41 @@ router.get('/analytics', async (req, res) => {
 
       totalCollection = (thisMonthPayments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
       lastMonthCollection = (lastMonthPayments || []).reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+      // Calculate dues for active tenants in the current month
+      const { data: activeAllocations } = await supabase
+        .from('allocations')
+        .select('rent_amount, tenant_id, beds!inner(rooms!inner(floors!inner(hostel_id)))')
+        .in('status', ['active', 'vacating'])
+        .eq('beds.rooms.floors.hostel_id', hostelId);
+
+      if (activeAllocations && activeAllocations.length > 0) {
+        const activeTenantIds = activeAllocations.map(a => a.tenant_id).filter(Boolean);
+        if (activeTenantIds.length > 0) {
+          // Fetch payments made by active tenants this month
+          const { data: activeTenantsPayments } = await supabase
+            .from('payments')
+            .select('tenant_id, amount')
+            .in('tenant_id', activeTenantIds)
+            .gte('paid_at', thisMonthStart)
+            .eq('status', 'completed');
+
+          // Group payments by tenant
+          const tenantPaidMap = {};
+          (activeTenantsPayments || []).forEach(p => {
+            tenantPaidMap[p.tenant_id] = (tenantPaidMap[p.tenant_id] || 0) + (Number(p.amount) || 0);
+          });
+
+          // Dues for each tenant is their rent_amount minus their payment this month (min 0)
+          activeAllocations.forEach(a => {
+            const paid = tenantPaidMap[a.tenant_id] || 0;
+            const due = (Number(a.rent_amount) || 0) - paid;
+            if (due > 0) {
+              totalDues += due;
+            }
+          });
+        }
+      }
     }
 
     const collectionTrend = lastMonthCollection > 0
@@ -451,6 +487,7 @@ router.get('/analytics', async (req, res) => {
          occupancyRate,
          totalCollection,
          lastMonthCollection,
+         totalDues,
          collectionTrend,
          totalTenants,
          availableRooms: totalCapacity - totalTenants

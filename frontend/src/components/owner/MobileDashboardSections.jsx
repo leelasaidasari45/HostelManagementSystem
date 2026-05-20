@@ -6,7 +6,12 @@ import toast from 'react-hot-toast';
 import './MobileDashboardSections.css';
 
 const MobileDashboardSections = ({ analytics, activeHostel }) => {
-  const currentMonth = new Date().toLocaleString('default', { month: 'short' });
+  const now = new Date();
+  const currentMonth = now.toLocaleString('default', { month: 'short' });
+  const lastMonthDate = new Date();
+  lastMonthDate.setMonth(now.getMonth() - 1);
+  const lastMonthName = lastMonthDate.toLocaleString('default', { month: 'short' });
+
   const [activeSlide, setActiveSlide] = React.useState(0);
   const carouselRef = React.useRef(null);
 
@@ -35,16 +40,6 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
         <div className="summary-cards-scroll">
           <div className="summary-card">
             <div className="sc-top">
-              <span className="sc-value green">₹0</span>
-            </div>
-            <div className="sc-bottom">
-              <span className="sc-label">Today's<br/>Collection</span>
-              <Coins size={14} className="sc-icon green" />
-            </div>
-          </div>
-
-          <div className="summary-card">
-            <div className="sc-top">
               <span className="sc-value green">₹{analytics?.metrics?.totalCollection?.toLocaleString() || 0}</span>
             </div>
             <div className="sc-bottom">
@@ -55,7 +50,17 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
 
           <div className="summary-card">
             <div className="sc-top">
-              <span className="sc-value red">₹0</span>
+              <span className="sc-value green">₹{analytics?.metrics?.lastMonthCollection?.toLocaleString() || 0}</span>
+            </div>
+            <div className="sc-bottom">
+              <span className="sc-label">{lastMonthName}'s<br/>Collection</span>
+              <Coins size={14} className="sc-icon green" />
+            </div>
+          </div>
+
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value red">₹{analytics?.metrics?.totalDues?.toLocaleString() || 0}</span>
             </div>
             <div className="sc-bottom">
               <span className="sc-label">{currentMonth}'s<br/>Dues</span>
