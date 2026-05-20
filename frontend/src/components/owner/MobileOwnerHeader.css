@@ -18,9 +18,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #3b82f6; /* Vibrant blue */
+    background-color: var(--bg-elevated);
     padding: max(1rem, env(safe-area-inset-top)) 1rem 1rem 1rem;
-    color: white;
+    color: var(--text-bright);
+    border-bottom: 1px solid var(--border-muted);
   }
 
   .header-left {
@@ -35,8 +36,8 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: white;
-    border: 2px solid rgba(255,255,255,0.8);
+    background: var(--bg-base);
+    border: 2px solid var(--border-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,12 +86,29 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid var(--border-muted);
     background: transparent;
-    color: white;
+    color: var(--text-bright);
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* Light mode overrides to restore vibrant blue theme */
+  .light-mode .mobile-header-top {
+    background-color: #3b82f6;
+    color: white;
+    border-bottom: none;
+  }
+  
+  .light-mode .header-logo {
+    background: white;
+    border: 2px solid rgba(255,255,255,0.8);
+  }
+
+  .light-mode .icon-circle-btn {
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
   }
 
   .mobile-header-search {
