@@ -109,7 +109,7 @@ const OwnerDashboard = () => {
             </div>
 
             {/* Mobile Specific Sections (Hidden on Desktop) */}
-            <MobileDashboardSections analytics={loading ? null : analytics} />
+            <MobileDashboardSections analytics={loading ? null : analytics} activeHostel={activeHostel} />
 
             {/* Widget row (Hidden on Mobile) */}
             <div className="grid gap-6 desktop-only-widgets" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>

@@ -388,4 +388,100 @@
     justify-content: center;
     transition: transform 0.2s ease;
   }
+
+  /* Credentials Card */
+  .credentials-card {
+    display: flex;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-muted);
+    border-radius: 16px;
+    padding: 1.25rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  }
+
+  .credentials-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .cred-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: rgba(234, 88, 12, 0.1);
+    color: #ea580c;
+    border-radius: 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    width: fit-content;
+    margin-bottom: 0.25rem;
+  }
+
+  .credentials-left h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-bright);
+  }
+
+  .code-display-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.4rem 0;
+  }
+
+  .code-val {
+    font-family: 'JetBrains Mono', monospace, monospace;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ea580c;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-btn-mini {
+    background: var(--bg-base);
+    border: 1px solid var(--border-muted);
+    color: var(--text-bright);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .copy-btn-mini:active {
+    transform: scale(0.95);
+    background: var(--border-muted);
+  }
+
+  .cred-desc {
+    margin: 0;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    line-height: 1.3;
+  }
+
+  .credentials-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qr-container-mini {
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border-muted);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, TrendingUp, Smartphone, ShieldCheck, Zap, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import toast from 'react-hot-toast';
 import './MobileDashboardSections.css';
 
-const MobileDashboardSections = ({ analytics }) => {
+const MobileDashboardSections = ({ analytics, activeHostel }) => {
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });
   const [activeSlide, setActiveSlide] = React.useState(0);
   const carouselRef = React.useRef(null);
@@ -62,6 +64,42 @@ const MobileDashboardSections = ({ analytics }) => {
           </div>
         </div>
       </section>
+
+      {/* Hostel Access Credentials */}
+      {activeHostel && (
+        <section className="dashboard-section mt-4">
+          <h2 className="section-title">Property Access</h2>
+          <div className="credentials-card">
+            <div className="credentials-left">
+              <span className="cred-badge">Active Code</span>
+              <h3>{activeHostel.name || 'Hostel Code'}</h3>
+              <div className="code-display-wrapper">
+                <span className="code-val">{activeHostel.code}</span>
+                <button 
+                  className="copy-btn-mini" 
+                  onClick={() => { 
+                    navigator.clipboard.writeText(`${window.location.origin}/tenant/join?code=${activeHostel.code}`); 
+                    toast.success('Join link copied!'); 
+                  }}
+                >
+                  Copy Link
+                </button>
+              </div>
+              <p className="cred-desc">Share this code or QR with tenants to join.</p>
+            </div>
+            <div className="credentials-right">
+              <div className="qr-container-mini">
+                <QRCodeSVG 
+                  value={`${window.location.origin}/tenant/join?code=${activeHostel.code}`} 
+                  size={75} 
+                  fgColor="#000000"
+                  bgColor="#ffffff"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Quick Actions */}
       <section className="dashboard-section mt-4">
