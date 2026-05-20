@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import OwnerHeader from '../../components/owner/OwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
+import MobileBottomNav from '../../components/owner/MobileBottomNav';
+import MobileDashboardSections from '../../components/owner/MobileDashboardSections';
 import './OwnerDashboard.css';
 
 const OwnerDashboard = () => {
@@ -40,8 +42,10 @@ const OwnerDashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      <OwnerSidebar />
-      <main className="dashboard-content fade-in">
+      <div className="desktop-sidebar-wrapper">
+        <OwnerSidebar />
+      </div>
+      <main className="dashboard-content fade-in mobile-pb">
         <OwnerHeader title="Overview" subtitle="Managing" />
 
         {loading ? (
@@ -92,8 +96,11 @@ const OwnerDashboard = () => {
               </div>
             </div>
 
-            {/* Widget row */}
-            <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>
+            {/* Mobile Specific Sections (Hidden on Desktop) */}
+            <MobileDashboardSections />
+
+            {/* Widget row (Hidden on Mobile) */}
+            <div className="grid gap-6 desktop-only-widgets" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>
               {/* Notice */}
               <div className="glass-panel p-6 slide-up">
                 <div style={{ display:'flex', alignItems:'center', gap:'.5rem', marginBottom:'1.25rem' }}>
@@ -170,6 +177,7 @@ const OwnerDashboard = () => {
           </>
         )}
       </main>
+      <MobileBottomNav />
     </div>
   );
 };

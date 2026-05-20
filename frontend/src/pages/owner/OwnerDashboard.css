@@ -19,6 +19,38 @@
 body.hide-sidebar-all .sidebar { display: none !important; }
 body.hide-sidebar-all .dashboard-layout { grid-template-columns: 1fr !important; }
 
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .desktop-sidebar-wrapper {
+    display: none;
+  }
+  
+  .desktop-only-widgets {
+    display: none !important;
+  }
+  
+  .mobile-pb {
+    padding-bottom: 90px !important; /* Space for MobileBottomNav */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1.5rem;
+  }
+}
+
 /* Override glass-panel hover on sidebar */
 .sidebar:hover { box-shadow: none; border-color: var(--border-subtle); }
 

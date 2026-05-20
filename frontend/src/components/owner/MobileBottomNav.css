@@ -1,0 +1,152 @@
+/* Mobile Bottom Nav - Only visible on small screens */
+.mobile-bottom-nav {
+  display: none; /* Hidden on desktop by default */
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--border-muted);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom, 0px); /* For iOS home indicator */
+  }
+
+  .mobile-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-ghost);
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 600;
+    gap: 4px;
+    flex: 1;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .mobile-bottom-nav .nav-item.active,
+  .mobile-bottom-nav .nav-item:active {
+    color: var(--aurora-1);
+  }
+
+  .nav-item-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    top: -15px;
+  }
+
+  .center-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
+    color: white;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    text-decoration: none;
+  }
+
+  /* Slide-up More Menu */
+  .more-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(2px);
+  }
+
+  .more-menu-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .more-menu-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-elevated);
+    border-radius: 20px 20px 0 0;
+    padding: 1.5rem;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .more-menu-content.slide-up-active {
+    transform: translateY(0);
+  }
+
+  .more-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-muted);
+    padding-bottom: 1rem;
+  }
+
+  .more-menu-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+  }
+
+  .more-menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .more-menu-links a, .more-menu-links button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem;
+    background: var(--bg-base);
+    border: 1px solid var(--border-muted);
+    border-radius: 12px;
+    color: var(--text-bright);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    text-align: left;
+  }
+
+  .more-menu-links button.logout-btn {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.05);
+  }
+}
