@@ -49,11 +49,7 @@ const OwnerDashboard = () => {
           <OwnerHeader title="Overview" subtitle="Managing" />
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 size={40} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
-          </div>
-        ) : !analytics?.hostel ? (
+        {!activeHostel ? (
           <div className="glass-panel p-8 text-center" style={{ maxWidth: 480, margin: '4rem auto' }}>
             <div style={{ width:72, height:72, background:'rgba(124,58,237,0.12)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 1.5rem' }}>
               <Building2 size={36} style={{ color: 'var(--aurora-1)' }} />
@@ -68,6 +64,19 @@ const OwnerDashboard = () => {
           <>
             {/* KPI Stats (Desktop Only) */}
             <div className="stats-grid slide-up desktop-only-widgets">
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="stat-card" style={{ opacity: 0.7 }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                      <div style={{ width: 100, height: 16, background: 'var(--bg-elevated)', borderRadius: 4 }}></div>
+                      <div style={{ width: 18, height: 18, background: 'var(--bg-elevated)', borderRadius: '50%' }}></div>
+                    </div>
+                    <div style={{ width: 140, height: 32, background: 'var(--bg-elevated)', borderRadius: 6, margin: '0.5rem 0' }}></div>
+                    <div style={{ width: 80, height: 14, background: 'var(--bg-elevated)', borderRadius: 4 }}></div>
+                  </div>
+                ))
+              ) : (
+                <>
               <div className="stat-card">
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <p>Total Collection</p>
@@ -95,13 +104,21 @@ const OwnerDashboard = () => {
                 <h3>{analytics.metrics.occupancyRate}%</h3>
                 <span className="stat-trend">{analytics.metrics.availableRooms} rooms available</span>
               </div>
+                </>
+              )}
             </div>
 
             {/* Mobile Specific Sections (Hidden on Desktop) */}
-            <MobileDashboardSections analytics={analytics} />
+            <MobileDashboardSections analytics={loading ? null : analytics} />
 
             {/* Widget row (Hidden on Mobile) */}
             <div className="grid gap-6 desktop-only-widgets" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>
+              {loading ? (
+                <div className="flex justify-center items-center h-64 w-full" style={{ gridColumn: '1 / -1' }}>
+                  <Loader2 size={40} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
+                </div>
+              ) : (
+                <>
               {/* Notice */}
               <div className="glass-panel p-6 slide-up">
                 <div style={{ display:'flex', alignItems:'center', gap:'.5rem', marginBottom:'1.25rem' }}>
@@ -174,6 +191,8 @@ const OwnerDashboard = () => {
                   Copy Join Link
                 </button>
               </div>
+                </>
+              )}
             </div>
           </>
         )}

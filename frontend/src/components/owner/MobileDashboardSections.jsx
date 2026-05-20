@@ -93,14 +93,14 @@ const MobileDashboardSections = ({ analytics }) => {
       <section className="dashboard-section">
         <h2 className="section-title">New Features</h2>
         <div className="features-carousel">
-          <div className="feature-banner" style={{ background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' }}>
+          <div className="feature-banner banner-purple">
             <div className="feature-badge" style={{ color: '#4338ca', background: '#fff' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
             </div>
             <h3>Never Miss Tenants With<br/><span style={{ background: '#4f46e5', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
             <p>Tenants scan and join instantly without manual entry.</p>
           </div>
-          <div className="feature-banner" style={{ background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)' }}>
+          <div className="feature-banner banner-green">
             <div className="feature-badge" style={{ color: '#047857', background: '#fff' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> Now Live
             </div>

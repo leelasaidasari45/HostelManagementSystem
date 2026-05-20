@@ -179,6 +179,18 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
   }
   
+  .banner-purple {
+    background: var(--bg-elevated);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
+  }
+
+  .banner-green {
+    background: var(--bg-elevated);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05);
+  }
+  
   .feature-badge .dot {
     width: 6px;
     height: 6px;
@@ -189,15 +201,20 @@
     font-size: 1.25rem;
     margin: 0 0 0.5rem 0;
     line-height: 1.4;
-    color: #1e1e1e !important;
+    color: var(--text-bright);
   }
   
   .feature-banner p {
     font-size: 0.85rem;
     margin: 0;
     opacity: 0.9;
-    color: #1e1e1e !important;
+    color: var(--text-dim);
   }
+
+  /* Light mode overrides for banners */
+  .light-mode .banner-purple { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border: none; }
+  .light-mode .banner-green { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: none; }
+  .light-mode .feature-banner h3, .light-mode .feature-banner p { color: #1e1e1e !important; }
   
   /* Join Community */
   .community-banner {
@@ -281,15 +298,28 @@
     text-align: center;
     position: relative;
     overflow: hidden;
+    background: var(--bg-elevated);
   }
   
-  .smart-card.bg-blue { background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%); color: #1e3a8a !important; }
-  .smart-card.bg-orange { background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%); color: #9a3412 !important; }
-  .smart-card.bg-green { background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46 !important; }
+  /* Dark mode default for smart cards */
+  .smart-card.bg-blue { border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.05); }
+  .smart-card.bg-orange { border: 1px solid rgba(249, 115, 22, 0.3); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.05); }
+  .smart-card.bg-green { border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05); }
   
-  .smart-card.bg-blue h4, .smart-card.bg-blue p, .smart-card.bg-blue .smart-icon { color: #1e3a8a !important; }
-  .smart-card.bg-orange h4, .smart-card.bg-orange p, .smart-card.bg-orange .smart-icon { color: #9a3412 !important; }
-  .smart-card.bg-green h4, .smart-card.bg-green p, .smart-card.bg-green .smart-icon { color: #065f46 !important; }
+  .smart-card h4 { color: var(--text-bright); }
+  .smart-card p { color: var(--text-dim); }
+  .smart-card.bg-blue .smart-icon { color: #3b82f6; }
+  .smart-card.bg-orange .smart-icon { color: #f97316; }
+  .smart-card.bg-green .smart-icon { color: #10b981; }
+
+  /* Light mode overrides for smart cards */
+  .light-mode .smart-card.bg-blue { background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%); border: none; }
+  .light-mode .smart-card.bg-orange { background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%); border: none; }
+  .light-mode .smart-card.bg-green { background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%); border: none; }
+  
+  .light-mode .smart-card.bg-blue h4, .light-mode .smart-card.bg-blue p, .light-mode .smart-card.bg-blue .smart-icon { color: #1e3a8a !important; }
+  .light-mode .smart-card.bg-orange h4, .light-mode .smart-card.bg-orange p, .light-mode .smart-card.bg-orange .smart-icon { color: #9a3412 !important; }
+  .light-mode .smart-card.bg-green h4, .light-mode .smart-card.bg-green p, .light-mode .smart-card.bg-green .smart-icon { color: #065f46 !important; }
   
   .smart-card h4 {
     font-size: 0.9rem;
