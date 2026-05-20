@@ -1,12 +1,14 @@
 import React from 'react';
-import { ChevronDown, Bell, HelpCircle, Search, Sun, Moon } from 'lucide-react';
+import { ChevronDown, LogOut, HelpCircle, Search, Sun, Moon } from 'lucide-react';
 import { useHostel } from '../../context/HostelContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import './MobileOwnerHeader.css';
 
 const MobileOwnerHeader = () => {
   const { activeHostel, hostels, switchHostel } = useHostel();
   const { isDarkMode, toggleTheme } = useTheme();
+  const { logoutContext } = useAuth();
 
   const handleSwitch = (e) => {
     switchHostel(e.target.value);
@@ -40,8 +42,8 @@ const MobileOwnerHeader = () => {
           <button className="icon-circle-btn" onClick={toggleTheme} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          <button className="icon-circle-btn">
-            <Bell size={18} />
+          <button className="icon-circle-btn" onClick={logoutContext} title="Logout">
+            <LogOut size={18} />
           </button>
           <button className="icon-circle-btn">
             <HelpCircle size={18} />
