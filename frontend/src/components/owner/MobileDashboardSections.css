@@ -302,22 +302,22 @@
   }
   
   /* Dark mode default for smart cards */
-  .smart-card.bg-blue { border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.05); }
+  .smart-card.bg-purple { border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 4px 20px rgba(139, 92, 246, 0.05); }
   .smart-card.bg-orange { border: 1px solid rgba(249, 115, 22, 0.3); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.05); }
   .smart-card.bg-green { border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05); }
   
   .smart-card h4 { color: var(--text-bright); }
   .smart-card p { color: var(--text-dim); }
-  .smart-card.bg-blue .smart-icon { color: #3b82f6; }
+  .smart-card.bg-purple .smart-icon { color: #8b5cf6; }
   .smart-card.bg-orange .smart-icon { color: #f97316; }
   .smart-card.bg-green .smart-icon { color: #10b981; }
 
   /* Light mode overrides for smart cards */
-  .light-mode .smart-card.bg-blue { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; }
+  .light-mode .smart-card.bg-purple { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border: none; }
   .light-mode .smart-card.bg-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border: none; }
   .light-mode .smart-card.bg-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; }
   
-  .light-mode .smart-card.bg-blue h4, .light-mode .smart-card.bg-blue p, .light-mode .smart-card.bg-blue .smart-icon { color: #ffffff !important; }
+  .light-mode .smart-card.bg-purple h4, .light-mode .smart-card.bg-purple p, .light-mode .smart-card.bg-purple .smart-icon { color: #ffffff !important; }
   .light-mode .smart-card.bg-orange h4, .light-mode .smart-card.bg-orange p, .light-mode .smart-card.bg-orange .smart-icon { color: #ffffff !important; }
   .light-mode .smart-card.bg-green h4, .light-mode .smart-card.bg-green p, .light-mode .smart-card.bg-green .smart-icon { color: #ffffff !important; }
   

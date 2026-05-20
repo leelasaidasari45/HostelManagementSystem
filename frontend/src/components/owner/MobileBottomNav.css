@@ -39,7 +39,7 @@
 
   .mobile-bottom-nav .nav-item.active,
   .mobile-bottom-nav .nav-item:active {
-    color: var(--aurora-1);
+    color: #7c3aed;
   }
 
   .nav-item-center {
@@ -57,7 +57,7 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
     color: white;
     box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
     text-decoration: none;

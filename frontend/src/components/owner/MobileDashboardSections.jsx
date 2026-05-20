@@ -57,7 +57,7 @@ const MobileDashboardSections = ({ analytics }) => {
         <h2 className="section-title">Quick Links</h2>
         <div className="quick-actions-scroll">
           <Link to="/owner/tenants" className="qa-item">
-            <div className="qa-icon" style={{ color: '#3b82f6' }}>
+            <div className="qa-icon" style={{ color: '#8b5cf6' }}>
               <Users size={24} />
             </div>
             <span>Tenants</span>
@@ -134,7 +134,7 @@ const MobileDashboardSections = ({ analytics }) => {
       <section className="dashboard-section pb-8">
         <h2 className="section-title">Smart Automations</h2>
         <div className="smart-features-grid">
-          <div className="smart-card bg-blue">
+          <div className="smart-card bg-purple">
             <h4>My Tenant App</h4>
             <div className="smart-icon"><Smartphone size={32} /></div>
             <p>Give your tenants a dedicated portal for dues and complaints.</p>
