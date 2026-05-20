@@ -110,17 +110,19 @@ const MobileDashboardSections = ({ analytics }) => {
         </div>
       </section>
 
-      {/* Join Community */}
+      {/* Help & Support */}
       <section className="dashboard-section">
-        <h2 className="section-title">Owner Community</h2>
+        <h2 className="section-title">Help & Support</h2>
         <a href="https://wa.me/917569621094" target="_blank" rel="noopener noreferrer" className="community-banner">
           <div className="community-content">
-            <div className="live-badge"><span className="dot"></span> Now Live!</div>
-            <h3>PG/Hostel Owners</h3>
-            <div className="wa-channel-badge">
-              <MessageSquare size={16} /> WhatsApp Channel
+            <div className="live-badge" style={{ background: 'rgba(37, 211, 102, 0.1)', color: '#25d366' }}>
+              <span className="dot" style={{ background: '#25d366' }}></span> Active Support
             </div>
-            <p>Stay updated with Smart property Management Insights</p>
+            <h3>Need Help?</h3>
+            <div className="wa-channel-badge">
+              <MessageSquare size={16} /> Chat on WhatsApp
+            </div>
+            <p>Connect with our support team instantly on WhatsApp</p>
           </div>
           <div className="wa-icon-large">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
