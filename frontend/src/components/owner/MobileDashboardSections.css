@@ -135,7 +135,8 @@
     transform: scale(0.95);
   }
   
-  .qa-item span {
+  .qa-item span,
+  .smart-item span {
     font-size: 0.72rem;
     color: var(--text-bright);
     font-weight: 600;
@@ -306,57 +307,14 @@
   }
 
   .smart-icon-wrapper {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-muted);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.2s ease;
-  }
-
-  .smart-item span {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--text-bright);
-    white-space: nowrap;
-  }
-
-  /* Color themes for wrappers in Dark Mode */
-  .smart-icon-wrapper.bg-purple {
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.25);
-    color: #a78bfa;
-  }
-
-  .smart-icon-wrapper.bg-orange {
-    background: rgba(249, 115, 22, 0.1);
-    border: 1px solid rgba(249, 115, 22, 0.25);
-    color: #fb923c;
-  }
-
-  .smart-icon-wrapper.bg-green {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.25);
-    color: #34d399;
-  }
-
-  /* Color themes in Light Mode */
-  .light-mode .smart-icon-wrapper.bg-purple {
-    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-    border: none;
-    color: white;
-  }
-
-  .light-mode .smart-icon-wrapper.bg-orange {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    border: none;
-    color: white;
-  }
-
-  .light-mode .smart-icon-wrapper.bg-green {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    border: none;
-    color: white;
   }
 }

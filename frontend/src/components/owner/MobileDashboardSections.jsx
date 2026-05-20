@@ -135,31 +135,31 @@ const MobileDashboardSections = ({ analytics }) => {
         <h2 className="section-title">Smart Automations</h2>
         <div className="smart-automations-scroll">
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-orange">
+            <div className="smart-icon-wrapper" style={{ color: '#f97316' }}>
               <QrCode size={24} />
             </div>
             <span>QR Onboard</span>
           </div>
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-purple">
+            <div className="smart-icon-wrapper" style={{ color: '#8b5cf6' }}>
               <Key size={24} />
             </div>
             <span>Hostel Codes</span>
           </div>
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-green">
+            <div className="smart-icon-wrapper" style={{ color: '#10b981' }}>
               <Bell size={24} />
             </div>
             <span>Rent Remind</span>
           </div>
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-purple">
+            <div className="smart-icon-wrapper" style={{ color: '#6366f1' }}>
               <Eye size={24} />
             </div>
             <span>Room Visible</span>
           </div>
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-orange">
+            <div className="smart-icon-wrapper" style={{ color: '#ef4444' }}>
               <Wrench size={24} />
             </div>
             <span>Complaints Hub</span>
