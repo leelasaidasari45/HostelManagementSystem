@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, Building2, MessageSquare, Plus, History, ChevronRight, CreditCard } from 'lucide-react';
+import MobileBottomNav from './MobileBottomNav';
 
 const navItems = [
   { to: '/owner/dashboard', icon: <LayoutDashboard size={20} />, label: 'Home' },
@@ -17,8 +18,9 @@ const OwnerSidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <aside className={`sidebar ${expanded ? 'sidebar-exp' : ''}`}>
-      {/* Logo */}
+    <>
+      <aside className={`sidebar desktop-only-sidebar ${expanded ? 'sidebar-exp' : ''}`}>
+        {/* Logo */}
       <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div className="logo-wrap" title="easyPG">
           <img src="/logo.png" alt="easyPG" style={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 6 }} />
@@ -66,6 +68,8 @@ const OwnerSidebar = () => {
         <ChevronRight size={14} />
       </button>
     </aside>
+    <MobileBottomNav />
+    </>
   );
 };
 

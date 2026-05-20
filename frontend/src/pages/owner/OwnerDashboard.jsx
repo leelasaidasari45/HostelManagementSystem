@@ -8,8 +8,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import OwnerHeader from '../../components/owner/OwnerHeader';
 import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
-import MobileBottomNav from '../../components/owner/MobileBottomNav';
 import MobileDashboardSections from '../../components/owner/MobileDashboardSections';
+import WidgetRow from '../../components/owner/WidgetRow';
 import './OwnerDashboard.css';
 
 const OwnerDashboard = () => {
@@ -43,9 +43,7 @@ const OwnerDashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      <div className="desktop-sidebar-wrapper">
-        <OwnerSidebar />
-      </div>
+      <OwnerSidebar />
       <MobileOwnerHeader />
       <main className="dashboard-content fade-in mobile-pb">
         <div className="desktop-only-widgets">
@@ -181,7 +179,6 @@ const OwnerDashboard = () => {
           </>
         )}
       </main>
-      <MobileBottomNav />
     </div>
   );
 };

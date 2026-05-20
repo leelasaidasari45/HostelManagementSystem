@@ -189,12 +189,14 @@
     font-size: 1.25rem;
     margin: 0 0 0.5rem 0;
     line-height: 1.4;
+    color: #1e1e1e !important;
   }
   
   .feature-banner p {
     font-size: 0.85rem;
     margin: 0;
-    opacity: 0.8;
+    opacity: 0.9;
+    color: #1e1e1e !important;
   }
   
   /* Join Community */
@@ -281,9 +283,13 @@
     overflow: hidden;
   }
   
-  .smart-card.bg-blue { background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%); color: #1e3a8a; }
-  .smart-card.bg-orange { background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%); color: #9a3412; }
-  .smart-card.bg-green { background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; }
+  .smart-card.bg-blue { background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%); color: #1e3a8a !important; }
+  .smart-card.bg-orange { background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%); color: #9a3412 !important; }
+  .smart-card.bg-green { background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46 !important; }
+  
+  .smart-card.bg-blue h4, .smart-card.bg-blue p, .smart-card.bg-blue .smart-icon { color: #1e3a8a !important; }
+  .smart-card.bg-orange h4, .smart-card.bg-orange p, .smart-card.bg-orange .smart-icon { color: #9a3412 !important; }
+  .smart-card.bg-green h4, .smart-card.bg-green p, .smart-card.bg-green .smart-icon { color: #065f46 !important; }
   
   .smart-card h4 {
     font-size: 0.9rem;
