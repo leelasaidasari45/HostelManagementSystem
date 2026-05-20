@@ -96,7 +96,7 @@
 
   /* Light mode overrides to restore vibrant blue theme */
   .light-mode .mobile-header-top {
-    background-color: #3b82f6;
+    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
     color: white;
     border-bottom: none;
   }
