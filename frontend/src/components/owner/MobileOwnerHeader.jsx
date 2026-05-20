@@ -18,7 +18,7 @@ const MobileOwnerHeader = () => {
       <header className="mobile-header-top">
         <div className="header-left">
           <div className="header-logo">
-            <span style={{ fontWeight: 800, fontSize: '0.65rem' }}>easyPG</span>
+            <span>easyPG</span>
           </div>
           
           <div className="header-hostel-select">
