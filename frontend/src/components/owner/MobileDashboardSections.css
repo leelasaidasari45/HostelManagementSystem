@@ -283,58 +283,80 @@
   }
   
   /* Smart Property Features */
-  .smart-features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 1rem;
+  .smart-automations-scroll {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding: 0.5rem 0.25rem;
+    scrollbar-width: none;
   }
   
-  .smart-card {
-    border-radius: 16px;
-    padding: 1.25rem;
+  .smart-automations-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .smart-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
+    min-width: 80px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
-    background: var(--bg-elevated);
+    cursor: pointer;
   }
-  
-  /* Dark mode default for smart cards */
-  .smart-card.bg-purple { border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 4px 20px rgba(139, 92, 246, 0.05); }
-  .smart-card.bg-orange { border: 1px solid rgba(249, 115, 22, 0.3); box-shadow: 0 4px 20px rgba(249, 115, 22, 0.05); }
-  .smart-card.bg-green { border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05); }
-  
-  .smart-card h4 { color: var(--text-bright); }
-  .smart-card p { color: var(--text-dim); }
-  .smart-card.bg-purple .smart-icon { color: #8b5cf6; }
-  .smart-card.bg-orange .smart-icon { color: #f97316; }
-  .smart-card.bg-green .smart-icon { color: #10b981; }
 
-  /* Light mode overrides for smart cards */
-  .light-mode .smart-card.bg-purple { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border: none; }
-  .light-mode .smart-card.bg-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border: none; }
-  .light-mode .smart-card.bg-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; }
-  
-  .light-mode .smart-card.bg-purple h4, .light-mode .smart-card.bg-purple p, .light-mode .smart-card.bg-purple .smart-icon { color: #ffffff !important; }
-  .light-mode .smart-card.bg-orange h4, .light-mode .smart-card.bg-orange p, .light-mode .smart-card.bg-orange .smart-icon { color: #ffffff !important; }
-  .light-mode .smart-card.bg-green h4, .light-mode .smart-card.bg-green p, .light-mode .smart-card.bg-green .smart-icon { color: #ffffff !important; }
-  
-  .smart-card h4 {
-    font-size: 0.9rem;
-    margin: 0 0 1rem 0;
-    font-weight: 700;
+  .smart-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
   }
-  
-  .smart-icon {
-    margin-bottom: 1rem;
-    opacity: 0.9;
+
+  .smart-item span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    white-space: nowrap;
   }
-  
-  .smart-card p {
-    font-size: 0.7rem;
-    margin: 0;
-    opacity: 0.8;
+
+  /* Color themes for wrappers in Dark Mode */
+  .smart-icon-wrapper.bg-purple {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    color: #a78bfa;
+  }
+
+  .smart-icon-wrapper.bg-orange {
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    color: #fb923c;
+  }
+
+  .smart-icon-wrapper.bg-green {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #34d399;
+  }
+
+  /* Color themes in Light Mode */
+  .light-mode .smart-icon-wrapper.bg-purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    border: none;
+    color: white;
+  }
+
+  .light-mode .smart-icon-wrapper.bg-orange {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    border: none;
+    color: white;
+  }
+
+  .light-mode .smart-icon-wrapper.bg-green {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: white;
   }
 }

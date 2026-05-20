@@ -133,21 +133,24 @@ const MobileDashboardSections = ({ analytics }) => {
       {/* Smart Property */}
       <section className="dashboard-section pb-8">
         <h2 className="section-title">Smart Automations</h2>
-        <div className="smart-features-grid">
-          <div className="smart-card bg-purple">
-            <h4>My Tenant App</h4>
-            <div className="smart-icon"><Smartphone size={32} /></div>
-            <p>Give your tenants a dedicated portal for dues and complaints.</p>
+        <div className="smart-automations-scroll">
+          <div className="smart-item">
+            <div className="smart-icon-wrapper bg-purple">
+              <Smartphone size={24} />
+            </div>
+            <span>Tenant App</span>
           </div>
-          <div className="smart-card bg-orange">
-            <h4>QR Onboarding</h4>
-            <div className="smart-icon"><QrCode size={32} /></div>
-            <p>Zero friction entry for new tenants with scannable QRs.</p>
+          <div className="smart-item">
+            <div className="smart-icon-wrapper bg-orange">
+              <QrCode size={24} />
+            </div>
+            <span>QR Onboard</span>
           </div>
-          <div className="smart-card bg-green">
-            <h4>Auto Billing</h4>
-            <div className="smart-icon"><Zap size={32} /></div>
-            <p>Automated reminders and integrated rent collection.</p>
+          <div className="smart-item">
+            <div className="smart-icon-wrapper bg-green">
+              <Zap size={24} />
+            </div>
+            <span>Auto Billing</span>
           </div>
         </div>
       </section>
