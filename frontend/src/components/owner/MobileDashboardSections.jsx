@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, TrendingUp, Smartphone, ShieldCheck, Zap, ChevronDown, Coins, ClipboardList } from 'lucide-react';
+import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, TrendingUp, Smartphone, ShieldCheck, Zap, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench } from 'lucide-react';
 import './MobileDashboardSections.css';
 
 const MobileDashboardSections = ({ analytics }) => {
@@ -135,22 +135,34 @@ const MobileDashboardSections = ({ analytics }) => {
         <h2 className="section-title">Smart Automations</h2>
         <div className="smart-automations-scroll">
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-purple">
-              <Smartphone size={24} />
-            </div>
-            <span>Tenant App</span>
-          </div>
-          <div className="smart-item">
             <div className="smart-icon-wrapper bg-orange">
               <QrCode size={24} />
             </div>
             <span>QR Onboard</span>
           </div>
           <div className="smart-item">
-            <div className="smart-icon-wrapper bg-green">
-              <Zap size={24} />
+            <div className="smart-icon-wrapper bg-purple">
+              <Key size={24} />
             </div>
-            <span>Auto Billing</span>
+            <span>Hostel Codes</span>
+          </div>
+          <div className="smart-item">
+            <div className="smart-icon-wrapper bg-green">
+              <Bell size={24} />
+            </div>
+            <span>Rent Remind</span>
+          </div>
+          <div className="smart-item">
+            <div className="smart-icon-wrapper bg-purple">
+              <Eye size={24} />
+            </div>
+            <span>Room Visible</span>
+          </div>
+          <div className="smart-item">
+            <div className="smart-icon-wrapper bg-orange">
+              <Wrench size={24} />
+            </div>
+            <span>Complaints Hub</span>
           </div>
         </div>
       </section>
