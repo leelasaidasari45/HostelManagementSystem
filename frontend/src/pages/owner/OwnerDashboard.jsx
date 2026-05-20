@@ -9,7 +9,6 @@ import OwnerHeader from '../../components/owner/OwnerHeader';
 import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import MobileDashboardSections from '../../components/owner/MobileDashboardSections';
-import WidgetRow from '../../components/owner/WidgetRow';
 import './OwnerDashboard.css';
 
 const OwnerDashboard = () => {
