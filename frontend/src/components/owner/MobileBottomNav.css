@@ -3,6 +3,10 @@
   display: none; /* Hidden on desktop by default */
 }
 
+.more-menu-overlay {
+  display: none; /* Hidden on desktop by default */
+}
+
 @media (max-width: 768px) {
   .mobile-bottom-nav {
     display: flex;
@@ -65,6 +69,7 @@
 
   /* Slide-up More Menu */
   .more-menu-overlay {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
