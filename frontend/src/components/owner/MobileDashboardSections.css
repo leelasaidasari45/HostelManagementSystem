@@ -21,10 +21,10 @@
   
   /* Summary Section */
   .summary-section {
-    background: var(--bg-elevated);
-    margin: -1.5rem -1rem 2rem -1rem; /* Negative margin to pull it up to the header */
-    padding: 1.5rem 1rem 1.5rem 1rem;
-    border-bottom: 8px solid var(--bg-base);
+    background: transparent;
+    margin: 0 0 2rem 0;
+    padding: 0;
+    border-bottom: none;
   }
 
   .summary-header {
@@ -35,9 +35,9 @@
   }
 
   .summary-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: var(--aurora-1);
+    color: var(--text-bright);
     margin: 0;
   }
 
@@ -62,7 +62,7 @@
 
   .summary-card {
     min-width: 120px;
-    background: var(--bg-base);
+    background: var(--bg-elevated);
     border: 1px solid var(--border-muted);
     border-radius: 12px;
     padding: 0.8rem;
