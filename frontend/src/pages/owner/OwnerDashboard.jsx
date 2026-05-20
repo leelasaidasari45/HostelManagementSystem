@@ -64,7 +64,7 @@ const OwnerDashboard = () => {
           <>
             {/* KPI Stats (Desktop Only) */}
             <div className="stats-grid slide-up desktop-only-widgets">
-              {loading ? (
+              {loading && !analytics ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="stat-card" style={{ opacity: 0.7 }}>
                     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
@@ -82,10 +82,10 @@ const OwnerDashboard = () => {
                   <p>Total Collection</p>
                   <IndianRupee size={18} style={{ color:'var(--aurora-1)' }} />
                 </div>
-                <h3>₹{analytics.metrics.totalCollection.toLocaleString()}</h3>
-                <span className={`stat-trend ${analytics.metrics.collectionTrend < 0 ? 'down' : ''}`}>
-                  {analytics.metrics.collectionTrend >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
-                  {' '}{analytics.metrics.collectionTrend >= 0 ? '+' : ''}{analytics.metrics.collectionTrend}% this month
+                <h3>₹{analytics?.metrics?.totalCollection?.toLocaleString() || 0}</h3>
+                <span className={`stat-trend ${analytics?.metrics?.collectionTrend < 0 ? 'down' : ''}`}>
+                  {analytics?.metrics?.collectionTrend >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
+                  {' '}{analytics?.metrics?.collectionTrend >= 0 ? '+' : ''}{analytics?.metrics?.collectionTrend}% this month
                 </span>
               </div>
               <div className="stat-card">
@@ -93,7 +93,7 @@ const OwnerDashboard = () => {
                   <p>Active Tenants</p>
                   <Users size={18} style={{ color:'var(--aurora-2)' }} />
                 </div>
-                <h3>{analytics.metrics.totalTenants}</h3>
+                <h3>{analytics?.metrics?.totalTenants || 0}</h3>
                 <span className="stat-trend">Currently active</span>
               </div>
               <div className="stat-card">
@@ -101,19 +101,19 @@ const OwnerDashboard = () => {
                   <p>Occupancy Rate</p>
                   <DoorOpen size={18} style={{ color:'var(--aurora-3)' }} />
                 </div>
-                <h3>{analytics.metrics.occupancyRate}%</h3>
-                <span className="stat-trend">{analytics.metrics.availableRooms} rooms available</span>
+                <h3>{analytics?.metrics?.occupancyRate || 0}%</h3>
+                <span className="stat-trend">{analytics?.metrics?.availableRooms || 0} rooms available</span>
               </div>
                 </>
               )}
             </div>
 
             {/* Mobile Specific Sections (Hidden on Desktop) */}
-            <MobileDashboardSections analytics={loading ? null : analytics} activeHostel={activeHostel} />
+            <MobileDashboardSections analytics={analytics} activeHostel={activeHostel} />
 
             {/* Widget row (Hidden on Mobile) */}
             <div className="grid gap-6 desktop-only-widgets" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>
-              {loading ? (
+              {loading && !analytics ? (
                 <div className="flex justify-center items-center h-64 w-full" style={{ gridColumn: '1 / -1' }}>
                   <Loader2 size={40} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
                 </div>

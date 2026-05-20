@@ -12,13 +12,18 @@ export const HostelProvider = ({ children }) => {
 
   const { user } = useAuth();
 
+  const hostelsLoadedRef = React.useRef(false);
+
   // Fetch all hostels for the Owner
   const fetchHostels = useCallback(async () => {
     try {
-      setLoadingHostels(true);
+      if (!hostelsLoadedRef.current) {
+        setLoadingHostels(true);
+      }
       if (user && user.role === 'owner') {
         const res = await api.get('/api/owner/hostels');
         setHostels(res.data);
+        hostelsLoadedRef.current = true;
         
         // Determine Active Hostel
         const savedLocalId = localStorage.getItem('lastActiveHostelId');
@@ -32,13 +37,14 @@ export const HostelProvider = ({ children }) => {
       } else {
         setHostels([]);
         setActiveHostel(null);
+        hostelsLoadedRef.current = false;
       }
     } catch (err) {
       console.error("Failed to load hostels context", err);
     } finally {
       setLoadingHostels(false);
     }
-  }, [user]);
+  }, [user?.id, user?.role]);
 
   useEffect(() => {
     fetchHostels();

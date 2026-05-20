@@ -151,12 +151,11 @@ function AppContent() {
     return () => { if (App) App.removeAllListeners(); };
   }, []);
 
-  if (showSplash) return <MobileSplash />;
-
   // No more global spinner — pages render immediately.
   // Only ProtectedRoute components block while loadingAuth is true.
   return (
     <div className="app-container relative">
+      {showSplash && <MobileSplash />}
       <Toaster
         position="top-center"
         toastOptions={{
