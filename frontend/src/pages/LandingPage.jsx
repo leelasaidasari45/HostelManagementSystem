@@ -12,14 +12,19 @@ const LandingPage = () => {
   React.useEffect(() => {
     if (loadingAuth) return;
     if (user) {
-      navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
+      navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard', { replace: true });
       return;
     }
     // If on mobile device and not logged in, skip landing page and go to register
     if (window.innerWidth <= 768) {
-      navigate('/register');
+      navigate('/register', { replace: true });
     }
   }, [user, loadingAuth, navigate]);
+
+  // Prevent flash of landing page while redirecting or if on mobile
+  if (user || window.innerWidth <= 768) {
+    return null; 
+  }
 
   return (
     <div className="landing-page">
