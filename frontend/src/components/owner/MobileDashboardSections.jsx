@@ -30,22 +30,34 @@ const MobileDashboardSections = ({ analytics }) => {
           </div>
         </div>
         
-        <div className="collection-summary-card">
-          <div className="summary-stats-grid">
-            <div className="stat-box">
-              <span className="stat-label">Collected</span>
-              <span className="stat-value text-green">
-                <Coins size={16} className="inline-icon" />
-                {analytics?.collected || '₹0'}
-              </span>
+        <div className="summary-cards-scroll">
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value green">₹0</span>
             </div>
-            
-            <div className="stat-box">
-              <span className="stat-label">Pending</span>
-              <span className="stat-value text-orange">
-                <ClipboardList size={16} className="inline-icon" />
-                {analytics?.pending || '₹0'}
-              </span>
+            <div className="sc-bottom">
+              <span className="sc-label">Today's<br/>Collection</span>
+              <Coins size={14} className="sc-icon green" />
+            </div>
+          </div>
+
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value green">₹{analytics?.metrics?.totalCollection?.toLocaleString() || 0}</span>
+            </div>
+            <div className="sc-bottom">
+              <span className="sc-label">{currentMonth}'s<br/>Collection</span>
+              <Coins size={14} className="sc-icon green" />
+            </div>
+          </div>
+
+          <div className="summary-card">
+            <div className="sc-top">
+              <span className="sc-value red">₹0</span>
+            </div>
+            <div className="sc-bottom">
+              <span className="sc-label">{currentMonth}'s<br/>Dues</span>
+              <ClipboardList size={14} className="sc-icon red" />
             </div>
           </div>
         </div>
