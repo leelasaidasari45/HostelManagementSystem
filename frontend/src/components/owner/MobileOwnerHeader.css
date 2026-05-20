@@ -44,6 +44,10 @@
     flex-shrink: 0;
   }
 
+  .header-logo span {
+    color: #f97316;
+  }
+
   .header-hostel-select {
     position: relative;
     flex: 1;
@@ -96,7 +100,7 @@
 
   /* Light mode overrides to restore vibrant blue theme */
   .light-mode .mobile-header-top {
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+    background: linear-gradient(135deg, #f97316 0%, #ff8c00 50%, #e65100 100%);
     color: white;
     border-bottom: none;
   }
@@ -104,6 +108,10 @@
   .light-mode .header-logo {
     background: white;
     border: 2px solid rgba(255,255,255,0.8);
+  }
+
+  .light-mode .header-logo span {
+    color: #ea580c;
   }
 
   .light-mode .icon-circle-btn {
