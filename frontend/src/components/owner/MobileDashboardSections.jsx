@@ -12,9 +12,9 @@ const MobileDashboardSections = ({ analytics }) => {
       {/* Summary Section */}
       <section className="dashboard-section summary-section">
         <div className="summary-header">
-          <h2 className="summary-title">{currentMonth} Summary for</h2>
+          <h2 className="summary-title">{currentMonth} Collection Status</h2>
           <div className="summary-dropdown">
-            <span>All 1 Properties</span>
+            <span>All Properties</span>
             <ChevronDown size={14} />
           </div>
         </div>
@@ -54,7 +54,7 @@ const MobileDashboardSections = ({ analytics }) => {
 
       {/* Quick Actions */}
       <section className="dashboard-section mt-4">
-        <h2 className="section-title">Quick Actions</h2>
+        <h2 className="section-title">Quick Links</h2>
         <div className="quick-actions-scroll">
           <Link to="/owner/tenants" className="qa-item">
             <div className="qa-icon" style={{ color: '#3b82f6' }}>
@@ -91,7 +91,7 @@ const MobileDashboardSections = ({ analytics }) => {
 
       {/* New Features */}
       <section className="dashboard-section">
-        <h2 className="section-title">New Features</h2>
+        <h2 className="section-title">What's New</h2>
         <div className="features-carousel">
           <div className="feature-banner banner-purple">
             <div className="feature-badge" style={{ color: '#4338ca', background: '#fff' }}>
@@ -112,7 +112,7 @@ const MobileDashboardSections = ({ analytics }) => {
 
       {/* Join Community */}
       <section className="dashboard-section">
-        <h2 className="section-title">Join our community!</h2>
+        <h2 className="section-title">Owner Community</h2>
         <a href="https://wa.me/917569621094" target="_blank" rel="noopener noreferrer" className="community-banner">
           <div className="community-content">
             <div className="live-badge"><span className="dot"></span> Now Live!</div>
@@ -132,7 +132,7 @@ const MobileDashboardSections = ({ analytics }) => {
 
       {/* Smart Property */}
       <section className="dashboard-section pb-8">
-        <h2 className="section-title">Let's make your Property Smart!</h2>
+        <h2 className="section-title">Smart Automations</h2>
         <div className="smart-features-grid">
           <div className="smart-card bg-blue">
             <h4>My Tenant App</h4>
