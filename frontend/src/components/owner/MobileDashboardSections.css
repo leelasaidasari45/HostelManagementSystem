@@ -158,14 +158,17 @@
   }
   
   .feature-banner {
-    min-width: 280px;
-    flex: 0 0 auto;
+    min-width: 100%;
+    flex: 0 0 100%;
     scroll-snap-align: center;
     border-radius: 16px;
     padding: 1.5rem;
     position: relative;
     overflow: hidden;
     color: #1e1e1e; /* Keep dark text because banner bg is light gradient */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
   
   .feature-badge {
@@ -178,12 +181,19 @@
     font-weight: 600;
     margin-bottom: 1rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    width: fit-content;
   }
   
   .banner-purple {
     background: var(--bg-elevated);
     border: 1px solid rgba(124, 58, 237, 0.3);
     box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
+  }
+
+  .banner-blue {
+    background: var(--bg-elevated);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.05);
   }
 
   .banner-green {
@@ -212,10 +222,71 @@
     color: var(--text-dim);
   }
 
+  .feature-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #4f46e5;
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin-top: auto;
+    width: fit-content;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  }
+
+  .banner-blue .feature-btn {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+
+  .banner-green .feature-btn {
+    background: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  }
+
+  /* Carousel Dots */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-muted);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .carousel-dot.active {
+    background: var(--logo-text-color, #ea580c);
+    width: 16px;
+    border-radius: 4px;
+  }
+
   /* Light mode overrides for banners */
   .light-mode .banner-purple { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border: none; }
+  .light-mode .banner-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; }
   .light-mode .banner-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; }
   .light-mode .feature-banner h3, .light-mode .feature-banner p { color: #ffffff !important; }
+
+  .light-mode .banner-purple .feature-btn,
+  .light-mode .banner-blue .feature-btn,
+  .light-mode .banner-green .feature-btn {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .light-mode .banner-purple .feature-btn { color: #4f46e5; }
+  .light-mode .banner-blue .feature-btn { color: #2563eb; }
+  .light-mode .banner-green .feature-btn { color: #059669; }
   
   /* Join Community */
   .community-banner {

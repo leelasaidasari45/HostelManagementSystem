@@ -5,6 +5,17 @@ import './MobileDashboardSections.css';
 
 const MobileDashboardSections = ({ analytics }) => {
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });
+  const [activeSlide, setActiveSlide] = React.useState(0);
+  const carouselRef = React.useRef(null);
+
+  const handleScroll = () => {
+    if (carouselRef.current) {
+      const scrollLeft = carouselRef.current.scrollLeft;
+      const width = carouselRef.current.getBoundingClientRect().width;
+      const newIndex = Math.round(scrollLeft / width);
+      setActiveSlide(newIndex);
+    }
+  };
 
   return (
     <div className="mobile-only-sections">
@@ -19,34 +30,22 @@ const MobileDashboardSections = ({ analytics }) => {
           </div>
         </div>
         
-        <div className="summary-cards-scroll">
-          <div className="summary-card">
-            <div className="sc-top">
-              <span className="sc-value green">₹0</span>
+        <div className="collection-summary-card">
+          <div className="summary-stats-grid">
+            <div className="stat-box">
+              <span className="stat-label">Collected</span>
+              <span className="stat-value text-green">
+                <Coins size={16} className="inline-icon" />
+                {analytics?.collected || '₹0'}
+              </span>
             </div>
-            <div className="sc-bottom">
-              <span className="sc-label">Today's<br/>Collection</span>
-              <Coins size={14} className="sc-icon green" />
-            </div>
-          </div>
-
-          <div className="summary-card">
-            <div className="sc-top">
-              <span className="sc-value green">₹{analytics?.metrics?.totalCollection?.toLocaleString() || 0}</span>
-            </div>
-            <div className="sc-bottom">
-              <span className="sc-label">{currentMonth}'s<br/>Collection</span>
-              <Coins size={14} className="sc-icon green" />
-            </div>
-          </div>
-
-          <div className="summary-card">
-            <div className="sc-top">
-              <span className="sc-value red">₹0</span>
-            </div>
-            <div className="sc-bottom">
-              <span className="sc-label">{currentMonth}'s<br/>Dues</span>
-              <ClipboardList size={14} className="sc-icon red" />
+            
+            <div className="stat-box">
+              <span className="stat-label">Pending</span>
+              <span className="stat-value text-orange">
+                <ClipboardList size={16} className="inline-icon" />
+                {analytics?.pending || '₹0'}
+              </span>
             </div>
           </div>
         </div>
@@ -74,8 +73,8 @@ const MobileDashboardSections = ({ analytics }) => {
             </div>
             <span>Notice</span>
           </div>
-          <div className="qa-item" onClick={() => document.getElementById('menu-form')?.scrollIntoView({ behavior: 'smooth' })}>
-            <div className="qa-icon" style={{ color: '#8b5cf6' }}>
+          <div className="qa-item" style={{ opacity: 0.7 }}>
+            <div className="qa-icon" style={{ color: '#ec4899' }}>
               <Utensils size={24} />
             </div>
             <span>Add Menu</span>
@@ -92,21 +91,61 @@ const MobileDashboardSections = ({ analytics }) => {
       {/* New Features */}
       <section className="dashboard-section">
         <h2 className="section-title">What's New</h2>
-        <div className="features-carousel">
+        <div 
+          className="features-carousel"
+          ref={carouselRef}
+          onScroll={handleScroll}
+        >
           <div className="feature-banner banner-purple">
-            <div className="feature-badge" style={{ color: '#4338ca', background: '#fff' }}>
+            <div className="feature-badge" style={{ color: '#6366f1', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
             </div>
             <h3>Never Miss Tenants With<br/><span style={{ background: '#4f46e5', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
-            <p>Tenants scan and join instantly without manual entry.</p>
+            <p style={{ marginBottom: '1rem' }}>Tenants scan and join instantly without manual entry.</p>
+            <div className="feature-btn">Generate QR</div>
           </div>
+          
+          <div className="feature-banner banner-blue">
+            <div className="feature-badge" style={{ color: '#2563eb', background: 'var(--bg-base)' }}>
+              <span className="dot" style={{ background: '#10b981' }}></span> New Feature
+            </div>
+            <h3>Never Miss Rent With<br/><span style={{ background: '#2563eb', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>Autopay</span></h3>
+            <p style={{ marginBottom: '1rem' }}>Set up automatic monthly rent payments easily.</p>
+            <div className="feature-btn">Activate Now</div>
+          </div>
+
           <div className="feature-banner banner-green">
-            <div className="feature-badge" style={{ color: '#047857', background: '#fff' }}>
+            <div className="feature-badge" style={{ color: '#059669', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> Now Live
             </div>
             <h3>Smart<br/><span style={{ background: '#059669', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>Tenant Tracking</span></h3>
-            <p>Track all dues and collections automatically.</p>
+            <p style={{ marginBottom: '1rem' }}>Track all dues and collections automatically.</p>
+            <div className="feature-btn">Track Now</div>
           </div>
+        </div>
+
+        <div className="carousel-dots">
+          <span 
+            className={`carousel-dot ${activeSlide === 0 ? 'active' : ''}`}
+            onClick={() => {
+              const el = carouselRef.current;
+              if (el) el.scrollTo({ left: 0, behavior: 'smooth' });
+            }}
+          ></span>
+          <span 
+            className={`carousel-dot ${activeSlide === 1 ? 'active' : ''}`}
+            onClick={() => {
+              const el = carouselRef.current;
+              if (el) el.scrollTo({ left: el.getBoundingClientRect().width, behavior: 'smooth' });
+            }}
+          ></span>
+          <span 
+            className={`carousel-dot ${activeSlide === 2 ? 'active' : ''}`}
+            onClick={() => {
+              const el = carouselRef.current;
+              if (el) el.scrollTo({ left: el.getBoundingClientRect().width * 2, behavior: 'smooth' });
+            }}
+          ></span>
         </div>
       </section>
 
