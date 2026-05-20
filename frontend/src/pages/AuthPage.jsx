@@ -194,9 +194,8 @@ const AuthPage = () => {
                       setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
                       setMobileStep('password_login');
                     } else {
-                      // New user -> go to register
-                      setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
-                      setMobileStep('register');
+                      // User does not exist -> show warning and suggest signup
+                      toast.error('Account not found. Please Sign Up!');
                     }
                   } catch (err) {
                     toast.error(err.message || 'Error checking user account');
@@ -207,19 +206,24 @@ const AuthPage = () => {
               >
                 {loading ? <Loader2 size={20} className="animate-spin" /> : 'Continue'}
               </button>
+
+              <p style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
+                New to easyPG?{' '}
+                <span 
+                  style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
+                    setMobileStep('register');
+                  }}
+                >
+                  Sign Up
+                </span>
+              </p>
               
               <p className="mobile-disclaimer">
                 By continuing you agree to our <br/>
                 <a href="/terms" target="_blank" rel="noreferrer">Terms of Service</a> & <a href="/privacy" target="_blank" rel="noreferrer">Privacy Policy</a>
               </p>
-            </div>
-            
-            <div className="mobile-auth-footer-toggle">
-              {mobileRole === 'owner' ? (
-                <p>Are you a tenant? <span className="toggle-role-link" onClick={() => setMobileRole('tenant')}>Go To Tenant App</span></p>
-              ) : (
-                <p>Are you an owner? <span className="toggle-role-link" onClick={() => setMobileRole('owner')}>Go To Owner App</span></p>
-              )}
             </div>
           </div>
         )}
@@ -233,7 +237,7 @@ const AuthPage = () => {
               </div>
               <h1 className="app-super-title">Welcome Back</h1>
               <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
-                Enter password for <strong style={{color: 'var(--text-bright)'}}>{emailInput}</strong>
+                Enter password for <strong style={{color: 'var(--text-bright)'}}>{formData.email}</strong>
               </p>
             </div>
             
@@ -280,6 +284,16 @@ const AuthPage = () => {
                 <Link to="/forgot-password" style={{ color: '#2563eb', fontSize: '.85rem', textDecoration: 'none' }}>Forgot password?</Link>
                 <span className="back-link" onClick={() => setMobileStep('email')}>Change email</span>
               </div>
+
+              <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
+                New to easyPG?{' '}
+                <span 
+                  style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
+                  onClick={() => setMobileStep('register')}
+                >
+                  Sign Up
+                </span>
+              </p>
             </div>
           </div>
         )}
@@ -293,7 +307,7 @@ const AuthPage = () => {
               </div>
               <h1 className="app-super-title">Create Account</h1>
               <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
-                Setting up profile for <strong style={{color: 'var(--text-bright)'}}>{emailInput}</strong>
+                Join easyPG today
               </p>
             </div>
             
@@ -305,6 +319,17 @@ const AuthPage = () => {
                   placeholder="Your Full Name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="mobile-email-input"
+                />
+              </div>
+
+              <div className="mobile-input-field" style={{ marginBottom: '0.2rem' }}>
+                <Mail size={18} className="mobile-input-icon" />
+                <input 
+                  type="email" 
+                  placeholder="name@company.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="mobile-email-input"
                 />
               </div>
@@ -353,6 +378,10 @@ const AuthPage = () => {
                     toast.error('Please enter your name');
                     return;
                   }
+                  if (!formData.email.trim() || !formData.email.includes('@')) {
+                    toast.error('Please enter a valid email address');
+                    return;
+                  }
                   if (formData.password.length < 6) {
                     toast.error('Password must be at least 6 characters');
                     return;
@@ -363,23 +392,16 @@ const AuthPage = () => {
                   }
                   setLoading(true);
                   try {
-                    // Register with the chosen role preference
+                    // Register with the unassigned role preference
                     const res = await api.post('/api/auth/register', { 
                       name: formData.name, 
                       email: formData.email, 
                       password: formData.password,
-                      role: mobileRole 
+                      role: 'unassigned'
                     });
                     loginContext(res.data);
                     toast.success('Account created successfully!');
-                    
-                    if (res.data.role === 'owner') {
-                      navigate('/select-plan');
-                    } else if (res.data.role === 'tenant') {
-                      navigate('/tenant/join');
-                    } else {
-                      navigate('/select-role');
-                    }
+                    navigate('/select-role');
                   } catch (err) {
                     toast.error(err.response?.data?.details || err.response?.data?.error || err.message || 'Registration failed');
                   } finally {
@@ -391,7 +413,7 @@ const AuthPage = () => {
               </button>
               
               <div className="password-links" style={{ justifyContent: 'center' }}>
-                <span className="back-link" onClick={() => setMobileStep('email')}>Back</span>
+                <span className="back-link" onClick={() => setMobileStep('email')}>Back to Login</span>
               </div>
             </div>
           </div>
