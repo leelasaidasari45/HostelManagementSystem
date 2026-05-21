@@ -321,6 +321,14 @@ const AuthPage = () => {
     navigate(mode === 'login' ? '/login' : '/register');
   };
 
+  const parseRequestError = (err, fallbackMessage) => {
+    if (!err) return fallbackMessage;
+    if (err?.message?.includes('Failed to fetch') || err?.message?.includes('Network Error')) {
+      return 'Unable to connect to the server. Please check your network and try again.';
+    }
+    return err.response?.data?.details || err.response?.data?.error || err.message || fallbackMessage;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -338,7 +346,7 @@ const AuthPage = () => {
         navigate('/select-role');
       }
     } catch (err) {
-      toast.error(err.response?.data?.details || err.response?.data?.error || err.message || 'Authentication failed');
+      toast.error(parseRequestError(err, 'Authentication failed'));
     } finally { setLoading(false); }
   };
 
@@ -460,7 +468,7 @@ const AuthPage = () => {
                       toast.error(t.accountNotFoundError);
                     }
                   } catch (err) {
-                    toast.error(err.message || 'Error checking user account');
+                    toast.error(parseRequestError(err, 'Error checking user account'));
                   } finally {
                     setLoading(false);
                   }
@@ -542,7 +550,7 @@ const AuthPage = () => {
                     toast.success(t.welcomeBackSuccess);
                     navigate(res.data.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
                   } catch (err) {
-                    toast.error(err.response?.data?.details || err.response?.data?.error || err.message || 'Login failed');
+                    toast.error(parseRequestError(err, 'Login failed'));
                   } finally {
                     setLoading(false);
                   }
