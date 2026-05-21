@@ -323,8 +323,13 @@ const AuthPage = () => {
 
   const parseRequestError = (err, fallbackMessage) => {
     if (!err) return fallbackMessage;
-    if (err?.message?.includes('Failed to fetch') || err?.message?.includes('Network Error')) {
-      return 'Unable to connect to the server. Please check your network and try again.';
+    const errorMsg = err?.message?.toLowerCase() || '';
+    if (
+      errorMsg.includes('failed to fetch') || 
+      errorMsg.includes('network error') || 
+      err?.code === 'ECONNABORTED'
+    ) {
+      return 'Unable to connect to the server. The backend might be starting up (Render free tier cold starts can take ~50s) or you are offline. Please wait a moment and try again.';
     }
     return err.response?.data?.details || err.response?.data?.error || err.message || fallbackMessage;
   };

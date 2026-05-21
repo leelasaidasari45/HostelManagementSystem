@@ -3,11 +3,12 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// Performance: Pre-warm the backend immediately to reduce cold-start delay
+// Performance: Pre-warm the backend on load to wake up Render free-tier cold starts
 (async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'https://pg-backend-499c.onrender.com';
-    fetch(`${apiUrl}/api/auth/me`).catch(() => {});
+    // Hit the public root endpoint (no auth required) to wake the server
+    fetch(`${apiUrl}/`, { method: 'GET' }).catch(() => {});
   } catch (e) {}
 })();
 
