@@ -30,8 +30,18 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const trialEndDate = new Date();
-    trialEndDate.setMonth(trialEndDate.getMonth() + 3);
+    let subscriptionStatus = 'none';
+    let paymentSetupComplete = false;
+    let trialEndDate = null;
+
+    if (role === 'owner') {
+      subscriptionStatus = 'trial';
+      trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+      paymentSetupComplete = false;
+    } else if (role === 'tenant') {
+      subscriptionStatus = 'none';
+      paymentSetupComplete = true;
+    }
 
     const { data: user, error } = await supabase.from('users').insert([{
       email,
@@ -39,9 +49,9 @@ router.post('/register', async (req, res) => {
       name,
       role,
       phone: phone || '',
-      trial_end_date: trialEndDate.toISOString(),
-      subscription_status: 'none',
-      payment_setup_complete: false // Owner must select plan first
+      trial_end_date: trialEndDate,
+      subscription_status: subscriptionStatus,
+      payment_setup_complete: paymentSetupComplete
     }]).select().single();
 
     if (error) throw error;
@@ -58,6 +68,10 @@ router.post('/register', async (req, res) => {
       email: user.email,
       name: user.name,
       role: user.role,
+      payment_setup_complete: user.payment_setup_complete,
+      subscription_status: user.subscription_status,
+      trial_end_date: user.trial_end_date,
+      created_at: user.created_at,
       token: token
     });
   } catch (err) {
@@ -72,24 +86,34 @@ router.post('/register', async (req, res) => {
 // Social Sync Route (for Google Auth)
 router.post('/social-sync', async (req, res) => {
   try {
-    const { supabaseId, email, name } = req.body;
+    const { supabaseId, email, name, role = 'unassigned' } = req.body;
 
     // Check if user exists by email or supabaseId
     let { data: user } = await supabase.from('users').select('*').eq('email', email).maybeSingle();
 
     if (!user) {
       // Create new user for social login
-      const trialEndDate = new Date();
-      trialEndDate.setMonth(trialEndDate.getMonth() + 3);
+      let subscriptionStatus = 'none';
+      let paymentSetupComplete = false;
+      let trialEndDate = null;
+
+      if (role === 'owner') {
+        subscriptionStatus = 'trial';
+        trialEndDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+        paymentSetupComplete = false;
+      } else if (role === 'tenant') {
+        subscriptionStatus = 'none';
+        paymentSetupComplete = true;
+      }
 
       const { data: newUser, error } = await supabase.from('users').insert([{
         id: supabaseId,
         email,
         name,
         role: 'unassigned',
-        trial_end_date: trialEndDate.toISOString(),
-        subscription_status: 'none',
-        payment_setup_complete: false // Must select plan after role selection
+        trial_end_date: trialEndDate,
+        subscription_status: subscriptionStatus,
+        payment_setup_complete: paymentSetupComplete
       }]).select().single();
 
       if (error) throw error;
@@ -107,6 +131,10 @@ router.post('/social-sync', async (req, res) => {
       email: user.email,
       name: user.name,
       role: user.role,
+      payment_setup_complete: user.payment_setup_complete,
+      subscription_status: user.subscription_status,
+      trial_end_date: user.trial_end_date,
+      created_at: user.created_at,
       token: token
     });
   } catch (err) {
@@ -124,13 +152,18 @@ router.put('/update-role', requireAuth, async (req, res) => {
     }
 
     const userId = req.user.id;
-    // Owners must complete plan selection; tenants have no subscription requirement
+    // For owner: automatically give 2 days free trial. For tenant: bypass billing.
     const paymentSetupComplete = role === 'tenant' ? true : false;
+    const subscriptionStatus = role === 'tenant' ? 'none' : 'trial';
+    const trialEndDate = role === 'owner' 
+      ? new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString()
+      : null;
 
     const { data: user, error } = await supabase.from('users').update({ 
       role,
       payment_setup_complete: paymentSetupComplete,
-      subscription_status: role === 'tenant' ? 'none' : 'pending'
+      subscription_status: subscriptionStatus,
+      trial_end_date: trialEndDate
     }).eq('id', userId).select().single();
 
     if (error) throw error;
@@ -144,9 +177,14 @@ router.put('/update-role', requireAuth, async (req, res) => {
 
     res.json({
       message: 'Role updated successfully',
+      id: user.id,
+      email: user.email,
+      name: user.name,
       role: user.role,
       payment_setup_complete: user.payment_setup_complete,
       subscription_status: user.subscription_status,
+      trial_end_date: user.trial_end_date,
+      created_at: user.created_at,
       token: token
     });
   } catch (err) {
@@ -183,6 +221,10 @@ router.post('/login', async (req, res) => {
       email: user.email,
       name: user.name,
       role: user.role,
+      payment_setup_complete: user.payment_setup_complete,
+      subscription_status: user.subscription_status,
+      trial_end_date: user.trial_end_date,
+      created_at: user.created_at,
       token: token
     });
   } catch (err) {
@@ -205,7 +247,7 @@ router.get('/me', requireAuth, async (req, res) => {
   // Always fetch fresh from DB so payment_setup_complete is up-to-date
   try {
     const { data: user } = await supabase.from('users')
-      .select('id, email, name, role, phone, hostel_id, join_date, aadhaar_url, payment_setup_complete, subscription_status, trial_end_date')
+      .select('id, email, name, role, phone, hostel_id, join_date, aadhaar_url, payment_setup_complete, subscription_status, trial_end_date, created_at')
       .eq('id', req.user.id)
       .single();
     

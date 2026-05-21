@@ -22,11 +22,12 @@ const SelectRolePage = () => {
         token: res.data.token,
         payment_setup_complete: res.data.payment_setup_complete,
         subscription_status: res.data.subscription_status,
+        trial_end_date: res.data.trial_end_date,
       });
       toast.success('Welcome aboard!');
       if (role === 'owner') {
-        // Owner must select a subscription plan first
-        navigate('/select-plan', { replace: true });
+        // Owner gets automatic 2-day free trial, route directly to dashboard
+        navigate('/owner/dashboard', { replace: true });
       } else {
         // Tenant goes directly to join
         navigate('/tenant/join', { replace: true });

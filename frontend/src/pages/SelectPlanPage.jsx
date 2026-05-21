@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, ArrowRight } from 'lucide-react';
+import { LogOut, ArrowRight, CheckCircle2, ShieldCheck, Sparkles, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 
-const PAYTM_BASE_URL = import.meta.env.VITE_PAYTM_BASE_URL || 'https://securegw-stage.paytm.in';
-
 const SelectPlanPage = () => {
-  const [loadingTrial, setLoadingTrial]   = useState(false);
   const [loadingAnnual, setLoadingAnnual] = useState(false);
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
   const { logoutContext, user, loginContext } = useAuth();
+  const [promoTimeLeft, setPromoTimeLeft] = useState('');
+  const [isPromoActive, setIsPromoActive] = useState(false);
 
-  // Handle Paytm callback redirect params
+  // Handle Paytm/Cashfree callback redirects
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const s = params.get('status');
@@ -26,12 +25,48 @@ const SelectPlanPage = () => {
     }
   }, []);
 
-  // Only skip plan page if owner has an ACTIVE subscription (not just flag=true from old trial bypass)
+  // Calculate remaining promo time
   useEffect(() => {
-    if (
-      user?.payment_setup_complete &&
-      (user?.subscription_status === 'active' || user?.subscription_status === 'trial')
-    ) {
+    if (!user?.created_at) return;
+
+    const calculateTimeLeft = () => {
+      const regDate = new Date(user.created_at).getTime();
+      const promoDuration = 7 * 24 * 60 * 60 * 1000; // 7 days
+      const expiryTime = regDate + promoDuration;
+      const now = Date.now();
+      const difference = expiryTime - now;
+
+      if (difference <= 0) {
+        setIsPromoActive(false);
+        setPromoTimeLeft('Expired');
+        return;
+      }
+
+      setIsPromoActive(true);
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+
+      if (days > 0) {
+        setPromoTimeLeft(`${days}d ${hours}h left`);
+      } else {
+        setPromoTimeLeft(`${hours}h ${minutes}m left`);
+      }
+    };
+
+    calculateTimeLeft();
+    const interval = setInterval(calculateTimeLeft, 60000);
+    return () => clearInterval(interval);
+  }, [user]);
+
+  // Route to dashboard if they already have an active subscription/trial
+  useEffect(() => {
+    const hasActiveSub = 
+      (user?.subscription_status === 'active' || user?.subscription_status === 'trial') &&
+      user?.trial_end_date &&
+      new Date(user.trial_end_date) > new Date();
+
+    if (hasActiveSub) {
       navigate('/owner/dashboard', { replace: true });
     }
   }, [user, navigate]);
@@ -40,36 +75,19 @@ const SelectPlanPage = () => {
     await logoutContext();
   };
 
-  // ── Free Trial: 7 days, no payment ──────────────────────
-  const handleFreeTrial = async () => {
-    setLoadingTrial(true);
-    try {
-      await api.post('/api/subscription/start-trial');
-      // Update local user cache so ProtectedRoute lets them through
-      loginContext({ ...user, payment_setup_complete: true, subscription_status: 'trial' });
-      toast.success('🎉 7-day free trial activated!');
-      navigate('/owner/dashboard', { replace: true });
-    } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to start trial');
-    } finally {
-      setLoadingTrial(false);
-    }
-  };
-
-  // ── Annual Pro: ₹40,000/year via Cashfree ───────────────
   const handleAnnualPro = async () => {
     setLoadingAnnual(true);
     try {
-      // Step 1: Create Cashfree order for subscription
+      // Step 1: Create Cashfree order for ₹40,000
       const res = await api.post('/api/cashfree/create-order', {
-        amount: 1, // TEST: change back to 40000 for production
+        amount: 40000,
         month: 'Annual',
         year: new Date().getFullYear(),
         type: 'subscription',
       });
       const { payment_session_id, order_id, environment } = res.data;
 
-      // Step 2: Load Cashfree SDK — use environment FROM backend response (not frontend env var)
+      // Step 2: Load Cashfree SDK
       const CF_MODE = environment || 'production';
       const loadSDK = () => new Promise((resolve, reject) => {
         if (window.Cashfree) { resolve(window.Cashfree); return; }
@@ -88,7 +106,6 @@ const SelectPlanPage = () => {
         redirectTarget: '_modal',
       });
 
-      // Only skip verification if user explicitly cancelled/closed
       const userCancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
                             result?.error?.type === 'user_cancelled';
       if (userCancelled) {
@@ -97,18 +114,21 @@ const SelectPlanPage = () => {
         return;
       }
 
-      // For ALL other outcomes (success, redirect, unknown) — verify with backend
-      // Cashfree JS SDK result structure varies by payment method, so don't rely on it
       toast.loading('Verifying payment...', { id: 'sub-verify' });
       try {
         const verifyRes = await api.post('/api/subscription/verify-cashfree', {
           order_id,
-          amount: 1, // TEST: change back to 40000 for production
+          amount: 40000,
           plan_name: 'Annual Pro',
         });
         toast.dismiss('sub-verify');
         if (verifyRes.data.success) {
-          loginContext({ ...user, payment_setup_complete: true, subscription_status: 'active' });
+          loginContext({ 
+            ...user, 
+            payment_setup_complete: true, 
+            subscription_status: 'active',
+            trial_end_date: verifyRes.data.end_date
+          });
           toast.success('🎉 Annual Pro activated!');
           navigate('/owner/dashboard', { replace: true });
         } else {
@@ -116,7 +136,6 @@ const SelectPlanPage = () => {
         }
       } catch (verifyErr) {
         toast.dismiss('sub-verify');
-        // If verify fails, could be payment still pending — redirect anyway
         if (verifyErr.response?.status === 400) {
           toast('Payment may still be processing. Check dashboard in a moment.', { icon: '⏳' });
           setTimeout(() => navigate('/owner/dashboard', { replace: true }), 2000);
@@ -131,369 +150,450 @@ const SelectPlanPage = () => {
     }
   };
 
-
-
   return (
     <div style={styles.page}>
-      {/* Top bar */}
+      {/* Aurora Background Orbs */}
+      <div style={styles.orb1} />
+      <div style={styles.orb2} />
+
+      {/* Top Navbar */}
       <div style={styles.topbar}>
-        <img src="/logo.png" alt="easyPG" style={{ height: 36, objectFit: 'contain' }} />
+        <img src="/logo.png" alt="easyPG" style={{ height: 42, objectFit: 'contain' }} />
         <button onClick={handleLogout} style={styles.logoutBtn}>
-          <LogOut size={14} /> Log out
+          <LogOut size={16} /> Log out
         </button>
       </div>
 
-      {/* Title */}
-      <div style={styles.titleBlock}>
+      {/* Header section */}
+      <div className="slide-up" style={styles.headerBlock}>
+        <div style={styles.badgeContainer}>
+          <Sparkles size={14} style={{ marginRight: 6, color: '#7c3aed' }} />
+          <span>Premium Portal</span>
+        </div>
         <h1 style={styles.title}>
-          Simple{' '}
-          <span style={styles.titleGradient}>Pricing</span>
+          Scale your hostel business with <span style={styles.titleGradient}>Annual Pro</span>
         </h1>
+        <p style={styles.subtitle}>
+          Your free trial has expired. Subscribe to standard easyPG Annual Pro to reactivate your dashboard access.
+        </p>
       </div>
 
-      {/* Cards */}
-      <div style={styles.cardsRow}>
-
-        {/* ── Free Trial Card ── */}
-        <div style={styles.freeCard}>
-          <p style={styles.planLabel}>Free Trial</p>
-          <div style={styles.freePrice}>
-            Free <span style={styles.freeDays}>/ 7 days</span>
-          </div>
-          <p style={styles.planDesc}>
-            Experience the full power of easyPG risk-free for a week.
-          </p>
-
-          <ul style={styles.featureList}>
-            {[
-              'Unlimited Tenants',
-              'Multi-Property Management',
-              'Full Analytics Access',
-              'Community Support',
-            ].map((f) => (
-              <li key={f} style={styles.featureItem}>
-                <span style={styles.check}>✓</span> {f}
-              </li>
-            ))}
-          </ul>
-
-          <button
-            style={styles.trialBtn}
-            onClick={handleFreeTrial}
-            disabled={loadingTrial}
-            id="start-trial-btn"
-          >
-            {loadingTrial ? (
-              <span className="pulse-opacity">
-                Activating
-                <span className="pulsing-dot-container">
-                  <span className="pulsing-dot"></span>
-                  <span className="pulsing-dot"></span>
-                  <span className="pulsing-dot"></span>
-                </span>
-              </span>
-            ) : <><span>Start 7-Day Trial</span> <ArrowRight size={15} /></>}
-          </button>
-        </div>
-
-        {/* ── Annual Pro Card ── */}
+      {/* Main Centered Premium Card */}
+      <div className="slide-up" style={styles.cardContainer}>
         <div style={styles.proCard}>
-          {/* Special offer badge */}
-          <div style={styles.specialBadge}>SPECIAL OFFER</div>
+          {/* Top Decorative Border */}
+          <div style={styles.cardAccentBar} />
 
-          <p style={styles.planLabelPro}>Annual Pro</p>
-          <div style={styles.proPrice}>
-            ₹1 <span style={styles.proYear}>/ year (TEST)</span>
+          {/* Premium Header */}
+          <div style={styles.cardHeader}>
+            <div>
+              <p style={styles.planLabel}>ANNUAL SUBSCRIPTION</p>
+              <h2 style={styles.planTitle}>Annual Pro Plan</h2>
+            </div>
+            <div style={styles.priceContainer}>
+              <span style={styles.currencySymbol}>₹</span>
+              <span style={styles.priceAmount}>40,000</span>
+              <span style={styles.pricePeriod}>/ year</span>
+            </div>
           </div>
 
-          {/* Promo banner */}
-          <div style={styles.promoBanner}>
-            🔥 Subscribe within 7 days and get <strong>+5 Months FREE!</strong>
+          {/* Dynamic Promo Banner */}
+          {isPromoActive ? (
+            <div style={styles.promoBannerActive}>
+              <div style={styles.promoIconContainer}>🔥</div>
+              <div style={{ flex: 1, textAlign: 'left' }}>
+                <p style={styles.promoTitle}>Special 7-Day Registration Offer Active!</p>
+                <p style={styles.promoDesc}>Pay now and get <strong>+5 Months FREE</strong> (17 months total instead of 12).</p>
+              </div>
+              <div style={styles.countdownBadge}>
+                <Clock size={12} style={{ marginRight: 4 }} />
+                <span>{promoTimeLeft}</span>
+              </div>
+            </div>
+          ) : (
+            <div style={styles.promoBannerExpired}>
+              <p style={styles.promoDescExpired}>
+                The 7-day registration promo has expired. Standard 12-month subscription terms apply.
+              </p>
+            </div>
+          )}
+
+          {/* Feature List */}
+          <div style={styles.featuresSection}>
+            <p style={styles.featuresTitle}>What's included in Annual Pro:</p>
+            <ul style={styles.featureList}>
+              {[
+                { title: 'Unlimited Tenants & Rooms', desc: 'No caps on the size of your property data' },
+                { title: 'Automated Rent Collections', desc: 'Collect and verify rent payments seamlessly' },
+                { title: 'Complaints Management', desc: 'Allow residents to raise digital issues instantly' },
+                { title: 'Real-time Analytics Dashboard', desc: 'Track occupancy, income, and defaults' },
+                { title: 'Dedicated Support Representative', desc: 'Priority help whenever you need it' },
+              ].map((item, index) => (
+                <li key={index} style={styles.featureItem}>
+                  <CheckCircle2 size={18} style={styles.checkIcon} />
+                  <div>
+                    <h4 style={styles.featureText}>{item.title}</h4>
+                    <p style={styles.featureSubtext}>{item.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <p style={styles.planDescPro}>
-            Complete hostel management solution.{' '}
-            Best value for serious owners.
-          </p>
-
-          <ul style={styles.featureList}>
-            {[
-              'Everything in Free Trial',
-              'Automated Rent Collection',
-              'Dedicated Account Manager',
-              'Priority 24/7 Support',
-            ].map((f) => (
-              <li key={f} style={styles.featureItem}>
-                <span style={styles.checkPro}>✓</span> {f}
-              </li>
-            ))}
-          </ul>
-
+          {/* Call to Action Button */}
           <button
-            style={styles.proBtn}
+            style={styles.payBtn}
             onClick={handleAnnualPro}
             disabled={loadingAnnual}
-            id="get-annual-pro-btn"
+            id="pay-annual-pro-btn"
           >
             {loadingAnnual ? (
-              <span className="pulse-opacity">
-                Opening Paytm
-                <span className="pulsing-dot-container">
-                  <span className="pulsing-dot"></span>
-                  <span className="pulsing-dot"></span>
-                  <span className="pulsing-dot"></span>
-                </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="spinner" /> Initiating Secure Payment...
               </span>
-            ) : <><u>Get Annual Pro</u> <ArrowRight size={15} /></>}
+            ) : (
+              <>
+                <span>Activate Annual Pro</span>
+                <ArrowRight size={18} style={{ marginLeft: 8 }} />
+              </>
+            )}
           </button>
+
+          {/* Trust Badges */}
+          <div style={styles.trustBadges}>
+            <div style={styles.trustItem}>
+              <ShieldCheck size={16} style={{ color: '#059669', marginRight: 4 }} />
+              <span>Secured by Cashfree</span>
+            </div>
+            <div style={styles.separator} />
+            <span>Cancel anytime</span>
+          </div>
         </div>
       </div>
 
       <p style={styles.footerNote}>
-        No hidden charges. Cancel anytime. Secured by Paytm.
+        Need customized plans for 500+ beds? Contact corporate sales at support@easypg.in
       </p>
 
       <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #start-trial-btn:hover:not(:disabled) {
-          background: #e5e7eb !important;
-          transform: translateY(-1px);
+        .spinner {
+          width: 18px;
+          height: 18px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
         }
-        #get-annual-pro-btn:hover:not(:disabled) {
-          opacity: 0.9;
-          transform: translateY(-1px);
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
-        #start-trial-btn, #get-annual-pro-btn {
-          transition: all 180ms ease;
+        #pay-annual-pro-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+          filter: brightness(1.1);
+        }
+        #pay-annual-pro-btn:active:not(:disabled) {
+          transform: translateY(0);
+        }
+        #pay-annual-pro-btn {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
       `}</style>
     </div>
   );
 };
 
-/* ─── Inline styles to exactly match the image design ─── */
 const styles = {
   page: {
     minHeight: '100vh',
-    background: '#f8f9ff',
+    background: '#0a0d18',
+    color: '#f3f4f6',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: '2rem 1.5rem 4rem',
-    fontFamily: "'Inter', 'Space Grotesk', system-ui, sans-serif",
+    fontFamily: "'Inter', sans-serif",
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  orb1: {
+    position: 'absolute',
+    width: 600,
+    height: 600,
+    borderRadius: '50%',
+    background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
+    filter: 'blur(100px)',
+    top: -200,
+    left: -200,
+    pointerEvents: 'none',
+  },
+  orb2: {
+    position: 'absolute',
+    width: 600,
+    height: 600,
+    borderRadius: '50%',
+    background: 'radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%)',
+    filter: 'blur(100px)',
+    bottom: -200,
+    right: -200,
+    pointerEvents: 'none',
   },
   topbar: {
     width: '100%',
-    maxWidth: 900,
+    maxWidth: 1000,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '2.5rem',
+    marginBottom: '3rem',
+    position: 'relative',
+    zIndex: 10,
   },
   logoutBtn: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.35rem',
-    background: 'transparent',
-    border: 'none',
+    gap: '0.5rem',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
     cursor: 'pointer',
-    color: '#6b7280',
-    fontSize: '0.85rem',
+    color: '#9ca3af',
+    fontSize: '0.87rem',
+    padding: '0.5rem 1rem',
+    borderRadius: 99,
+    transition: 'all 0.2s',
   },
-  titleBlock: {
+  headerBlock: {
     textAlign: 'center',
     marginBottom: '2.5rem',
+    maxWidth: 650,
+    position: 'relative',
+    zIndex: 10,
+  },
+  badgeContainer: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0.35rem 0.85rem',
+    background: 'rgba(124, 58, 237, 0.1)',
+    border: '1px solid rgba(124, 58, 237, 0.2)',
+    borderRadius: 99,
+    fontSize: '0.78rem',
+    fontWeight: 600,
+    color: '#a78bfa',
+    marginBottom: '1rem',
   },
   title: {
-    fontSize: 'clamp(2rem, 5vw, 2.75rem)',
-    fontWeight: 700,
-    color: '#111827',
-    margin: 0,
+    fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+    fontWeight: 800,
+    color: '#ffffff',
+    margin: '0 0 1rem 0',
+    lineHeight: 1.25,
     letterSpacing: '-0.02em',
   },
   titleGradient: {
-    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+    background: 'linear-gradient(135deg, #a78bfa, #818cf8)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
-  cardsRow: {
-    display: 'flex',
-    gap: '1.5rem',
-    width: '100%',
-    maxWidth: 860,
-    alignItems: 'stretch',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+  subtitle: {
+    fontSize: '1rem',
+    color: '#9ca3af',
+    margin: 0,
+    lineHeight: 1.5,
   },
-
-  /* ── Free Trial card ── */
-  freeCard: {
-    flex: '1 1 340px',
-    maxWidth: 400,
-    background: '#ffffff',
-    border: '1.5px solid #e5e7eb',
-    borderRadius: 20,
-    padding: '2.25rem 2rem',
+  cardContainer: {
+    width: '100%',
+    maxWidth: 640,
+    position: 'relative',
+    zIndex: 10,
+  },
+  proCard: {
+    background: 'rgba(17, 24, 39, 0.7)',
+    backdropFilter: 'blur(16px)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: 24,
+    padding: '2.5rem',
+    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  cardAccentBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    background: 'linear-gradient(90deg, #7c3aed, #4f46e5)',
+  },
+  cardHeader: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '1.1rem',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+    marginBottom: '1.75rem',
   },
   planLabel: {
-    fontSize: '0.95rem',
+    fontSize: '0.75rem',
     fontWeight: 700,
-    color: '#111827',
+    color: '#a78bfa',
+    letterSpacing: '0.1em',
+    margin: '0 0 0.25rem 0',
+  },
+  planTitle: {
+    fontSize: '1.75rem',
+    fontWeight: 700,
+    color: '#ffffff',
     margin: 0,
   },
-  freePrice: {
-    fontSize: '2.8rem',
-    fontWeight: 800,
-    color: '#111827',
-    lineHeight: 1.1,
+  priceContainer: {
     display: 'flex',
     alignItems: 'baseline',
-    gap: '0.4rem',
   },
-  freeDays: {
-    fontSize: '1rem',
-    fontWeight: 400,
-    color: '#6b7280',
+  currencySymbol: {
+    fontSize: '1.5rem',
+    fontWeight: 700,
+    color: '#ffffff',
+    marginRight: 2,
   },
-  planDesc: {
-    fontSize: '0.88rem',
-    color: '#6b7280',
+  priceAmount: {
+    fontSize: '3rem',
+    fontWeight: 800,
+    color: '#ffffff',
+    letterSpacing: '-0.02em',
+  },
+  pricePeriod: {
+    fontSize: '0.95rem',
+    color: '#9ca3af',
+    marginLeft: 4,
+  },
+  promoBannerActive: {
+    display: 'flex',
+    alignItems: 'center',
+    background: 'rgba(5, 150, 105, 0.08)',
+    border: '1px solid rgba(5, 150, 105, 0.2)',
+    borderRadius: 16,
+    padding: '1rem 1.25rem',
+    marginBottom: '2rem',
+    gap: '0.75rem',
+  },
+  promoIconContainer: {
+    fontSize: '1.5rem',
+  },
+  promoTitle: {
+    fontSize: '0.87rem',
+    fontWeight: 700,
+    color: '#34d399',
+    margin: '0 0 0.15rem 0',
+  },
+  promoDesc: {
+    fontSize: '0.82rem',
+    color: '#a7f3d0',
     margin: 0,
-    lineHeight: 1.6,
+    lineHeight: 1.4,
+  },
+  countdownBadge: {
+    display: 'flex',
+    alignItems: 'center',
+    background: 'rgba(5, 150, 105, 0.2)',
+    border: '1px solid rgba(5, 150, 105, 0.3)',
+    borderRadius: 8,
+    padding: '0.35rem 0.65rem',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    color: '#34d399',
+    whiteSpace: 'nowrap',
+  },
+  promoBannerExpired: {
+    background: 'rgba(255, 255, 255, 0.02)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+    padding: '0.85rem 1.25rem',
+    marginBottom: '2rem',
+    textAlign: 'center',
+  },
+  promoDescExpired: {
+    fontSize: '0.82rem',
+    color: '#9ca3af',
+    margin: 0,
+  },
+  featuresSection: {
+    marginBottom: '2.5rem',
+  },
+  featuresTitle: {
+    fontSize: '0.87rem',
+    fontWeight: 600,
+    color: '#e5e7eb',
+    marginBottom: '1.25rem',
   },
   featureList: {
     listStyle: 'none',
     padding: 0,
-    margin: '0.25rem 0',
+    margin: 0,
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.6rem',
-    flex: 1,
+    gap: '1rem',
   },
   featureItem: {
-    fontSize: '0.88rem',
-    color: '#374151',
     display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
+    alignItems: 'flex-start',
+    gap: '0.75rem',
   },
-  check: {
-    color: '#374151',
+  checkIcon: {
+    color: '#7c3aed',
+    flexShrink: 0,
+    marginTop: 2,
+  },
+  featureText: {
+    fontSize: '0.9rem',
     fontWeight: 600,
-    fontSize: '0.85rem',
+    color: '#ffffff',
+    margin: '0 0 0.15rem 0',
   },
-  trialBtn: {
-    marginTop: '0.5rem',
-    width: '100%',
-    padding: '0.9rem 1.5rem',
-    background: '#f3f4f6',
-    border: '1.5px solid #e5e7eb',
-    borderRadius: 12,
-    cursor: 'pointer',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    color: '#374151',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-  },
-
-  /* ── Annual Pro card ── */
-  proCard: {
-    flex: '1 1 340px',
-    maxWidth: 400,
-    background: 'linear-gradient(145deg, #f0f0ff 0%, #ebe8ff 100%)',
-    border: '1.5px solid #d8d4ff',
-    borderRadius: 20,
-    padding: '2.25rem 2rem',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.1rem',
-    position: 'relative',
-    boxShadow: '0 4px 20px rgba(124,58,237,0.12)',
-  },
-  specialBadge: {
-    position: 'absolute',
-    top: -16,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-    color: '#fff',
-    fontSize: '0.72rem',
-    fontWeight: 800,
-    letterSpacing: '0.1em',
-    padding: '0.35rem 1.1rem',
-    borderRadius: 99,
-    whiteSpace: 'nowrap',
-  },
-  planLabelPro: {
-    fontSize: '0.95rem',
-    fontWeight: 700,
-    color: '#111827',
+  featureSubtext: {
+    fontSize: '0.8rem',
+    color: '#9ca3af',
     margin: 0,
+    lineHeight: 1.4,
   },
-  proPrice: {
-    fontSize: '2.8rem',
-    fontWeight: 800,
-    color: '#111827',
-    lineHeight: 1.1,
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: '0.4rem',
-  },
-  proYear: {
-    fontSize: '1rem',
-    fontWeight: 400,
-    color: '#6b7280',
-  },
-  promoBanner: {
-    padding: '0.65rem 1rem',
-    background: 'rgba(52, 211, 153, 0.15)',
-    border: '1.5px solid rgba(52,211,153,0.4)',
-    borderRadius: 10,
-    fontSize: '0.85rem',
-    color: '#065f46',
-    textAlign: 'center',
-    lineHeight: 1.5,
-  },
-  planDescPro: {
-    fontSize: '0.88rem',
-    color: '#4b5563',
-    margin: 0,
-    lineHeight: 1.6,
-  },
-  checkPro: {
-    color: '#374151',
-    fontWeight: 600,
-    fontSize: '0.85rem',
-  },
-  proBtn: {
-    marginTop: '0.5rem',
+  payBtn: {
     width: '100%',
-    padding: '0.9rem 1.5rem',
-    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+    padding: '1.1rem 2rem',
+    background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
     border: 'none',
-    borderRadius: 12,
+    borderRadius: 14,
     cursor: 'pointer',
-    fontSize: '0.95rem',
+    fontSize: '1rem',
     fontWeight: 700,
-    color: '#fff',
+    color: '#ffffff',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '0.5rem',
-    boxShadow: '0 4px 16px rgba(124,58,237,0.35)',
+    boxShadow: '0 4px 16px rgba(124, 58, 237, 0.25)',
   },
-  footerNote: {
-    marginTop: '2rem',
+  trustBadges: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.75rem',
+    marginTop: '1.25rem',
     fontSize: '0.78rem',
     color: '#9ca3af',
+  },
+  trustItem: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  separator: {
+    width: 1,
+    height: 12,
+    background: 'rgba(255, 255, 255, 0.15)',
+  },
+  footerNote: {
+    marginTop: '2.5rem',
+    fontSize: '0.8rem',
+    color: '#4b5563',
     textAlign: 'center',
+    position: 'relative',
+    zIndex: 10,
   },
 };
 

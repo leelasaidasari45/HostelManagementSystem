@@ -9,20 +9,26 @@ const LandingPage = () => {
   const { user, loadingAuth } = useAuth();
   const navigate = useNavigate();
 
+  // Detect Capacitor native platform
+  const isNative = typeof window !== 'undefined' &&
+    (window.Capacitor?.isNativePlatform?.() ||
+     window.cordova !== undefined ||
+     (/android/i.test(navigator.userAgent) && window.location.protocol === 'file:'));
+
   React.useEffect(() => {
     if (loadingAuth) return;
     if (user) {
       navigate(user.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard', { replace: true });
       return;
     }
-    // If on mobile device and not logged in, skip landing page and go to register
-    if (window.innerWidth <= 768) {
+    // If on native Capacitor app and not logged in, skip landing page and go to register
+    if (isNative) {
       navigate('/register', { replace: true });
     }
   }, [user, loadingAuth, navigate]);
 
-  // Prevent flash of landing page while redirecting or if on mobile
-  if (user || window.innerWidth <= 768) {
+  // Prevent flash of landing page while redirecting or if on native app
+  if (user || isNative) {
     return null; 
   }
 

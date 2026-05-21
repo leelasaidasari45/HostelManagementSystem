@@ -24,6 +24,8 @@ const BillingPage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [promoTimeLeft, setPromoTimeLeft] = useState('');
+  const [isPromoActive, setIsPromoActive] = useState(false);
 
   const fetchStatus = async () => {
     try {
@@ -45,50 +47,106 @@ const BillingPage = () => {
     }
   }, []);
 
-  // Trigger Paytm subscription checkout
+  // Calculate remaining promo time
+  useEffect(() => {
+    if (!data?.created_at) return;
+
+    const calculateTimeLeft = () => {
+      const regDate = new Date(data.created_at).getTime();
+      const promoDuration = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+      const expiryTime = regDate + promoDuration;
+      const now = Date.now();
+      const difference = expiryTime - now;
+
+      if (difference <= 0) {
+        setIsPromoActive(false);
+        setPromoTimeLeft('Expired');
+        return;
+      }
+
+      setIsPromoActive(true);
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+
+      if (days > 0) {
+        setPromoTimeLeft(`${days}d ${hours}h left`);
+      } else {
+        setPromoTimeLeft(`${hours}h ${minutes}m left`);
+      }
+    };
+
+    calculateTimeLeft();
+    const interval = setInterval(calculateTimeLeft, 60000);
+    return () => clearInterval(interval);
+  }, [data]);
+
+  // Upgrade using Cashfree
   const handleUpgrade = async () => {
     setProcessing(true);
     try {
-      const res = await api.post('/api/subscription/create-subscription', {
-        planName: 'Pro Plan',
-        amount: 999,
+      // Step 1: Create Cashfree order for ₹40,000
+      const res = await api.post('/api/cashfree/create-order', {
+        amount: 40000,
+        month: 'Annual',
+        year: new Date().getFullYear(),
+        type: 'subscription',
       });
-      const { txnToken, orderId, mid, amount } = res.data;
-      const PAYTM_BASE_URL = import.meta.env.VITE_PAYTM_BASE_URL || 'https://securegw-stage.paytm.in';
+      const { payment_session_id, order_id, environment } = res.data;
 
-      const existingScript = document.getElementById('paytm-billing-script');
-      if (existingScript) existingScript.remove();
+      // Step 2: Load Cashfree SDK
+      const CF_MODE = environment || 'production';
+      const loadSDK = () => new Promise((resolve, reject) => {
+        if (window.Cashfree) { resolve(window.Cashfree); return; }
+        const s = document.createElement('script');
+        s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+        s.onload = () => resolve(window.Cashfree);
+        s.onerror = () => reject(new Error('Failed to load Cashfree'));
+        document.body.appendChild(s);
+      });
+      await loadSDK();
+      const cashfree = await window.Cashfree({ mode: CF_MODE });
 
-      const script = document.createElement('script');
-      script.id = 'paytm-billing-script';
-      script.src = `${PAYTM_BASE_URL}/merchantpgpui/checkoutjs/merchants/${mid}.js`;
-      script.crossOrigin = 'anonymous';
-      script.type = 'application/javascript';
-      script.onload = () => {
-        const config = {
-          root: '',
-          data: { orderId, token: txnToken, tokenType: 'TXN_TOKEN', amount: String(amount) },
-          website: 'WEBSTAGING',
-          flow: 'SUBSCRIPTION',
-          merchant: { mid, redirect: true },
-          handler: {
-            notifyMerchant: (n) => {
-              if (n === 'APP_CLOSED') setProcessing(false);
-            },
-          },
-        };
-        if (window.Paytm?.CheckoutJS) {
-          window.Paytm.CheckoutJS.onLoad(() =>
-            window.Paytm.CheckoutJS.init(config)
-              .then(() => window.Paytm.CheckoutJS.invoke())
-              .catch(() => { toast.error('Checkout failed'); setProcessing(false); })
-          );
+      // Step 3: Launch Cashfree drop-in checkout
+      const result = await cashfree.checkout({
+        paymentSessionId: payment_session_id,
+        redirectTarget: '_modal',
+      });
+
+      const userCancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
+                            result?.error?.type === 'user_cancelled';
+      if (userCancelled) {
+        toast('Payment cancelled.', { icon: 'ℹ️' });
+        setProcessing(false);
+        return;
+      }
+
+      toast.loading('Verifying payment...', { id: 'sub-verify' });
+      try {
+        const verifyRes = await api.post('/api/subscription/verify-cashfree', {
+          order_id,
+          amount: 40000,
+          plan_name: 'Annual Pro',
+        });
+        toast.dismiss('sub-verify');
+        if (verifyRes.data.success) {
+          toast.success('🎉 Annual Pro activated!');
+          fetchStatus();
+        } else {
+          toast.error('Payment done but verification failed. Contact support.');
         }
-      };
-      script.onerror = () => { toast.error('Failed to load payment gateway'); setProcessing(false); };
-      document.body.appendChild(script);
+      } catch (verifyErr) {
+        toast.dismiss('sub-verify');
+        if (verifyErr.response?.status === 400) {
+          toast('Payment may still be processing. Refreshing...', { icon: '⏳' });
+          setTimeout(() => fetchStatus(), 2000);
+        } else {
+          toast.error('Verification error. Contact support.');
+        }
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to initiate payment');
+    } finally {
       setProcessing(false);
     }
   };
@@ -118,7 +176,7 @@ const BillingPage = () => {
   const paymentDone = data?.payment_setup_complete || false;
   const trialEnd = data?.trial_end_date ? new Date(data.trial_end_date) : null;
   const daysLeft = trialEnd ? Math.max(0, Math.ceil((trialEnd - new Date()) / (1000 * 60 * 60 * 24))) : 0;
-  const isActive = userStatus === 'active' || userStatus === 'trial';
+  const isActive = (userStatus === 'active' || userStatus === 'trial') && trialEnd && trialEnd > new Date();
   const latestSub = data?.latest;
   const history = data?.history || [];
   const statusCfg = STATUS_CONFIG[userStatus] || STATUS_CONFIG.none;
@@ -136,18 +194,22 @@ const BillingPage = () => {
             <div className="billing-hero-left">
               <div className="billing-status-badge" style={{ background: statusCfg.bg, color: statusCfg.color }}>
                 {isActive ? <Sparkles size={14} /> : <Clock size={14} />}
-                {statusCfg.label}
+                {isActive ? statusCfg.label : 'Expired'}
               </div>
               <h2>
-                {userStatus === 'trial' && 'Free Trial Active'}
-                {userStatus === 'active' && 'Pro Plan Active'}
+                {userStatus === 'trial' && isActive && 'Free Trial Active'}
+                {userStatus === 'trial' && !isActive && 'Free Trial Expired'}
+                {userStatus === 'active' && isActive && 'Pro Plan Active'}
+                {userStatus === 'active' && !isActive && 'Pro Plan Expired'}
                 {userStatus === 'pending' && 'Setup Incomplete'}
                 {userStatus === 'cancelled' && 'Subscription Cancelled'}
                 {userStatus === 'none' && 'No Active Subscription'}
               </h2>
               <p>
-                {userStatus === 'trial' && `Trial ends on ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}. Auto-charges ₹999/month after.`}
-                {userStatus === 'active' && `Next billing on ${latestSub?.end_date ? new Date(latestSub.end_date).toLocaleDateString('en-IN') : 'N/A'}.`}
+                {userStatus === 'trial' && isActive && `Trial ends on ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}. Subscribe to standard easyPG Annual Pro to retain access.`}
+                {userStatus === 'trial' && !isActive && `Trial ended on ${trialEnd?.toLocaleDateString('en-IN')}. Please pay ₹40,000/year to reactivate dashboard access.`}
+                {userStatus === 'active' && isActive && `Subscription active until ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.`}
+                {userStatus === 'active' && !isActive && `Subscription expired on ${trialEnd?.toLocaleDateString('en-IN')}. Please renew to reactivate dashboard access.`}
                 {userStatus === 'pending' && 'Complete payment setup to activate your account.'}
                 {(userStatus === 'cancelled' || userStatus === 'none') && 'Resubscribe to unlock full hostel management features.'}
               </p>
@@ -161,10 +223,49 @@ const BillingPage = () => {
               )}
               <div className="billing-metric">
                 <span className="billing-metric-label">Plan</span>
-                <span className="billing-metric-value" style={{ fontSize: '1.2rem' }}>₹999/mo</span>
+                <span className="billing-metric-value" style={{ fontSize: '1.2rem' }}>₹40,000/yr</span>
               </div>
             </div>
           </div>
+
+          {/* ── Dynamic Promo Banner ── */}
+          {isPromoActive && !paymentDone && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(52, 211, 153, 0.08)',
+              border: '1px solid rgba(52, 211, 153, 0.2)',
+              borderRadius: 16,
+              padding: '1.25rem 1.5rem',
+              gap: '1rem',
+              position: 'relative'
+            }}>
+              <span style={{ fontSize: '1.75rem' }}>🔥</span>
+              <div style={{ flex: 1 }}>
+                <strong style={{ color: '#34d399', fontSize: '0.95rem', display: 'block', marginBottom: '0.2rem' }}>
+                  7-Day Registration Offer Active!
+                </strong>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>
+                  Upgrade within 7 days and get <strong>+5 Months FREE</strong> (17 months total instead of 12).
+                </span>
+              </div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                background: 'rgba(52, 211, 153, 0.2)',
+                border: '1px solid rgba(52, 211, 153, 0.3)',
+                borderRadius: 8,
+                padding: '0.35rem 0.65rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: '#34d399',
+                whiteSpace: 'nowrap'
+              }}>
+                <Clock size={12} style={{ marginRight: 4 }} />
+                <span>{promoTimeLeft}</span>
+              </div>
+            </div>
+          )}
 
           <div className="billing-grid">
 
@@ -175,8 +276,8 @@ const BillingPage = () => {
                   <Crown size={22} />
                 </div>
                 <div>
-                  <h3>Pro Plan</h3>
-                  <div className="plan-price-tag">₹999<span>/month</span></div>
+                  <h3>Annual Pro Plan</h3>
+                  <div className="plan-price-tag">₹40,000<span>/year</span></div>
                 </div>
               </div>
 
@@ -184,8 +285,8 @@ const BillingPage = () => {
                 {[
                   ['Unlimited Hostels & Rooms', TrendingUp],
                   ['Advanced Occupancy Analytics', Activity],
-                  ['Automated Rent Reminders (WhatsApp)', Zap],
-                  ['Priority Support', ShieldCheck],
+                  ['Automated Rent Collections', Zap],
+                  ['Priority Support & Account Manager', ShieldCheck],
                   ['Custom Notice Board', Calendar],
                   ['Complaint Management & Tracking', CheckCircle2],
                 ].map(([feat, Icon], i) => (
@@ -205,17 +306,12 @@ const BillingPage = () => {
                 >
                   {processing ? (
                     <span className="pulse-opacity">
-                      Opening Paytm
-                      <span className="pulsing-dot-container">
-                        <span className="pulsing-dot"></span>
-                        <span className="pulsing-dot"></span>
-                        <span className="pulsing-dot"></span>
-                      </span>
+                      Opening Cashfree Checkout...
                     </span>
                   ) : (
                     <>
                       <Zap size={16} />
-                      <span>{paymentDone ? 'Renew Subscription' : 'Setup Autopay with Paytm'}</span>
+                      <span>{paymentDone ? 'Renew Subscription' : 'Upgrade to Annual Pro'}</span>
                     </>
                   )}
                 </button>
@@ -234,7 +330,7 @@ const BillingPage = () => {
 
               <p className="billing-secure-note">
                 <ShieldCheck size={12} />
-                Secured by Paytm · Cancel anytime
+                Secured by Cashfree · Cancel anytime
               </p>
             </div>
 
@@ -255,7 +351,7 @@ const BillingPage = () => {
                     return (
                       <div key={sub.id} className="billing-invoice-item">
                         <div className="invoice-left">
-                          <div className="invoice-plan">{sub.plan_name || 'Pro Plan'}</div>
+                          <div className="invoice-plan">{sub.plan_name || 'Annual Pro'}</div>
                           <div className="invoice-date">
                             {new Date(sub.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </div>
@@ -290,17 +386,6 @@ const BillingPage = () => {
               )}
             </div>
           </div>
-
-          {/* ── Trial Countdown Banner ── */}
-          {userStatus === 'trial' && daysLeft <= 14 && (
-            <div className="billing-trial-warning glass-panel">
-              <AlertCircle size={20} style={{ color: 'var(--warning)' }} />
-              <div>
-                <strong>Trial ending in {daysLeft} days</strong>
-                <p>After {trialEnd?.toLocaleDateString('en-IN')}, ₹999 will be auto-debited via Paytm. Ensure your linked payment method is active.</p>
-              </div>
-            </div>
-          )}
         </div>
       </main>
     </div>

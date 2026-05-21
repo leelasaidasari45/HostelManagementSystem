@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, User, Eye, EyeOff, Moon, Sun, Building, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Moon, Sun, Building, CheckCircle2, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -50,7 +50,9 @@ const translations = {
     passwordLengthError: "Password must be at least 6 characters",
     passwordMatchError: "Passwords do not match",
     accountCreatedSuccess: "Account created successfully!",
-    welcomeBackSuccess: "Welcome back!"
+    welcomeBackSuccess: "Welcome back!",
+    mobileNumber: "Mobile Number",
+    enterPhoneError: "Please enter your mobile number"
   },
   hi: {
     chooseLang: "भाषा चुनें",
@@ -82,7 +84,9 @@ const translations = {
     passwordLengthError: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए",
     passwordMatchError: "पासवर्ड मेल नहीं खाते",
     accountCreatedSuccess: "खाता सफलतापूर्वक बन गया!",
-    welcomeBackSuccess: "आपका स्वागत है!"
+    welcomeBackSuccess: "आपका स्वागत है!",
+    mobileNumber: "मोबाइल नंबर",
+    enterPhoneError: "कृपया अपना मोबाइल नंबर दर्ज करें"
   },
   gu: {
     chooseLang: "ભાષા પસંદ કરો",
@@ -114,7 +118,9 @@ const translations = {
     passwordLengthError: "પાસવર્ડ ઓછામાં ઓછો 6 અક્ષરોનો હોવો જોઈએ",
     passwordMatchError: "પાસવર્ડ મેળ ખાતા નથી",
     accountCreatedSuccess: "ખાતું સફળતાપૂર્વક બનાવવામાં આવ્યું છે!",
-    welcomeBackSuccess: "આપનું સ્વાગત છે!"
+    welcomeBackSuccess: "આપનું સ્વાગત છે!",
+    mobileNumber: "મોબાઇલ નંબર",
+    enterPhoneError: "કૃપા કરીને તમારો મોબાઇલ નંબર દાખલ કરો"
   },
   kn: {
     chooseLang: "ಭಾಷೆಯನ್ನು ಆರಿಸಿ",
@@ -146,7 +152,9 @@ const translations = {
     passwordLengthError: "ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು",
     passwordMatchError: "ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹೊಂದಾಣಿಕೆಯಾಗುತ್ತಿಲ್ಲ",
     accountCreatedSuccess: "ಖಾತೆ ಯಶಸ್ವಿಯಾಗಿ ರಚನೆಯಾಗಿದೆ!",
-    welcomeBackSuccess: "ಸ್ವಾಗತ!"
+    welcomeBackSuccess: "ಸ್ವಾಗತ!",
+    mobileNumber: "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+    enterPhoneError: "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ"
   },
   ta: {
     chooseLang: "மொழியைத் தேர்ந்தெடுக்கவும்",
@@ -178,7 +186,9 @@ const translations = {
     passwordLengthError: "கடவுச்சொல் குறைந்தது 6 எழுத்துக்களைக் கொண்டிருக்க வேண்டும்",
     passwordMatchError: "கடவுச்சொற்கள் பொருந்தவில்லை",
     accountCreatedSuccess: "கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது!",
-    welcomeBackSuccess: "வரவேற்கிறோம்!"
+    welcomeBackSuccess: "வரவேற்கிறோம்!",
+    mobileNumber: "கைப்பேசி எண்",
+    enterPhoneError: "தயவுசெய்து உங்கள் கைப்பேசி எண்ணை உள்ளிடவும்"
   },
   te: {
     chooseLang: "భాషను ఎంచుకోండి",
@@ -210,7 +220,9 @@ const translations = {
     passwordLengthError: "పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి",
     passwordMatchError: "పాస్‌వర్డ్‌లు సరిపోలలేదు",
     accountCreatedSuccess: "ఖాతా విజయవంతంగా సృష్టించబడింది!",
-    welcomeBackSuccess: "స్వాగతం!"
+    welcomeBackSuccess: "స్వాగతం!",
+    mobileNumber: "మొబైల్ సంఖ్య",
+    enterPhoneError: "దయచేసి మీ మొబైల్ సంఖ్యను నమోదు చేయండి"
   },
   bn: {
     chooseLang: "ভাষা নির্বাচন করুন",
@@ -242,7 +254,9 @@ const translations = {
     passwordLengthError: "পাসওয়ার্ডটি কমপক্ষে ৬টি অক্ষরের হতে হবে",
     passwordMatchError: "পাসওয়ার্ড মেলেনি",
     accountCreatedSuccess: "অ্যাকাউন্ট সফলভাবে তৈরি করা হয়েছে!",
-    welcomeBackSuccess: "স্বাগতম!"
+    welcomeBackSuccess: "স্বাগতম!",
+    mobileNumber: "মোবাইল নম্বর",
+    enterPhoneError: "অনুগ্রহ করে আপনার মোবাইল নম্বর লিখুন"
   },
   mr: {
     chooseLang: "भाषा निवडा",
@@ -274,7 +288,9 @@ const translations = {
     passwordLengthError: "पासवर्ड किमान ६ अक्षरांचा असावा",
     passwordMatchError: "पासवर्ड जुळत नाहीत",
     accountCreatedSuccess: "खाते यशस्वीरित्या तयार झाले आहे!",
-    welcomeBackSuccess: "सुस्वागतम!"
+    welcomeBackSuccess: "सुस्वागतम!",
+    mobileNumber: "मोबाईल नंबर",
+    enterPhoneError: "कृपया आपला मोबाईल नंबर प्रविष्ट करा"
   }
 };
 
@@ -299,7 +315,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({ phone: '', email: '', password: '', confirmPassword: '' });
 
   const t = translations[selectedLang] || translations.en;
 
@@ -344,8 +360,14 @@ const AuthPage = () => {
         toast.success('Welcome back!');
         navigate(res.data.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
       } else {
-        if (formData.password !== formData.confirmPassword) throw new Error("Passwords don't match");
-        const res = await api.post('/api/auth/register', { name: formData.name, email: formData.email, password: formData.password });
+        if (!formData.phone.trim()) throw new Error(t.enterPhoneError);
+        if (formData.password !== formData.confirmPassword) throw new Error(t.passwordMatchError);
+        const res = await api.post('/api/auth/register', { 
+          name: formData.phone, 
+          phone: formData.phone,
+          email: formData.email, 
+          password: formData.password 
+        });
         loginContext(res.data);
         toast.success('Account created!');
         navigate('/select-role');
@@ -606,12 +628,12 @@ const AuthPage = () => {
             
             <div className="mobile-auth-form-card">
               <div className="mobile-input-field" style={{ marginBottom: '0.2rem' }}>
-                <User size={18} className="mobile-input-icon" />
+                <Phone size={18} className="mobile-input-icon" />
                 <input 
-                  type="text" 
-                  placeholder={t.yourFullName}
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  type="tel" 
+                  placeholder={t.mobileNumber}
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="mobile-email-input"
                 />
               </div>
@@ -667,8 +689,8 @@ const AuthPage = () => {
                 className="mobile-continue-btn"
                 disabled={loading}
                 onClick={async () => {
-                  if (!formData.name.trim()) {
-                    toast.error(t.enterNameError);
+                  if (!formData.phone.trim()) {
+                    toast.error(t.enterPhoneError);
                     return;
                   }
                   if (!formData.email.trim() || !formData.email.includes('@')) {
@@ -687,7 +709,8 @@ const AuthPage = () => {
                   try {
                     // Register with the unassigned role preference
                     const res = await api.post('/api/auth/register', { 
-                      name: formData.name, 
+                      name: formData.phone, 
+                      phone: formData.phone, 
                       email: formData.email, 
                       password: formData.password,
                       role: 'unassigned'
@@ -816,14 +839,14 @@ const AuthPage = () => {
               <form onSubmit={handleSubmit} className="auth-form-v2">
                 {!isLogin && (
                   <div className="form-group-v2">
-                    <label>Full Name</label>
+                    <label>{t.mobileNumber}</label>
                     <div className="input-field">
-                      <User size={20} />
+                      <Phone size={20} />
                       <input 
-                        type="text" 
-                        placeholder="John Doe"
-                        value={formData.name} 
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                        type="tel" 
+                        placeholder="e.g. 9876543210"
+                        value={formData.phone} 
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
                         required={!isLogin}
                       />
                     </div>

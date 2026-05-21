@@ -85,14 +85,33 @@ router.post('/verify-cashfree', requireAuth, requireOwner, async (req, res) => {
       return res.status(400).json({ error: 'Payment not confirmed yet' });
     }
 
-    // Calculate subscription end date (1 year from now)
+    // Retrieve the user's registration date
+    const { data: userRecord, error: userErr } = await supabase
+      .from('users')
+      .select('created_at')
+      .eq('id', userId)
+      .single();
+
+    if (userErr || !userRecord) {
+      return res.status(400).json({ error: 'User record not found' });
+    }
+
+    const createdAt = new Date(userRecord.created_at).getTime();
+    const now = Date.now();
+    const isWithinPromo = (now - createdAt) <= 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    // Calculate subscription end date (1 year standard vs 17 months for promo)
     const endDate = new Date();
-    endDate.setFullYear(endDate.getFullYear() + 1);
+    if (isWithinPromo) {
+      endDate.setMonth(endDate.getMonth() + 17);
+    } else {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    }
 
     // Record in platform_subscriptions
     await supabase.from('platform_subscriptions').insert([{
       owner_id:   userId,
-      plan_name:  plan_name || 'Annual Pro',
+      plan_name:  plan_name || (isWithinPromo ? 'Annual Pro (7-Day Promo)' : 'Annual Pro'),
       amount:     parseFloat(amount || 40000),
       status:     'active',
       order_id:   order_id,
@@ -108,7 +127,7 @@ router.post('/verify-cashfree', requireAuth, requireOwner, async (req, res) => {
       trial_end_date:         endDate.toISOString(),
     }).eq('id', userId);
 
-    res.json({ success: true, message: 'Subscription activated!', end_date: endDate });
+    res.json({ success: true, message: 'Subscription activated!', end_date: endDate, is_promo_applied: isWithinPromo });
   } catch (err) {
     console.error('verify-cashfree error:', err?.response?.data || err.message);
     res.status(500).json({ error: err?.response?.data?.message || 'Verification failed' });
@@ -291,7 +310,7 @@ router.get('/status', requireAuth, requireOwner, async (req, res) => {
   try {
     const { data: user } = await supabase
       .from('users')
-      .select('subscription_status, trial_end_date, payment_setup_complete, paytm_subscription_id')
+      .select('subscription_status, trial_end_date, payment_setup_complete, paytm_subscription_id, created_at')
       .eq('id', req.user.id)
       .single();
 
@@ -314,6 +333,7 @@ router.get('/status', requireAuth, requireOwner, async (req, res) => {
       payment_setup_complete: user?.payment_setup_complete || false,
       trial_end_date: user?.trial_end_date,
       paytm_subscription_id: user?.paytm_subscription_id,
+      created_at: user?.created_at,
       latest: sub || null,
       history: allSubs || [],
     });

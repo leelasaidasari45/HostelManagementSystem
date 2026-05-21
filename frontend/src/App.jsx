@@ -60,11 +60,14 @@ const ProtectedRoute = ({ children, roleType }) => {
     return <Navigate to="/select-role" replace />;
   }
 
-  // Gate: owner hasn't set up any subscription → force to /select-plan
-  const hasActiveSub = user?.subscription_status === 'active' || user?.subscription_status === 'trial';
+  // Gate: owner has no active/valid trial or active subscription -> force to /select-plan
+  const hasActiveSub = 
+    (user?.subscription_status === 'active' || user?.subscription_status === 'trial') &&
+    user?.trial_end_date &&
+    new Date(user.trial_end_date) > new Date();
+
   if (
     user.role === 'owner' &&
-    !user.payment_setup_complete &&
     !hasActiveSub &&
     window.location.pathname !== '/select-plan'
   ) {
