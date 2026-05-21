@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Loader2, TrendingUp, TrendingDown, Users, DoorOpen, IndianRupee, Plus, Bell, Utensils } from 'lucide-react';
+import { Building2, TrendingUp, TrendingDown, Users, DoorOpen, IndianRupee, Plus, Bell, Utensils } from 'lucide-react';
 import { useHostel } from '../../context/HostelContext';
 import api from '../../api';
 import toast from 'react-hot-toast';
@@ -9,22 +9,24 @@ import OwnerHeader from '../../components/owner/OwnerHeader';
 import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import MobileDashboardSections from '../../components/owner/MobileDashboardSections';
+import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
-  const [analytics, setAnalytics] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { activeHostel, loadingHostels, analytics, setAnalytics } = useHostel();
+  const [loading, setLoading] = useState(!analytics);
   const [loadingNotice, setLoadingNotice] = useState(false);
   const [loadingMenu, setLoadingMenu] = useState(false);
-  const { activeHostel, loadingHostels } = useHostel();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       if (loadingHostels) return;
       if (!activeHostel) { setLoading(false); return; }
       try {
-        setLoading(true);
+        if (!analytics) {
+          setLoading(true);
+        }
         const res = await api.get(`/api/owner/analytics?hostelId=${activeHostel._id}`);
         setAnalytics(res.data);
       } catch (err) {
@@ -34,11 +36,20 @@ const OwnerDashboard = () => {
     fetchAnalytics();
   }, [activeHostel, loadingHostels]);
 
-  if (loadingHostels) return (
-    <div className="flex justify-center items-center h-screen">
-      <Loader2 size={40} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
-    </div>
-  );
+  if (loadingHostels || (loading && !analytics && activeHostel)) {
+    return (
+      <div className="dashboard-layout">
+        <OwnerSidebar />
+        <MobileOwnerHeader />
+        <main className="dashboard-content fade-in mobile-pb">
+          <div className="desktop-only-widgets">
+            <OwnerHeader title="Overview" subtitle="Managing" />
+          </div>
+          <PageSkeleton type="dashboard" />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-layout">
@@ -113,12 +124,6 @@ const OwnerDashboard = () => {
 
             {/* Widget row (Hidden on Mobile) */}
             <div className="grid gap-6 desktop-only-widgets" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))' }}>
-              {loading && !analytics ? (
-                <div className="flex justify-center items-center h-64 w-full" style={{ gridColumn: '1 / -1' }}>
-                  <Loader2 size={40} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
-                </div>
-              ) : (
-                <>
               {/* Notice */}
               <div className="glass-panel p-6 slide-up">
                 <div style={{ display:'flex', alignItems:'center', gap:'.5rem', marginBottom:'1.25rem' }}>
@@ -141,8 +146,21 @@ const OwnerDashboard = () => {
                     <textarea name="message" className="form-control" rows="3" placeholder="Message body..." required></textarea>
                   </div>
                   <button type="submit" className="btn btn-primary w-full" disabled={loadingNotice}>
-                    {loadingNotice ? <Loader2 size={15} className="animate-spin" /> : <Bell size={15} />}
-                    {loadingNotice ? 'Posting...' : 'Broadcast Notice'}
+                    {loadingNotice ? (
+                      <span className="pulse-opacity">
+                        Posting
+                        <span className="pulsing-dot-container">
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                        </span>
+                      </span>
+                    ) : (
+                      <>
+                        <Bell size={15} />
+                        <span>Broadcast Notice</span>
+                      </>
+                    )}
                   </button>
                 </form>
               </div>
@@ -170,8 +188,18 @@ const OwnerDashboard = () => {
                     ))}
                   </div>
                   <button type="submit" className="btn btn-secondary w-full" disabled={loadingMenu}>
-                    {loadingMenu ? <Loader2 size={15} className="animate-spin" /> : null}
-                    {loadingMenu ? 'Saving...' : 'Save Menu'}
+                    {loadingMenu ? (
+                      <span className="pulse-opacity">
+                        Saving
+                        <span className="pulsing-dot-container">
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                        </span>
+                      </span>
+                    ) : (
+                      <span>Save Menu</span>
+                    )}
                   </button>
                 </form>
               </div>
@@ -191,8 +219,6 @@ const OwnerDashboard = () => {
                   Copy Join Link
                 </button>
               </div>
-                </>
-              )}
             </div>
           </>
         )}

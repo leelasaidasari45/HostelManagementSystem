@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, LogOut, ArrowRight } from 'lucide-react';
+import { LogOut, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -183,10 +183,16 @@ const SelectPlanPage = () => {
             disabled={loadingTrial}
             id="start-trial-btn"
           >
-            {loadingTrial
-              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Activating...</>
-              : <>Start 7-Day Trial <ArrowRight size={15} /></>
-            }
+            {loadingTrial ? (
+              <span className="pulse-opacity">
+                Activating
+                <span className="pulsing-dot-container">
+                  <span className="pulsing-dot"></span>
+                  <span className="pulsing-dot"></span>
+                  <span className="pulsing-dot"></span>
+                </span>
+              </span>
+            ) : <><span>Start 7-Day Trial</span> <ArrowRight size={15} /></>}
           </button>
         </div>
 
@@ -229,10 +235,16 @@ const SelectPlanPage = () => {
             disabled={loadingAnnual}
             id="get-annual-pro-btn"
           >
-            {loadingAnnual
-              ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Opening Paytm...</>
-              : <><u>Get Annual Pro</u> <ArrowRight size={15} /></>
-            }
+            {loadingAnnual ? (
+              <span className="pulse-opacity">
+                Opening Paytm
+                <span className="pulsing-dot-container">
+                  <span className="pulsing-dot"></span>
+                  <span className="pulsing-dot"></span>
+                  <span className="pulsing-dot"></span>
+                </span>
+              </span>
+            ) : <><u>Get Annual Pro</u> <ArrowRight size={15} /></>}
           </button>
         </div>
       </div>

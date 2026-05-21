@@ -1,0 +1,78 @@
+/* Shared mobile-only owner UI (matches Capacitor app at ≤768px) */
+
+@media (max-width: 768px) {
+  .owner-mobile-stack-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .owner-desktop-table-wrap {
+    display: none !important;
+  }
+
+  .owner-mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .owner-mobile-record-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-muted);
+    border-radius: var(--r-lg);
+    padding: 1rem 1.1rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .owner-mobile-record-card:active {
+    transform: scale(0.99);
+  }
+
+  .owner-mobile-record-card .record-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .owner-mobile-record-card .record-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .owner-mobile-record-card .record-label {
+    color: var(--text-ghost);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+
+  .owner-mobile-record-card .record-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .billing-container {
+    padding-bottom: 1rem;
+  }
+
+  .billing-hero-card {
+    padding: 1.25rem !important;
+  }
+
+  .billing-plan-card,
+  .billing-container .glass-panel.p-8 {
+    padding: 1.25rem !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .owner-mobile-card-list {
+    display: none;
+  }
+}

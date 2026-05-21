@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
-  QrCode, FileText, CheckCircle2, Loader2, XCircle, Camera,
+  QrCode, FileText, CheckCircle2, RefreshCw, XCircle, Camera,
   ChevronRight, User, Phone, Home, Hash, Car, Calendar,
   Upload, ArrowLeft, IndianRupee, CreditCard, ShieldCheck, Sparkles
 } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
+import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './JoinHostel.css';
 
 const CF_ENV = import.meta.env.VITE_CASHFREE_ENV || 'sandbox';
@@ -276,7 +277,9 @@ const JoinHostel = () => {
 
   if (step === null) return (
     <div className="join-page">
-      <Loader2 size={36} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
+      <div className="join-card" style={{ maxWidth: 480, width: '100%', padding: '2rem' }}>
+        <PageSkeleton type="join-hostel" />
+      </div>
     </div>
   );
 
@@ -335,8 +338,16 @@ const JoinHostel = () => {
                 />
               </div>
               <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loadingCode}>
-                {loadingCode ? <Loader2 size={18} className="animate-spin" /> : <ChevronRight size={18} />}
-                {loadingCode ? 'Verifying...' : 'Verify Code'}
+                {loadingCode ? (
+                  <span className="pulse-opacity">
+                    Verifying
+                    <span className="pulsing-dot-container">
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                    </span>
+                  </span>
+                ) : (<><ChevronRight size={18} /> Verify Code</>)}
               </button>
             </form>
 
@@ -404,10 +415,16 @@ const JoinHostel = () => {
               disabled={loadingPayment || !admissionAmount}
               id="pay-now-btn"
             >
-              {loadingPayment
-                ? <><Loader2 size={18} className="animate-spin" /> Opening Paytm...</>
-                : <><CreditCard size={18} /> Pay ₹{admissionAmount || '---'} via Paytm</>
-              }
+              {loadingPayment ? (
+                <span className="pulse-opacity">
+                  Opening Paytm
+                  <span className="pulsing-dot-container">
+                    <span className="pulsing-dot"></span>
+                    <span className="pulsing-dot"></span>
+                    <span className="pulsing-dot"></span>
+                  </span>
+                </span>
+              ) : (<><CreditCard size={18} /> Pay ₹{admissionAmount || '---'} via Paytm</>)}
             </button>
 
             <p style={{ fontSize: '.75rem', color: 'var(--text-ghost)', textAlign: 'center', marginTop: '.75rem' }}>
@@ -504,8 +521,16 @@ const JoinHostel = () => {
               </div>
 
               <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loadingSubmit} style={{ marginTop: '.5rem' }}>
-                {loadingSubmit ? <Loader2 size={18} className="animate-spin" /> : <FileText size={18} />}
-                {loadingSubmit ? 'Submitting...' : 'Submit Application'}
+                {loadingSubmit ? (
+                  <span className="pulse-opacity">
+                    Submitting
+                    <span className="pulsing-dot-container">
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                    </span>
+                  </span>
+                ) : (<><FileText size={18} /> Submit Application</>)}
               </button>
             </form>
           </div>
@@ -536,7 +561,7 @@ const JoinHostel = () => {
 
             <div style={{ display: 'flex', gap: '.75rem' }}>
               <button className="btn btn-primary flex-1" onClick={() => window.location.reload()}>
-                <Loader2 size={15} /> Check Status
+                <RefreshCw size={15} /> Check Status
               </button>
               <button className="btn btn-ghost flex-1" onClick={logoutContext} style={{ color: 'var(--danger)', borderColor: 'rgba(220,38,38,0.25)', border: '1px solid' }}>
                 Logout
@@ -705,13 +730,21 @@ const JoinHostel = () => {
               disabled={confirmingPay}
               id="confirm-pay-btn"
             >
-              {confirmingPay
-                ? <><Loader2 size={18} className="animate-spin" /> Processing...</>
-                : <>
+              {confirmingPay ? (
+                <span className="pulse-opacity">
+                  Processing
+                  <span className="pulsing-dot-container">
+                    <span className="pulsing-dot"></span>
+                    <span className="pulsing-dot"></span>
+                    <span className="pulsing-dot"></span>
+                  </span>
+                </span>
+              ) : (
+                <>
                     <ShieldCheck size={18} />
                     Pay ₹{parseFloat(admissionAmount || 0).toLocaleString('en-IN')} Securely
                   </>
-              }
+              )}
             </button>
 
             {/* Secure notice */}

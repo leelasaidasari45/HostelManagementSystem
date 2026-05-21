@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Loader2, Mail, Lock, User, Eye, EyeOff, Moon, Sun, Building, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Moon, Sun, Building, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -466,7 +466,16 @@ const AuthPage = () => {
                   }
                 }}
               >
-                {loading ? <Loader2 size={20} className="animate-spin" /> : t.continue}
+                {loading ? (
+                  <span className="pulse-opacity">
+                    Checking
+                    <span className="pulsing-dot-container">
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                    </span>
+                  </span>
+                ) : t.continue}
               </button>
 
               <p style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
@@ -539,7 +548,16 @@ const AuthPage = () => {
                   }
                 }}
               >
-                {loading ? <Loader2 size={20} className="animate-spin" /> : t.logIn}
+                {loading ? (
+                  <span className="pulse-opacity">
+                    Signing In
+                    <span className="pulsing-dot-container">
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                    </span>
+                  </span>
+                ) : t.logIn}
               </button>
               
               <div className="password-links">
@@ -671,7 +689,16 @@ const AuthPage = () => {
                   }
                 }}
               >
-                {loading ? <Loader2 size={20} className="animate-spin" /> : t.register}
+                {loading ? (
+                  <span className="pulse-opacity">
+                    Creating Account
+                    <span className="pulsing-dot-container">
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                    </span>
+                  </span>
+                ) : t.register}
               </button>
               
               <div className="password-links" style={{ justifyContent: 'center' }}>
@@ -854,7 +881,14 @@ const AuthPage = () => {
                   disabled={loading}
                 >
                   {loading ? (
-                    <><Loader2 size={20} className="spin" />{isLogin ? 'Authenticating...' : 'Preparing Workspace...'}</>
+                    <span className="pulse-opacity">
+                      {isLogin ? 'Authenticating' : 'Preparing Workspace'}
+                      <span className="pulsing-dot-container">
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                      </span>
+                    </span>
                   ) : (
                     <>{isLogin ? 'Continue to Dashboard' : 'Create My Account'}</>
                   )}

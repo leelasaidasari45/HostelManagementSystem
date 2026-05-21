@@ -10,9 +10,23 @@ export const HostelProvider = ({ children }) => {
   const [activeHostel, setActiveHostel] = useState(null);
   const [loadingHostels, setLoadingHostels] = useState(true);
 
+  // Cached states for SWR page caching
+  const [rooms, setRooms] = useState([]);
+  const [tenants, setTenants] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
+  const [complaints, setComplaints] = useState([]);
+
   const { user } = useAuth();
 
   const hostelsLoadedRef = React.useRef(false);
+
+  // Clear caches when switching properties to avoid flashing incorrect data
+  useEffect(() => {
+    setRooms([]);
+    setTenants([]);
+    setAnalytics(null);
+    setComplaints([]);
+  }, [activeHostel?._id]);
 
   // Fetch all hostels for the Owner
   const fetchHostels = useCallback(async () => {
@@ -66,8 +80,16 @@ export const HostelProvider = ({ children }) => {
     activeHostel,
     switchHostel,
     refreshHostels: fetchHostels,
-    loadingHostels
-  }), [hostels, activeHostel, switchHostel, fetchHostels, loadingHostels]);
+    loadingHostels,
+    rooms,
+    setRooms,
+    tenants,
+    setTenants,
+    analytics,
+    setAnalytics,
+    complaints,
+    setComplaints
+  }), [hostels, activeHostel, switchHostel, fetchHostels, loadingHostels, rooms, tenants, analytics, complaints]);
 
   return (
     <HostelContext.Provider value={contextValue}>

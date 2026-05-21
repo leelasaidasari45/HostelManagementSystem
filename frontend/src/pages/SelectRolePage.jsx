@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, User, ChevronRight, Loader2 } from 'lucide-react';
+import { Building2, User, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import toast from 'react-hot-toast';
@@ -97,8 +97,9 @@ const SelectRolePage = () => {
               onMouseEnter={e => { if(!loading) e.currentTarget.style.borderColor='var(--border-active)'; e.currentTarget.style.boxShadow=`0 0 20px ${glow}`; }}
               onMouseLeave={e => { if(selected!==role){ e.currentTarget.style.borderColor='var(--border-muted)'; e.currentTarget.style.boxShadow='none'; } }}
             >
-              <div style={{ width:60, height:60, borderRadius:'50%', background:iconBg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, boxShadow:`0 8px 20px ${glow}` }}>
-                {loading && selected===role ? <Loader2 size={24} color="#fff" className="animate-spin" /> : icon}
+              <div style={{ width:60, height:60, borderRadius:'50%', background:iconBg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, boxShadow:`0 8px 20px ${glow}`,
+                animation: loading && selected===role ? 'pulse-op 1.2s infinite ease-in-out' : 'none' }}>
+                {icon}
               </div>
               <div style={{ flex:1 }}>
                 <div style={{ display:'flex', alignItems:'center', gap:'.6rem', marginBottom:'.3rem' }}>

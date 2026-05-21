@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-import { Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const AuthCallback = () => {
@@ -52,10 +51,19 @@ const AuthCallback = () => {
   }, [navigate, loginContext]);
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'var(--bg-base)' }}>
-      <div style={{ width:48, height:48, border:'3px solid var(--border-subtle)', borderTopColor:'var(--aurora-1)', borderRadius:'50%', animation:'spin 1s linear infinite' }} />
-      <p style={{ marginTop:'1.5rem', fontSize:'1rem', color:'var(--text-bright)', fontWeight:500, letterSpacing:'0.02em' }}>
-        Finishing your secure login...
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'var(--bg-base)', gap: '1.5rem' }}>
+      <div className="skeleton skeleton-avatar" style={{ width: 64, height: 64, borderRadius: '50%' }} />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+        <div className="skeleton skeleton-title" style={{ width: 200, height: 20 }} />
+        <div className="skeleton skeleton-text" style={{ width: 150 }} />
+      </div>
+      <p className="pulse-opacity" style={{ fontSize:'1rem', color:'var(--text-dim)', fontWeight:500, letterSpacing:'0.02em', marginTop: '0.5rem' }}>
+        Finishing your secure login
+        <span className="pulsing-dot-container">
+          <span className="pulsing-dot"></span>
+          <span className="pulsing-dot"></span>
+          <span className="pulsing-dot"></span>
+        </span>
       </p>
     </div>
   );

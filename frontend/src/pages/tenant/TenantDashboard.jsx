@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Home, CreditCard, MessageSquare, ArrowRightCircle, IndianRupee, CheckCircle2, Loader2, ShieldCheck, LogOut, Building2, History } from 'lucide-react';
+import { Home, CreditCard, MessageSquare, ArrowRightCircle, IndianRupee, CheckCircle2, RefreshCw, ShieldCheck, LogOut, Building2, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../../components/ThemeToggle';
+import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './TenantDashboard.css';
 
 const CF_ENV = import.meta.env.VITE_CASHFREE_ENV || 'sandbox';
@@ -169,8 +170,39 @@ const TenantDashboard = () => {
 
   // Loading screen
   if (loadingConfig) return (
-    <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--bg-base)' }}>
-      <Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} />
+    <div className="dashboard-layout">
+      {/* Sidebar (mobile = bottom nav) */}
+      <aside className="sidebar">
+        <Link to="/" style={{ textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div className="logo-wrap" title="easyPG">
+            <img src="/logo.png" alt="easyPG" style={{ width: 36, height: 36, objectFit: 'contain', borderRadius: 6 }} />
+          </div>
+        </Link>
+        <div className="sidebar-divider" />
+        <nav className="sidebar-nav">
+          {tabs.map(t => (
+            <button key={t.id} onClick={() => setActiveTab(t.id)} className={`nav-item ${activeTab===t.id?'active':''}`} title={t.label}>
+              {t.icon}
+              <span className="nav-label">{t.label}</span>
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      <main className="dashboard-content fade-in">
+        {/* Header */}
+        <header className="dashboard-header glass-panel">
+          <div>
+            <h1>{titleMap[activeTab]}</h1>
+          </div>
+          <div className="header-actions">
+            <ThemeToggle />
+            <button onClick={logoutContext} className="header-logout-btn"><LogOut size={16} /> <span className="btn-label">Logout</span></button>
+          </div>
+        </header>
+
+        <PageSkeleton type="tenant-dashboard" />
+      </main>
     </div>
   );
 
@@ -194,7 +226,7 @@ const TenantDashboard = () => {
       </div>
       <div style={{ display:'flex', gap:'.75rem' }}>
         <button className="btn btn-primary" onClick={() => window.location.reload()}>
-          <Loader2 size={15} /> Refresh Status
+          <RefreshCw size={15} /> Refresh Status
         </button>
         <button className="btn btn-ghost" onClick={logoutContext} style={{ color:'var(--danger)', border:'1px solid rgba(220,38,38,0.2)' }}>
           Logout
@@ -240,11 +272,7 @@ const TenantDashboard = () => {
           </div>
         </header>
 
-        {loadingConfig ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} />
-          </div>
-        ) : activeTab === 'dashboard' ? (
+        {activeTab === 'dashboard' ? (
           <>
             {/* Welcome hero */}
             <div className="tenant-welcome slide-up">
@@ -333,8 +361,16 @@ const TenantDashboard = () => {
                   <div className="payment-amount text-gradient">₹{(dueInfo?.amount || 0).toLocaleString('en-IN')}</div>
                   <p style={{ color:'var(--text-dim)', marginBottom:'1.5rem' }}>Securely processed via <strong>Paytm</strong></p>
                   <button className="btn btn-primary btn-lg w-full" onClick={handlePayment} disabled={isPaying || !dueInfo?.amount}>
-                    {isPaying ? <Loader2 size={18} className="animate-spin" /> : null}
-                    {isPaying ? 'Processing...' : dueInfo?.amount ? `Pay ₹${dueInfo.amount.toLocaleString('en-IN')} Now` : 'Rent not configured'}
+                    {isPaying ? (
+                      <span className="pulse-opacity">
+                        Processing
+                        <span className="pulsing-dot-container">
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                        </span>
+                      </span>
+                    ) : dueInfo?.amount ? `Pay ₹${dueInfo.amount.toLocaleString('en-IN')} Now` : 'Rent not configured'}
                   </button>
                 </>
               )}
@@ -383,8 +419,16 @@ const TenantDashboard = () => {
                 <textarea className="form-control" rows="5" placeholder="Describe the issue in detail..." value={complaintText} onChange={e => setComplaintText(e.target.value)} required></textarea>
               </div>
               <button type="submit" className="btn btn-danger w-full" disabled={loadingComplaint}>
-                {loadingComplaint ? <Loader2 size={16} className="animate-spin" /> : null}
-                {loadingComplaint ? 'Submitting...' : 'Submit Complaint'}
+                {loadingComplaint ? (
+                  <span className="pulse-opacity">
+                    Submitting
+                    <span className="pulsing-dot-container">
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                      <span className="pulsing-dot"></span>
+                    </span>
+                  </span>
+                ) : 'Submit Complaint'}
               </button>
             </form>
           </div>
@@ -415,8 +459,16 @@ const TenantDashboard = () => {
                     <textarea className="form-control" rows="3" placeholder="Relocating, graduated, etc." value={vacateReason} onChange={e => setVacateReason(e.target.value)} required></textarea>
                   </div>
                   <button type="submit" className="btn w-full" style={{ background:'var(--warning)', color:'#000', fontWeight:600 }} disabled={loadingVacate}>
-                    {loadingVacate ? <Loader2 size={16} className="animate-spin" /> : null}
-                    {loadingVacate ? 'Submitting...' : 'Submit Notice'}
+                    {loadingVacate ? (
+                      <span className="pulse-opacity">
+                        Submitting
+                        <span className="pulsing-dot-container">
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                          <span className="pulsing-dot"></span>
+                        </span>
+                      </span>
+                    ) : 'Submit Notice'}
                   </button>
                 </form>
               </>

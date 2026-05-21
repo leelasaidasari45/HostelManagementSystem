@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { Lock, KeyRound, Loader2, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Lock, KeyRound, CheckCircle, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import './AuthPages.css';
@@ -100,8 +100,16 @@ const ResetPasswordPage = () => {
                     </div>
 
                     <button type="submit" className="btn btn-primary w-full mt-4" disabled={loading}>
-                        {loading ? <Loader2 size={18} className="animate-spin" /> : <KeyRound size={18} />}
-                        {loading ? 'Updating Password...' : 'Update Password'}
+                        {loading ? (
+                          <span className="pulse-opacity">
+                            Updating Password
+                            <span className="pulsing-dot-container">
+                              <span className="pulsing-dot"></span>
+                              <span className="pulsing-dot"></span>
+                              <span className="pulsing-dot"></span>
+                            </span>
+                          </span>
+                        ) : (<><KeyRound size={18} /> Update Password</>)}
                     </button>
 
                     <Link to="/login" className="btn btn-secondary w-full mt-3">

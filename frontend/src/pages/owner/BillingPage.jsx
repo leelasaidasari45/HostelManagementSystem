@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  CreditCard, CheckCircle2, Clock, AlertCircle, Loader2,
+  CreditCard, CheckCircle2, Clock, AlertCircle,
   Sparkles, Zap, Crown, Calendar, RefreshCw, XCircle, ShieldCheck,
   TrendingUp, IndianRupee, Activity
 } from 'lucide-react';
@@ -8,6 +8,7 @@ import api from '../../api';
 import toast from 'react-hot-toast';
 import OwnerHeader from '../../components/owner/OwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
+import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './BillingPage.css';
 
 const STATUS_CONFIG = {
@@ -106,10 +107,9 @@ const BillingPage = () => {
   if (loading) return (
     <div className="dashboard-layout">
       <OwnerSidebar />
-      <main className="dashboard-content">
-        <div className="flex justify-center items-center h-64">
-          <Loader2 size={40} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
-        </div>
+      <main className="dashboard-content fade-in">
+        <OwnerHeader title="Billing & Plans" subtitle="Manage your subscription" />
+        <PageSkeleton type="billing" />
       </main>
     </div>
   );
@@ -203,10 +203,21 @@ const BillingPage = () => {
                   disabled={processing}
                   id="upgrade-btn"
                 >
-                  {processing
-                    ? <><Loader2 size={18} className="animate-spin" /> Opening Paytm...</>
-                    : <><Zap size={16} /> {paymentDone ? 'Renew Subscription' : 'Setup Autopay with Paytm'}</>
-                  }
+                  {processing ? (
+                    <span className="pulse-opacity">
+                      Opening Paytm
+                      <span className="pulsing-dot-container">
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                      </span>
+                    </span>
+                  ) : (
+                    <>
+                      <Zap size={16} />
+                      <span>{paymentDone ? 'Renew Subscription' : 'Setup Autopay with Paytm'}</span>
+                    </>
+                  )}
                 </button>
               )}
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, ArrowLeft, Loader2, Send } from 'lucide-react';
+import { Mail, ArrowLeft, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import './AuthPages.css';
@@ -73,8 +73,16 @@ const ForgotPasswordPage = () => {
                     </div>
 
                     <button type="submit" className="btn btn-primary w-full mt-4" disabled={loading}>
-                        {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                        {loading ? 'Sending Link...' : 'Send Reset Link'}
+                        {loading ? (
+                          <span className="pulse-opacity">
+                            Sending Link
+                            <span className="pulsing-dot-container">
+                              <span className="pulsing-dot"></span>
+                              <span className="pulsing-dot"></span>
+                              <span className="pulsing-dot"></span>
+                            </span>
+                          </span>
+                        ) : (<><Send size={18} /> Send Reset Link</>)}
                     </button>
 
                     <Link to="/login" className="btn btn-secondary w-full mt-3">

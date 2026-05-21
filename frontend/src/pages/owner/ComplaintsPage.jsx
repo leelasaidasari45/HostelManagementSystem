@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, CheckCircle, MessageSquare } from 'lucide-react';
+import { CheckCircle, MessageSquare } from 'lucide-react';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { useHostel } from '../../context/HostelContext';
 import OwnerHeader from '../../components/owner/OwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
+import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
 
 const ComplaintsPage = () => {
-  const [complaints, setComplaints] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { activeHostel, loadingHostels } = useHostel();
+  const { activeHostel, loadingHostels, complaints, setComplaints } = useHostel();
+  const [loading, setLoading] = useState(complaints.length === 0);
+
+  // Reset loading when hostel changes to prevent displaying stale property data
+  useEffect(() => {
+    setLoading(true);
+  }, [activeHostel?._id]);
 
   const fetchComplaints = async () => {
     if (loadingHostels) return;
     if (!activeHostel) { setLoading(false); return; }
     try {
-      setLoading(true);
+      if (complaints.length === 0) {
+        setLoading(true);
+      }
       const res = await api.get(`/api/owner/complaints?hostelId=${activeHostel._id}`);
       setComplaints(res.data);
     } catch { toast.error('Failed to load complaints'); }
@@ -33,7 +40,17 @@ const ComplaintsPage = () => {
     } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
   };
 
-  if (loadingHostels) return <div className="flex justify-center items-center h-screen"><Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} /></div>;
+  if (loadingHostels || loading) {
+    return (
+      <div className="dashboard-layout">
+        <OwnerSidebar />
+        <main className="dashboard-content fade-in">
+          <OwnerHeader title="Complaints Center" subtitle="Issue tracking" />
+          <PageSkeleton type="complaints" />
+        </main>
+      </div>
+    );
+  }
 
   const open = complaints.filter(c => c.status !== 'resolved');
   const resolved = complaints.filter(c => c.status === 'resolved');
@@ -44,11 +61,7 @@ const ComplaintsPage = () => {
       <main className="dashboard-content fade-in">
         <OwnerHeader title="Complaints Center" subtitle="Issue tracking" />
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} />
-          </div>
-        ) : complaints.length === 0 ? (
+        {complaints.length === 0 ? (
           <div className="glass-panel p-8 text-center" style={{ maxWidth:440, margin:'4rem auto' }}>
             <MessageSquare size={48} style={{ color:'var(--success)', margin:'0 auto 1rem', display:'block' }} />
             <h3 style={{ marginBottom:'.5rem' }}>All Clear!</h3>

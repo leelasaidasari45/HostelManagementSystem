@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, TrendingUp, Smartphone, ShieldCheck, Zap, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench } from 'lucide-react';
+import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench, X, Send, CheckCircle2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
+import api from '../../api';
 import './MobileDashboardSections.css';
 
 const MobileDashboardSections = ({ analytics, activeHostel }) => {
@@ -15,12 +16,72 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
   const [activeSlide, setActiveSlide] = React.useState(0);
   const carouselRef = React.useRef(null);
 
+  // Modal states
+  const [showNoticeModal, setShowNoticeModal] = useState(false);
+  const [showMenuModal, setShowMenuModal] = useState(false);
+  const [loadingNotice, setLoadingNotice] = useState(false);
+  const [loadingMenu, setLoadingMenu] = useState(false);
+  const [noticeSuccess, setNoticeSuccess] = useState(false);
+  const [menuSuccess, setMenuSuccess] = useState(false);
+  const [noticeForm, setNoticeForm] = useState({ title: '', message: '' });
+  const [menuForm, setMenuForm] = useState({ breakfast: '', lunch: '', snacks: '', dinner: '' });
+
   const handleScroll = () => {
     if (carouselRef.current) {
       const scrollLeft = carouselRef.current.scrollLeft;
       const width = carouselRef.current.getBoundingClientRect().width;
       const newIndex = Math.round(scrollLeft / width);
       setActiveSlide(newIndex);
+    }
+  };
+
+  const handlePostNotice = async (e) => {
+    e.preventDefault();
+    if (!activeHostel) return toast.error('No hostel selected');
+    setLoadingNotice(true);
+    try {
+      await api.post(`/api/owner/notices?hostelId=${activeHostel._id}`, {
+        title: noticeForm.title,
+        message: noticeForm.message,
+      });
+      setNoticeSuccess(true);
+      toast.success('Notice broadcasted to all tenants! 📢');
+      setTimeout(() => {
+        setNoticeSuccess(false);
+        setShowNoticeModal(false);
+        setNoticeForm({ title: '', message: '' });
+      }, 2000);
+    } catch {
+      toast.error('Failed to post notice');
+    } finally {
+      setLoadingNotice(false);
+    }
+  };
+
+  const handleUpdateMenu = async (e) => {
+    e.preventDefault();
+    if (!activeHostel) return toast.error('No hostel selected');
+    const day = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    setLoadingMenu(true);
+    try {
+      await api.put(`/api/owner/menu?hostelId=${activeHostel._id}`, {
+        day,
+        breakfast: menuForm.breakfast,
+        lunch: menuForm.lunch,
+        snacks: menuForm.snacks,
+        dinner: menuForm.dinner,
+      });
+      setMenuSuccess(true);
+      toast.success(`Menu updated for ${day}! 🍽️`);
+      setTimeout(() => {
+        setMenuSuccess(false);
+        setShowMenuModal(false);
+        setMenuForm({ breakfast: '', lunch: '', snacks: '', dinner: '' });
+      }, 2000);
+    } catch {
+      toast.error('Failed to update menu');
+    } finally {
+      setLoadingMenu(false);
     }
   };
 
@@ -122,13 +183,13 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
             </div>
             <span>Rooms</span>
           </Link>
-          <div className="qa-item" onClick={() => document.getElementById('notice-form')?.scrollIntoView({ behavior: 'smooth' })}>
+          <div className="qa-item" onClick={() => setShowNoticeModal(true)}>
             <div className="qa-icon" style={{ color: '#f59e0b' }}>
               <Bell size={24} />
             </div>
             <span>Notice</span>
           </div>
-          <div className="qa-item" style={{ opacity: 0.7 }}>
+          <div className="qa-item" onClick={() => setShowMenuModal(true)}>
             <div className="qa-icon" style={{ color: '#ec4899' }}>
               <Utensils size={24} />
             </div>
@@ -143,14 +204,10 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
         </div>
       </section>
 
-      {/* New Features */}
+      {/* What's New carousel */}
       <section className="dashboard-section">
         <h2 className="section-title">What's New</h2>
-        <div 
-          className="features-carousel"
-          ref={carouselRef}
-          onScroll={handleScroll}
-        >
+        <div className="features-carousel" ref={carouselRef} onScroll={handleScroll}>
           <div className="feature-banner banner-purple">
             <div className="feature-badge" style={{ color: '#6366f1', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
@@ -159,7 +216,6 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
             <p style={{ marginBottom: '1rem' }}>Tenants scan and join instantly without manual entry.</p>
             <div className="feature-btn">Generate QR</div>
           </div>
-          
           <div className="feature-banner banner-blue">
             <div className="feature-badge" style={{ color: '#2563eb', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
@@ -168,7 +224,6 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
             <p style={{ marginBottom: '1rem' }}>Set up automatic monthly rent payments easily.</p>
             <div className="feature-btn">Activate Now</div>
           </div>
-
           <div className="feature-banner banner-green">
             <div className="feature-badge" style={{ color: '#059669', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> Now Live
@@ -178,29 +233,10 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
             <div className="feature-btn">Track Now</div>
           </div>
         </div>
-
         <div className="carousel-dots">
-          <span 
-            className={`carousel-dot ${activeSlide === 0 ? 'active' : ''}`}
-            onClick={() => {
-              const el = carouselRef.current;
-              if (el) el.scrollTo({ left: 0, behavior: 'smooth' });
-            }}
-          ></span>
-          <span 
-            className={`carousel-dot ${activeSlide === 1 ? 'active' : ''}`}
-            onClick={() => {
-              const el = carouselRef.current;
-              if (el) el.scrollTo({ left: el.getBoundingClientRect().width, behavior: 'smooth' });
-            }}
-          ></span>
-          <span 
-            className={`carousel-dot ${activeSlide === 2 ? 'active' : ''}`}
-            onClick={() => {
-              const el = carouselRef.current;
-              if (el) el.scrollTo({ left: el.getBoundingClientRect().width * 2, behavior: 'smooth' });
-            }}
-          ></span>
+          <span className={`carousel-dot ${activeSlide === 0 ? 'active' : ''}`} onClick={() => { const el = carouselRef.current; if (el) el.scrollTo({ left: 0, behavior: 'smooth' }); }}></span>
+          <span className={`carousel-dot ${activeSlide === 1 ? 'active' : ''}`} onClick={() => { const el = carouselRef.current; if (el) el.scrollTo({ left: el.getBoundingClientRect().width, behavior: 'smooth' }); }}></span>
+          <span className={`carousel-dot ${activeSlide === 2 ? 'active' : ''}`} onClick={() => { const el = carouselRef.current; if (el) el.scrollTo({ left: el.getBoundingClientRect().width * 2, behavior: 'smooth' }); }}></span>
         </div>
       </section>
 
@@ -226,42 +262,172 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
         </a>
       </section>
 
-      {/* Smart Property */}
+      {/* Smart Automations */}
       <section className="dashboard-section pb-8">
         <h2 className="section-title">Smart Automations</h2>
         <div className="smart-automations-scroll">
-          <div className="smart-item">
-            <div className="smart-icon-wrapper" style={{ color: '#f97316' }}>
-              <QrCode size={24} />
-            </div>
-            <span>QR Onboard</span>
-          </div>
-          <div className="smart-item">
-            <div className="smart-icon-wrapper" style={{ color: '#8b5cf6' }}>
-              <Key size={24} />
-            </div>
-            <span>Hostel Codes</span>
-          </div>
-          <div className="smart-item">
-            <div className="smart-icon-wrapper" style={{ color: '#10b981' }}>
-              <Bell size={24} />
-            </div>
-            <span>Rent Remind</span>
-          </div>
-          <div className="smart-item">
-            <div className="smart-icon-wrapper" style={{ color: '#6366f1' }}>
-              <Eye size={24} />
-            </div>
-            <span>Room Visible</span>
-          </div>
-          <div className="smart-item">
-            <div className="smart-icon-wrapper" style={{ color: '#ef4444' }}>
-              <Wrench size={24} />
-            </div>
-            <span>Complaints Hub</span>
-          </div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#f97316' }}><QrCode size={24} /></div><span>QR Onboard</span></div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#8b5cf6' }}><Key size={24} /></div><span>Hostel Codes</span></div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#10b981' }}><Bell size={24} /></div><span>Rent Remind</span></div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#6366f1' }}><Eye size={24} /></div><span>Room Visible</span></div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#ef4444' }}><Wrench size={24} /></div><span>Complaints Hub</span></div>
         </div>
       </section>
+
+      {/* ═══ NOTICE MODAL ═══ */}
+      {showNoticeModal && (
+        <div className="ql-modal-backdrop" onClick={() => !loadingNotice && setShowNoticeModal(false)}>
+          <div className="ql-modal-card slide-up" onClick={e => e.stopPropagation()}>
+            <div className="ql-modal-header notice-header">
+              <div className="ql-modal-icon notice-icon"><Bell size={22} /></div>
+              <div className="ql-modal-header-text">
+                <h3 className="ql-modal-title">Post a Notice</h3>
+                <p className="ql-modal-subtitle">Broadcast to all tenants instantly</p>
+              </div>
+              <button className="ql-close-btn" onClick={() => !loadingNotice && setShowNoticeModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+
+            {noticeSuccess ? (
+              <div className="ql-success-state">
+                <CheckCircle2 size={48} style={{ color: 'var(--success)' }} />
+                <h4>Notice Broadcasted!</h4>
+                <p>All tenants can see your notice now.</p>
+              </div>
+            ) : (
+              <form onSubmit={handlePostNotice} className="ql-modal-form">
+                <div className="ql-form-group">
+                  <label className="ql-label">Notice Title</label>
+                  <input
+                    type="text"
+                    className="ql-input"
+                    placeholder="e.g. Water supply off tomorrow"
+                    value={noticeForm.title}
+                    onChange={e => setNoticeForm(p => ({ ...p, title: e.target.value }))}
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="ql-form-group">
+                  <label className="ql-label">Message</label>
+                  <textarea
+                    className="ql-input ql-textarea"
+                    rows={4}
+                    placeholder="Write your full notice message here..."
+                    value={noticeForm.message}
+                    onChange={e => setNoticeForm(p => ({ ...p, message: e.target.value }))}
+                    required
+                  />
+                </div>
+                <button type="submit" className="ql-submit-btn notice-submit" disabled={loadingNotice}>
+                  {loadingNotice ? (
+                    <span className="pulse-opacity">
+                      Broadcasting
+                      <span className="pulsing-dot-container">
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                      </span>
+                    </span>
+                  ) : (
+                    <><Send size={16} /> Broadcast Notice</>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ MENU MODAL ═══ */}
+      {showMenuModal && (
+        <div className="ql-modal-backdrop" onClick={() => !loadingMenu && setShowMenuModal(false)}>
+          <div className="ql-modal-card slide-up" onClick={e => e.stopPropagation()}>
+            <div className="ql-modal-header menu-header">
+              <div className="ql-modal-icon menu-icon"><Utensils size={22} /></div>
+              <div className="ql-modal-header-text">
+                <h3 className="ql-modal-title">Today's Menu</h3>
+                <p className="ql-modal-subtitle">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+              </div>
+              <button className="ql-close-btn" onClick={() => !loadingMenu && setShowMenuModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+
+            {menuSuccess ? (
+              <div className="ql-success-state">
+                <CheckCircle2 size={48} style={{ color: 'var(--success)' }} />
+                <h4>Menu Updated!</h4>
+                <p>Tenants can now see today's menu.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleUpdateMenu} className="ql-modal-form">
+                <div className="ql-form-group">
+                  <label className="ql-label">Breakfast</label>
+                  <input
+                    type="text"
+                    className="ql-input"
+                    placeholder="e.g. Idli, Sambar, Vada"
+                    value={menuForm.breakfast}
+                    onChange={e => setMenuForm(p => ({ ...p, breakfast: e.target.value }))}
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="ql-form-group">
+                  <label className="ql-label">Lunch</label>
+                  <input
+                    type="text"
+                    className="ql-input"
+                    placeholder="e.g. Rice, Dal, Veggies"
+                    value={menuForm.lunch}
+                    onChange={e => setMenuForm(p => ({ ...p, lunch: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="ql-form-group">
+                  <label className="ql-label">Snacks</label>
+                  <input
+                    type="text"
+                    className="ql-input"
+                    placeholder="e.g. Tea & Biscuits"
+                    value={menuForm.snacks}
+                    onChange={e => setMenuForm(p => ({ ...p, snacks: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="ql-form-group">
+                  <label className="ql-label">Dinner</label>
+                  <input
+                    type="text"
+                    className="ql-input"
+                    placeholder="e.g. Chapati, Curry"
+                    value={menuForm.dinner}
+                    onChange={e => setMenuForm(p => ({ ...p, dinner: e.target.value }))}
+                    required
+                  />
+                </div>
+                <button type="submit" className="ql-submit-btn menu-submit" disabled={loadingMenu}>
+                  {loadingMenu ? (
+                    <span className="pulse-opacity">
+                      Saving Menu
+                      <span className="pulsing-dot-container">
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                        <span className="pulsing-dot"></span>
+                      </span>
+                    </span>
+                  ) : (
+                    <><Utensils size={16} /> Save Today's Menu</>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

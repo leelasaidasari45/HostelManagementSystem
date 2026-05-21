@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BuildingIcon, Users, LayoutDashboard, Loader2, MessageSquare, Plus, XCircle } from 'lucide-react';
+import { BuildingIcon, Users, LayoutDashboard, MessageSquare, Plus, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { useHostel } from '../../context/HostelContext';
 import OwnerHeader from '../../components/owner/OwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
+import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
 
 const PastTenantsPage = () => {
@@ -35,8 +36,19 @@ const PastTenantsPage = () => {
     fetchTenants();
   }, [activeHostel, loadingHostels]);
 
-  if (loadingHostels) {
-    return <div className="flex justify-center items-center h-screen"><Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} /></div>;
+  if (loadingHostels || loading) {
+    return (
+      <div className="dashboard-layout">
+        <OwnerSidebar />
+        <main className="dashboard-content fade-in">
+          <OwnerHeader 
+            title="Archived Residents" 
+            subtitle="History of past tenants" 
+          />
+          <PageSkeleton type="tenants" />
+        </main>
+      </div>
+    );
   }
 
   // No pending tenets here
@@ -54,11 +66,7 @@ const PastTenantsPage = () => {
           subtitle="History of past tenants" 
         />
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} />
-          </div>
-        ) : (
+        (
           <div>
             {/* Active Tenants List */}
             <div>
@@ -105,7 +113,7 @@ const PastTenantsPage = () => {
               )}
             </div>
           </div>
-        )}
+        )
 
         {/* View Details Modal */}
         {selectedTenant && (

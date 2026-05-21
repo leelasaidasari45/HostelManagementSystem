@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, QrCode, XCircle, Download, Loader2, Sun, Moon } from 'lucide-react';
+import { LogOut, QrCode, XCircle, Download, Sun, Moon } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { useHostel } from '../../context/HostelContext';

@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Loader2, CheckCircle, XCircle, Search, X, Phone, Home, Hash, Car, Calendar, FileText, IndianRupee, User, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
+import { Users, CheckCircle, XCircle, Search, X, Phone, Home, Hash, Car, Calendar, FileText, IndianRupee, User, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { useHostel } from '../../context/HostelContext';
 import OwnerHeader from '../../components/owner/OwnerHeader';
+import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
+import PageSkeleton, { SkeletonRect } from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
 
 const TenantsPage = () => {
-  const [tenants, setTenants] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { activeHostel, hostels, switchHostel, loadingHostels, tenants, setTenants } = useHostel();
+  const [loading, setLoading] = useState(tenants.length === 0);
   const [selectedTenant, setSelectedTenant] = useState(null);
   const [tenantPayments, setTenantPayments] = useState([]);
   const [loadingPayments, setLoadingPayments] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const { activeHostel, hostels, switchHostel, loadingHostels } = useHostel();
   const { logoutContext } = useAuth();
+
+  // Reset loading when hostel changes to prevent displaying stale property data
+  useEffect(() => {
+    setLoading(true);
+  }, [activeHostel?._id]);
 
   const fetchTenants = async () => {
     if (loadingHostels) return;
@@ -26,7 +32,9 @@ const TenantsPage = () => {
       return;
     }
     try {
-      setLoading(true);
+      if (tenants.length === 0) {
+        setLoading(true);
+      }
       const res = await api.get(`/api/owner/tenants?hostelId=${activeHostel._id}`);
       setTenants(res.data);
     } catch (err) {
@@ -68,8 +76,23 @@ const TenantsPage = () => {
   const pendingTenants = React.useMemo(() => filteredTenants.filter(t => t.status === 'pending'), [filteredTenants]);
   const activeTenants = React.useMemo(() => filteredTenants.filter(t => t.status === 'active' || t.status === 'vacating'), [filteredTenants]);
 
-  if (loadingHostels) {
-    return <div className="flex justify-center items-center h-screen"><Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} /></div>;
+  if (loadingHostels || loading) {
+    return (
+      <div className="dashboard-layout">
+        <OwnerSidebar />
+        <MobileOwnerHeader />
+        <main className="dashboard-content fade-in mobile-pb">
+          <div className="desktop-only-widgets">
+            <OwnerHeader
+              title="Tenants Management"
+              subtitle="Approve and manage residents"
+            />
+          </div>
+          <h2 className="mobile-page-title">Tenants Management</h2>
+          <PageSkeleton type="tenants" />
+        </main>
+      </div>
+    );
   }
 
   const handleApprove = async (id) => {
@@ -143,18 +166,19 @@ const TenantsPage = () => {
         <OwnerSidebar />
       )}
 
-      <main className="dashboard-content fade-in">
-        <OwnerHeader
-          title="Tenants Management"
-          subtitle="Approve and manage residents"
-        />
+      <MobileOwnerHeader />
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 size={40} className="animate-spin" style={{ color:'var(--aurora-1)' }} />
-          </div>
-        ) : (
-          <div>
+      <main className="dashboard-content fade-in mobile-pb">
+        <div className="desktop-only-widgets">
+          <OwnerHeader
+            title="Tenants Management"
+            subtitle="Approve and manage residents"
+          />
+        </div>
+
+        <h2 className="mobile-page-title">Tenants Management</h2>
+
+        <div>
             {/* Redesigned Search Bar */}
             <div style={{ display:'flex', justifyContent:'center', marginBottom:'1.5rem' }}>
               <div className="search-container" style={{ maxWidth:600, width:'100%' }}>
@@ -270,9 +294,8 @@ const TenantsPage = () => {
                   ))}
                 </div>
               )}
-            </div>
           </div>
-        )}
+        </div>
 
         {/* View Details Modal */}
         {selectedTenant && (
@@ -375,8 +398,9 @@ const TenantsPage = () => {
                   </div>
 
                   {loadingPayments ? (
-                    <div style={{ textAlign: 'center', padding: '1.5rem' }}>
-                      <Loader2 size={22} className="animate-spin" style={{ color: 'var(--aurora-1)' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
+                      <SkeletonRect height="44px" marginBottom="0" />
+                      <SkeletonRect height="44px" marginBottom="0" />
                     </div>
                   ) : tenantPayments.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
