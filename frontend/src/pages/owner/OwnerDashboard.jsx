@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, TrendingUp, TrendingDown, Users, DoorOpen, IndianRupee, Plus, Bell, Utensils } from 'lucide-react';
 import { useHostel } from '../../context/HostelContext';
+import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { QRCodeSVG } from 'qrcode.react';
@@ -9,11 +10,13 @@ import OwnerHeader from '../../components/owner/OwnerHeader';
 import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import MobileDashboardSections from '../../components/owner/MobileDashboardSections';
+import TrialExpiryWarning from '../../components/TrialExpiryWarning';
 import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { activeHostel, loadingHostels, analytics, setAnalytics } = useHostel();
   const [loading, setLoading] = useState(!analytics);
   const [loadingNotice, setLoadingNotice] = useState(false);
@@ -55,6 +58,16 @@ const OwnerDashboard = () => {
     <div className="dashboard-layout">
       <OwnerSidebar />
       <MobileOwnerHeader />
+      
+      {/* Trial Expiry Warning */}
+      {user?.subscription_status === 'trial' && (
+        <TrialExpiryWarning
+          trialEndDate={user.trial_end_date}
+          user={user}
+          onUpgradeClick={() => navigate('/select-plan')}
+        />
+      )}
+      
       <main className="dashboard-content fade-in mobile-pb">
         <div className="desktop-only-widgets">
           <OwnerHeader title="Overview" subtitle="Managing" />

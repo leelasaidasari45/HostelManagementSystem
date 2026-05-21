@@ -4,9 +4,12 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { useHostel } from '../../context/HostelContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
+import TrialBadge from '../TrialBadge';
 import toast from 'react-hot-toast';
 
 const OwnerHeader = ({ title, subtitle }) => {
+  const navigate = useNavigate();
   const { activeHostel, hostels, switchHostel } = useHostel();
   const { logoutContext, user } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
@@ -61,6 +64,15 @@ const OwnerHeader = ({ title, subtitle }) => {
             >
               {hostels.map(h => <option key={h._id} value={h._id}>{h.name}</option>)}
             </select>
+          )}
+
+          {/* Trial Badge */}
+          {user?.subscription_status === 'trial' && (
+            <TrialBadge
+              trialEndDate={user.trial_end_date}
+              subscription_status={user.subscription_status}
+              onUpgrade={() => navigate('/select-plan')}
+            />
           )}
 
           {/* Theme toggle */}

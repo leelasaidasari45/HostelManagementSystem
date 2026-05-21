@@ -6,6 +6,8 @@ import api from './api';
 // Warm up the backend immediately on app load (prevents Render cold start delay)
 api.get('/').catch(() => {});
 
+// Import SubscriptionGuard for owner routes
+import SubscriptionGuard from './components/SubscriptionGuard';
 
 // Lazy load all pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -30,7 +32,7 @@ import { HostelProvider } from './context/HostelContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ children, roleType }) => {
-  const { user, loadingAuth } = useAuth();
+  const { user, loadingAuth, isSubscriptionValid } = useAuth();
   
   // If we have a cached user, render immediately — don't block with spinner
   if (loadingAuth && !user) {
@@ -60,18 +62,11 @@ const ProtectedRoute = ({ children, roleType }) => {
     return <Navigate to="/select-role" replace />;
   }
 
-  // Gate: owner has no active/valid trial or active subscription -> force to /select-plan
-  const hasActiveSub = 
-    (user?.subscription_status === 'active' || user?.subscription_status === 'trial') &&
-    user?.trial_end_date &&
-    new Date(user.trial_end_date) > new Date();
-
-  if (
-    user.role === 'owner' &&
-    !hasActiveSub &&
-    window.location.pathname !== '/select-plan'
-  ) {
-    return <Navigate to="/select-plan" replace />;
+  // Gate: owner must have valid subscription or trial
+  if (user.role === 'owner' && !isSubscriptionValid(user)) {
+    if (window.location.pathname !== '/select-plan') {
+      return <Navigate to="/select-plan" replace />;
+    }
   }
 
   if (roleType && user.role !== roleType) {
@@ -187,13 +182,13 @@ function AppContent() {
           <Route path="/select-plan" element={<ProtectedRoute roleType="owner"><SelectPlanPage /></ProtectedRoute>} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/owner/dashboard" element={<ProtectedRoute roleType="owner"><OwnerDashboard /></ProtectedRoute>} />
-          <Route path="/owner/create-hostel" element={<ProtectedRoute roleType="owner"><CreateHostel /></ProtectedRoute>} />
-          <Route path="/owner/rooms" element={<ProtectedRoute roleType="owner"><RoomsPage /></ProtectedRoute>} />
-          <Route path="/owner/complaints" element={<ProtectedRoute roleType="owner"><ComplaintsPage /></ProtectedRoute>} />
-          <Route path="/owner/billing" element={<ProtectedRoute roleType="owner"><BillingPage /></ProtectedRoute>} />
-          <Route path="/owner/tenants" element={<ProtectedRoute roleType="owner"><TenantsPage /></ProtectedRoute>} />
-          <Route path="/owner/past-tenants" element={<ProtectedRoute roleType="owner"><PastTenantsPage /></ProtectedRoute>} />
+          <Route path="/owner/dashboard" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><OwnerDashboard /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/create-hostel" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><CreateHostel /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/rooms" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><RoomsPage /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/complaints" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><ComplaintsPage /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/billing" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><BillingPage /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><TenantsPage /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/past-tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><PastTenantsPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
           <Route path="/tenant/dashboard" element={<ProtectedRoute roleType="tenant"><TenantDashboard /></ProtectedRoute>} />
         </Routes>

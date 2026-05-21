@@ -25,6 +25,22 @@ export const AuthProvider = ({ children }) => {
 
   api.defaults.withCredentials = true;
 
+  // Check if subscription is valid (owner-specific check)
+  const isSubscriptionValid = useCallback((userData) => {
+    if (!userData || userData.role !== 'owner') return true; // Tenants don't have subscriptions
+    
+    const now = new Date();
+    const trialEnd = userData.trial_end_date ? new Date(userData.trial_end_date) : null;
+    
+    if (!trialEnd) return false; // No trial end date = subscription not set up
+    if (now > trialEnd) return false; // Trial/subscription has expired
+    
+    const isTrialValid = userData.subscription_status === 'trial';
+    const isSubscriptionActive = userData.subscription_status === 'active';
+    
+    return isTrialValid || isSubscriptionActive;
+  }, []);
+
   const verifySession = useCallback(async (silent = false) => {
     if (!silent) setLoadingAuth(true);
     hasTimedOut.current = false;
@@ -39,9 +55,12 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await api.get('/api/auth/me');
       clearTimeout(timeoutId);
+      
+      const freshUserData = res.data;
+      
       // Update cache with fresh data
-      localStorage.setItem('cached_user', JSON.stringify(res.data));
-      setUser(res.data);
+      localStorage.setItem('cached_user', JSON.stringify(freshUserData));
+      setUser(freshUserData);
     } catch (err) {
       clearTimeout(timeoutId);
       // Only clear user if the server explicitly says unauthorized (401)
@@ -97,7 +116,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loadingAuth, loginContext, logoutContext, logout: logoutContext, verifySession }}>
+    <AuthContext.Provider value={{ user, loadingAuth, loginContext, logoutContext, logout: logoutContext, verifySession, isSubscriptionValid }}>
       {children}
     </AuthContext.Provider>
   );
