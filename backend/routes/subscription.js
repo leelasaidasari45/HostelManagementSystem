@@ -16,13 +16,13 @@ const {
 } = process.env;
 
 // ─────────────────────────────────────────────────────────
-// 0. Start Free Trial — 7 days, no payment needed
+// 0. Start Free Trial — 2 days, no payment needed
 // ─────────────────────────────────────────────────────────
 router.post('/start-trial', requireAuth, requireOwner, async (req, res) => {
   try {
     const userId = req.user.id;
     const trialEndDate = new Date();
-    trialEndDate.setDate(trialEndDate.getDate() + 7);
+    trialEndDate.setDate(trialEndDate.getDate() + 2);
 
     // Activate trial on user record
     const { error } = await supabase.from('users').update({
