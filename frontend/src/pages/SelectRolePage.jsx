@@ -192,8 +192,8 @@ const SelectRolePage = () => {
 const styles = {
   page: {
     minHeight: '100vh',
-    background: '#0a0d18',
-    color: '#f3f4f6',
+    background: 'var(--bg-base)',
+    color: 'var(--text-bright)',
     display: 'flex',
     flexDirection: 'column',
     padding: 0,
@@ -226,7 +226,7 @@ const styles = {
   header: {
     width: '100%',
     padding: '1.5rem 2rem',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+    borderBottom: '1px solid var(--border-subtle)',
     position: 'relative',
     zIndex: 10,
   },
@@ -252,9 +252,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    color: '#9ca3af',
+    background: 'var(--bg-elevated)',
+    border: '1px solid var(--border-muted)',
+    color: 'var(--text-dim)',
     padding: '0.5rem 1rem',
     borderRadius: 8,
     fontSize: '0.9rem',
