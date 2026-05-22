@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, ArrowRight, CheckCircle2, ShieldCheck, Sparkles, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 
 const SelectPlanPage = () => {
   const [loadingAnnual, setLoadingAnnual] = useState(false);
@@ -156,13 +157,27 @@ const SelectPlanPage = () => {
       <div style={styles.orb1} />
       <div style={styles.orb2} />
 
-      {/* Top Navbar */}
-      <div style={styles.topbar}>
-        <img src="/logo.png" alt="easyPG" style={{ height: 42, objectFit: 'contain' }} />
-        <button onClick={handleLogout} style={styles.logoutBtn}>
-          <LogOut size={16} /> Log out
-        </button>
-      </div>
+      {/* Header Nav */}
+      <header className="landing-header slide-up" style={styles.headerNav}>
+        <nav style={styles.landingNav}>
+          <Link to="/" className="landing-logo" style={{ textDecoration: 'none' }}>
+            <img src="/logo.png" alt="easyPG" style={{ height: 42, objectFit: 'contain' }} />
+          </Link>
+
+          <div style={styles.navLinks}>
+            <a href="#features" style={styles.navLink}>Features</a>
+            <a href="#how-it-works" style={styles.navLink}>How it Works</a>
+            <a href="#pricing" style={styles.navLink}>Pricing</a>
+          </div>
+
+          <div style={styles.navActions}>
+            <ThemeToggle />
+            <button onClick={handleLogout} style={styles.logoutBtn}>
+              <LogOut size={16} /> Log out
+            </button>
+          </div>
+        </nav>
+      </header>
 
       {/* Header section */}
       <div className="slide-up" style={styles.headerBlock}>
@@ -352,6 +367,9 @@ const SelectPlanPage = () => {
         #pay-annual-pro-btn {
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        a[href*="#"]:hover {
+          color: #a78bfa !important;
+        }
       `}</style>
     </div>
   );
@@ -392,6 +410,41 @@ const styles = {
     right: -200,
     pointerEvents: 'none',
   },
+  headerNav: {
+    width: '100%',
+    marginBottom: '2rem',
+    position: 'relative',
+    zIndex: 10,
+  },
+  landingNav: {
+    width: '100%',
+    maxWidth: 1200,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: '0 auto',
+    padding: '0 1.5rem',
+  },
+  navLinks: {
+    display: 'flex',
+    gap: '2.5rem',
+    alignItems: 'center',
+  },
+  navLink: {
+    fontSize: '0.95rem',
+    color: '#9ca3af',
+    textDecoration: 'none',
+    cursor: 'pointer',
+    transition: 'color 0.2s',
+    '&:hover': {
+      color: '#a78bfa',
+    },
+  },
+  navActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+  },
   topbar: {
     width: '100%',
     maxWidth: 1000,
@@ -417,7 +470,7 @@ const styles = {
   },
   headerBlock: {
     textAlign: 'center',
-    marginBottom: '2.5rem',
+    marginBottom: '2rem',
     maxWidth: 650,
     position: 'relative',
     zIndex: 10,
