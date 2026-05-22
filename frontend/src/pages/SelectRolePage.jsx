@@ -303,9 +303,9 @@ const styles = {
   },
   card: {
     padding: '2.5rem 2rem',
-    background: 'rgba(17, 24, 39, 0.6)',
+    background: 'var(--bg-glass)',
     backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
+    border: '1px solid var(--border-subtle)',
     borderRadius: 16,
     cursor: 'pointer',
     textAlign: 'center',
@@ -316,14 +316,14 @@ const styles = {
     overflow: 'hidden',
   },
   ownerCard: {
-    borderColor: 'rgba(124, 58, 237, 0.2)',
+    borderColor: 'var(--accent-primary)',
   },
   tenantCard: {
-    borderColor: 'rgba(5, 150, 105, 0.2)',
+    borderColor: 'var(--success)',
   },
   cardActive: {
-    background: 'rgba(17, 24, 39, 0.9)',
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    background: 'var(--bg-surface)',
+    borderColor: 'var(--border-active)',
     transform: 'translateY(-4px)',
     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
   },
@@ -335,8 +335,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     margin: '0 auto 1.5rem',
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
+    background: 'var(--bg-elevated)',
+    border: '1px solid var(--border-subtle)',
   },
   ownerIcon: {
     color: '#7c3aed',
@@ -352,7 +352,7 @@ const styles = {
   },
   cardDescription: {
     fontSize: '0.95rem',
-    color: '#d1d5db',
+    color: 'var(--text-secondary)',
     margin: '0 0 1.5rem 0',
     lineHeight: 1.6,
   },
@@ -364,14 +364,14 @@ const styles = {
   },
   benefit: {
     fontSize: '0.9rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     margin: '0.5rem 0',
     lineHeight: 1.5,
   },
   priceTag: {
     padding: '1rem',
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
+    background: 'var(--bg-elevated)',
+    border: '1px solid var(--border-subtle)',
     borderRadius: 12,
     marginBottom: '1.5rem',
     display: 'flex',
@@ -380,12 +380,12 @@ const styles = {
   },
   priceLabel: {
     fontSize: '0.8rem',
-    color: '#6b7280',
+    color: 'var(--text-dim)',
   },
   priceValue: {
     fontSize: '1.1rem',
     fontWeight: 700,
-    color: '#fff',
+    color: 'var(--text-bright)',
   },
   selectBtn: {
     padding: '0.9rem 1.5rem',
