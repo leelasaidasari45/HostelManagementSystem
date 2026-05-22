@@ -43,8 +43,31 @@ const BillingPage = () => {
     fetchStatus();
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
-      toast.success('🎉 Subscription activated! Welcome to Pro!');
+      const orderId = params.get('order_id');
       window.history.replaceState({}, '', '/owner/billing');
+      if (orderId) {
+        // Auto-verify when Cashfree redirects back (native Android flow)
+        toast.loading('Verifying payment...', { id: 'sub-verify-redirect' });
+        api.post('/api/subscription/verify-cashfree', {
+          order_id: orderId,
+          amount: 40000,
+          plan_name: 'Annual Pro',
+        }).then(res => {
+          toast.dismiss('sub-verify-redirect');
+          if (res.data.success) {
+            toast.success('🎉 Annual Pro activated! Welcome to Pro!');
+            fetchStatus();
+          } else {
+            toast.error('Verification failed. Contact support.');
+          }
+        }).catch(() => {
+          toast.dismiss('sub-verify-redirect');
+          toast.error('Could not verify payment. Contact support.');
+        });
+      } else {
+        toast.success('🎉 Subscription activated! Welcome to Pro!');
+        fetchStatus();
+      }
     }
   }, []);
 
@@ -82,6 +105,13 @@ const BillingPage = () => {
     return () => clearInterval(interval);
   }, [data]);
 
+  // Detect Capacitor native (Android/iOS)
+  const isNative = typeof window !== 'undefined' &&
+    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+
+  // Production return URL — always use Vercel, never localhost
+  const PROD_URL = 'https://easypg-zeta.vercel.app';
+
   // Upgrade using Cashfree
   const handleUpgrade = async () => {
     setProcessing(true);
@@ -102,13 +132,30 @@ const BillingPage = () => {
         const s = document.createElement('script');
         s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
         s.onload = () => resolve(window.Cashfree);
-        s.onerror = () => reject(new Error('Failed to load Cashfree'));
+        s.onerror = () => reject(new Error('Failed to load Cashfree SDK'));
         document.body.appendChild(s);
       });
       await loadSDK();
       const cashfree = await window.Cashfree({ mode: CF_MODE });
 
-      // Step 3: Launch Cashfree drop-in checkout
+      // Step 3: Launch checkout
+      // On Capacitor (Android/iOS): use _self + Vercel return URL to avoid localhost error
+      // On Web: use _modal (no redirect needed)
+      if (isNative) {
+        // Native: Cashfree will redirect to Vercel after payment
+        // Vercel page detects ?payment=success and shows result
+        await cashfree.checkout({
+          paymentSessionId: payment_session_id,
+          redirectTarget: '_self',
+          returnUrl: `${PROD_URL}/owner/billing?payment=success&order_id=${order_id}`,
+        });
+        // On native, execution continues after redirect comes back (if user cancelled)
+        toast.error('❌ Payment cancelled. No charges were made.', { duration: 4000 });
+        setProcessing(false);
+        return;
+      }
+
+      // Web modal flow
       const result = await cashfree.checkout({
         paymentSessionId: payment_session_id,
         redirectTarget: '_modal',
