@@ -27,6 +27,10 @@
     "allowMixedContent": true,
     "backgroundColor": "#060810"
   },
+  "server": {
+    "hostname": "easypg-zeta.vercel.app",
+    "androidScheme": "https"
+  },
   "ios": {
     "backgroundColor": "#060810",
     "preferredContentMode": "mobile"

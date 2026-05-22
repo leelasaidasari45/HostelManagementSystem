@@ -122,6 +122,7 @@ const BillingPage = () => {
         month: 'Annual',
         year: new Date().getFullYear(),
         type: 'subscription',
+        return_url: `${PROD_URL}/owner/billing?payment=success&order_id={order_id}`,
       });
       const { payment_session_id, order_id, environment } = res.data;
 
@@ -147,7 +148,6 @@ const BillingPage = () => {
         await cashfree.checkout({
           paymentSessionId: payment_session_id,
           redirectTarget: '_self',
-          returnUrl: `${PROD_URL}/owner/billing?payment=success&order_id=${order_id}`,
         });
         // On native, execution continues after redirect comes back (if user cancelled)
         toast.error('❌ Payment cancelled. No charges were made.', { duration: 4000 });
