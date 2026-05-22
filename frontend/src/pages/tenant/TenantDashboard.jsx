@@ -261,8 +261,8 @@ const TenantDashboard = () => {
           <div>
             <h1>{titleMap[activeTab]}</h1>
             {activeTab === 'dashboard' && dashData && (
-              <p className="header-subtitle">
-                Welcome to <strong className="header-highlight">{dashData.hostelName}</strong>
+              <p style={{ color:'var(--text-dim)', fontSize:'.88rem', marginTop:'.15rem' }}>
+                Welcome to <strong style={{ color:'var(--aurora-1)' }}>{dashData.hostelName}</strong>
               </p>
             )}
           </div>

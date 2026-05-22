@@ -66,12 +66,12 @@ const SelectRolePage = () => {
   };
 
   const ownerFeatures = [
-    { icon: BarChart3, text: 'Live Analytics', color: '249,115,22' },
-    { icon: Users, text: 'Tenant Management', color: '249,115,22' },
-    { icon: CreditCard, text: 'Rent Collection', color: '249,115,22' },
-    { icon: Bell, text: 'Smart Notices', color: '249,115,22' },
-    { icon: Shield, text: 'Verified Tenants', color: '249,115,22' },
-    { icon: Building2, text: 'Multi-Property', color: '249,115,22' },
+    { icon: BarChart3, text: 'Live Analytics', color: '124,58,237' },
+    { icon: Users, text: 'Tenant Management', color: '124,58,237' },
+    { icon: CreditCard, text: 'Rent Collection', color: '124,58,237' },
+    { icon: Bell, text: 'Smart Notices', color: '124,58,237' },
+    { icon: Shield, text: 'Verified Tenants', color: '124,58,237' },
+    { icon: Building2, text: 'Multi-Property', color: '124,58,237' },
   ];
 
   const tenantFeatures = [
@@ -135,11 +135,11 @@ const SelectRolePage = () => {
 
 
             {/* Icon */}
-            <div style={{ ...s.iconWrap, background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.25)' }}>
-              <Building2 size={36} style={{ color: '#f97316' }} />
+            <div style={{ ...s.iconWrap, background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)' }}>
+              <Building2 size={36} style={{ color: '#a78bfa' }} />
             </div>
 
-            <h2 style={{ ...s.cardTitle, color: '#f97316' }}>Hostel Owner</h2>
+            <h2 style={{ ...s.cardTitle, color: '#a78bfa' }}>Hostel Owner</h2>
 
             <p style={s.cardDesc}>
               Run your PG / hostel like a pro. Manage rooms, collect rent, and grow your business — all in one place.
@@ -157,8 +157,8 @@ const SelectRolePage = () => {
             {/* CTA */}
             <div style={{
               ...s.cta,
-              background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))',
-              boxShadow: hoveredCard === 'owner' ? '0 6px 24px rgba(var(--shadow-primary-color),0.45)' : '0 2px 10px rgba(var(--shadow-primary-color),0.25)',
+              background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+              boxShadow: hoveredCard === 'owner' ? '0 6px 24px rgba(124,58,237,0.45)' : '0 2px 10px rgba(124,58,237,0.25)',
             }}>
               {loading && selected === 'owner' ? (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -378,11 +378,11 @@ const s = {
   },
 
   cardHoverOwner: {
-    borderColor: 'rgba(var(--shadow-primary-color),0.4)',
-    boxShadow: '0 8px 30px rgba(var(--shadow-primary-color),0.12)',
+    borderColor: 'rgba(124,58,237,0.4)',
+    boxShadow: '0 8px 30px rgba(124,58,237,0.12)',
   },
   cardActiveOwner: {
-    borderColor: 'rgba(var(--shadow-primary-color),0.6)',
+    borderColor: 'rgba(124,58,237,0.6)',
   },
   cardHoverTenant: {
     borderColor: 'rgba(5,150,105,0.4)',

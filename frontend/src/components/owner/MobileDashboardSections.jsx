@@ -40,13 +40,13 @@ const TrialCountdownBanner = () => {
   const warning = timeInfo.days <= 1;          // 1 day
   const color   = urgent  ? '#ef4444'
                 : warning ? '#f97316'
-                :           '#f97316';
+                :           '#7c3aed';
   const bg      = urgent  ? 'rgba(239,68,68,0.10)'
                 : warning ? 'rgba(249,115,22,0.10)'
-                :           'rgba(249,115,22,0.10)';
+                :           'rgba(124,58,237,0.10)';
   const border  = urgent  ? 'rgba(239,68,68,0.25)'
                 : warning ? 'rgba(249,115,22,0.25)'
-                :           'rgba(249,115,22,0.25)';
+                :           'rgba(124,58,237,0.25)';
 
   const label = timeInfo.expired
     ? 'Trial Expired'
@@ -70,7 +70,7 @@ const TrialCountdownBanner = () => {
       {/* Icon */}
       <div style={{
         width: 38, height: 38, borderRadius: 10,
-        background: `rgba(${urgent ? '239,68,68' : warning ? '249,115,22' : '249,115,22'},0.15)`,
+        background: `rgba(${urgent ? '239,68,68' : warning ? '249,115,22' : '124,58,237'},0.15)`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
       }}>
@@ -308,7 +308,7 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
         <h2 className="section-title">Quick Links</h2>
         <div className="quick-actions-scroll">
           <Link to="/owner/tenants" className="qa-item">
-            <div className="qa-icon" style={{ color: '#f97316' }}>
+            <div className="qa-icon" style={{ color: '#8b5cf6' }}>
               <Users size={24} />
             </div>
             <span>Tenants</span>
@@ -344,11 +344,11 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
       <section className="dashboard-section">
         <h2 className="section-title">What's New</h2>
         <div className="features-carousel" ref={carouselRef} onScroll={handleScroll}>
-          <div className="feature-banner banner-orange">
-            <div className="feature-badge" style={{ color: '#f97316', background: 'var(--bg-base)' }}>
+          <div className="feature-banner banner-purple">
+            <div className="feature-badge" style={{ color: '#6366f1', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
             </div>
-            <h3>Never Miss Tenants With<br/><span style={{ background: '#ea580c', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
+            <h3>Never Miss Tenants With<br/><span style={{ background: '#4f46e5', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
             <p style={{ marginBottom: '1rem' }}>Tenants scan and join instantly without manual entry.</p>
             <div className="feature-btn">Generate QR</div>
           </div>
@@ -403,9 +403,9 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
         <h2 className="section-title">Smart Automations</h2>
         <div className="smart-automations-scroll">
           <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#f97316' }}><QrCode size={24} /></div><span>QR Onboard</span></div>
-          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#ea580c' }}><Key size={24} /></div><span>Hostel Codes</span></div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#8b5cf6' }}><Key size={24} /></div><span>Hostel Codes</span></div>
           <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#10b981' }}><Bell size={24} /></div><span>Rent Remind</span></div>
-          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#f97316' }}><Eye size={24} /></div><span>Room Visible</span></div>
+          <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#6366f1' }}><Eye size={24} /></div><span>Room Visible</span></div>
           <div className="smart-item"><div className="smart-icon-wrapper" style={{ color: '#ef4444' }}><Wrench size={24} /></div><span>Complaints Hub</span></div>
         </div>
       </section>

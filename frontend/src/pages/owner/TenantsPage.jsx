@@ -373,7 +373,7 @@ const TenantsPage = () => {
 
                 {/* Aadhaar Download */}
                 {selectedTenant.aadhaarFile && (
-                  <div style={{ padding: '.9rem', background: 'rgba(var(--shadow-primary-color),0.06)', border: '1px solid rgba(var(--shadow-primary-color),0.2)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
+                  <div style={{ padding: '.9rem', background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
                       <ShieldCheck size={18} style={{ color: 'var(--aurora-1)' }} />
                       <div>

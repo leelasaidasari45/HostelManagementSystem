@@ -49,7 +49,7 @@ const OwnerHeader = ({ title, subtitle }) => {
       <header className="dashboard-header glass-panel">
         <div>
           <h1>{title}</h1>
-          <p className="header-subtitle">
+          <p style={{ color: 'var(--text-dim)', fontSize: '.88rem', marginTop: '.15rem' }}>
             {activeHostel ? `${subtitle}: ${activeHostel.name} · ${activeHostel.code}` : 'Select a property'}
           </p>
         </div>
@@ -82,7 +82,8 @@ const OwnerHeader = ({ title, subtitle }) => {
 
           {/* QR button */}
           {activeHostel && (
-            <button className="icon-btn qr-btn" onClick={() => setShowQrModal(true)} title="Hostel QR Code">
+            <button className="icon-btn" onClick={() => setShowQrModal(true)} title="Hostel QR Code"
+              style={{ color: '#f97316', borderColor: 'rgba(249,115,22,0.3)' }}>
               <QrCode size={18} />
             </button>
           )}

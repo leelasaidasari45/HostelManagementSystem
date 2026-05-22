@@ -232,7 +232,7 @@ const BillingPage = () => {
           {/* ── Status Hero Card ── */}
           {userStatus === 'trial' && isActive ? (
             <div className="billing-hero-card trial-hero" style={{
-              background: 'linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%)',
+              background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
               color: '#fff',
               padding: '2rem',
               borderRadius: 16,
@@ -240,7 +240,7 @@ const BillingPage = () => {
               justifyContent: 'space-between',
               alignItems: 'center',
               gap: '2rem',
-              boxShadow: '0 8px 24px rgba(var(--shadow-primary-color), 0.2)'
+              boxShadow: '0 8px 24px rgba(124, 58, 237, 0.2)'
             }}>
               <div className="trial-hero-left" style={{ flex: 1 }}>
                 <div className="billing-status-badge" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: 'fit-content' }}>

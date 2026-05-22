@@ -147,7 +147,7 @@
   font-weight: 700;
   margin-bottom: 1rem;
   line-height: 1.1;
-  background: linear-gradient(to right, #fff, var(--aurora-1));
+  background: linear-gradient(to right, #fff, #a78bfa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -189,7 +189,7 @@
   justify-content: center;
   color: white;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(var(--shadow-primary-color), 0.2);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
 }
 
 .feature-item h4 {
@@ -274,7 +274,7 @@
 .tab-btn.active {
   background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
   color: white;
-  box-shadow: 0 4px 12px rgba(var(--shadow-primary-color), 0.15);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
 }
 
 /* ========== Form ========== */
@@ -371,7 +371,7 @@
   font-size: 1.05rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(var(--shadow-primary-color), 0.2);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -380,7 +380,7 @@
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(var(--shadow-primary-color), 0.3);
+  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
 }
 
 .submit-btn:disabled {

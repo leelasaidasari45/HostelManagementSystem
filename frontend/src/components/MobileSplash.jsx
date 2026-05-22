@@ -30,7 +30,7 @@ const MobileSplash = () => {
       {/* Ambient orb */}
       <div style={{
         position:'absolute', width:350, height:350, borderRadius:'50%',
-        background:'radial-gradient(circle, rgba(249,115,22,0.25) 0%, transparent 70%)',
+        background:'radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%)',
         filter:'blur(60px)', top:-80, left:-60, pointerEvents:'none'
       }} />
 
