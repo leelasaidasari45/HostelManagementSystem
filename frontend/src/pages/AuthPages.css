@@ -41,6 +41,7 @@
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
   animation: water-wave-auth 12s ease-in-out infinite;
+  will-change: opacity;
 }
 
 .light-mode .auth-container {
@@ -58,8 +59,8 @@
 
 /* bg-drift removal */
 @keyframes water-wave-auth {
-  0%, 100% { opacity: 0.5; background-position: center, 0 0, 0 0; }
-  50% { opacity: 0.85; background-position: center, 30px 20px, 30px 20px; }
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.85; }
 }
 
 .auth-card {
@@ -67,7 +68,7 @@
   max-width: 440px;
   padding: 3rem;
   background: var(--bg-glass);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
   border: 1px solid var(--border-muted);
   border-radius: 28px;
   box-shadow: var(--shadow-lg), var(--shadow-glow);

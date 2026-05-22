@@ -46,7 +46,7 @@ const TenantsPage = () => {
 
   useEffect(() => {
     fetchTenants();
-  }, [activeHostel, loadingHostels]);
+  }, [activeHostel?._id, loadingHostels]);
 
   // Fetch payment history when a tenant is selected
   const openTenantDetail = async (tenant) => {

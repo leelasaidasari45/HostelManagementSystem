@@ -333,7 +333,7 @@ a:focus-visible, button:focus-visible {
   display:flex; align-items:center; justify-content:space-between;
   padding:1.25rem 1.5rem;
   background:var(--bg-glass);
-  backdrop-filter:blur(16px);
+  backdrop-filter:blur(8px);
   border:1px solid var(--border-subtle);
   border-radius:var(--r-xl);
   margin-bottom:2rem;
@@ -753,7 +753,7 @@ a:focus-visible, button:focus-visible {
 /* Modal backdrop */
 .modal-backdrop {
   position:fixed; inset:0; background:rgba(6,8,16,0.85);
-  backdrop-filter:blur(6px); display:flex;
+  backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); display:flex;
   align-items:center; justify-content:center;
   z-index:9999; padding:1rem;
 }
@@ -811,7 +811,8 @@ a:focus-visible, button:focus-visible {
     border-right: none !important;
     border-top: 1px solid var(--border-subtle) !important;
     background: var(--bg-elevated) !important;
-    backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
     z-index: 99999 !important;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
     align-items: center !important;

@@ -5,6 +5,7 @@ import api from '../../api';
 import toast from 'react-hot-toast';
 import { useHostel } from '../../context/HostelContext';
 import OwnerHeader from '../../components/owner/OwnerHeader';
+import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
@@ -34,17 +35,21 @@ const PastTenantsPage = () => {
 
   useEffect(() => {
     fetchTenants();
-  }, [activeHostel, loadingHostels]);
+  }, [activeHostel?._id, loadingHostels]);
 
   if (loadingHostels || loading) {
     return (
       <div className="dashboard-layout">
         <OwnerSidebar />
-        <main className="dashboard-content fade-in">
-          <OwnerHeader 
-            title="Archived Residents" 
-            subtitle="History of past tenants" 
-          />
+        <MobileOwnerHeader />
+        <main className="dashboard-content fade-in mobile-pb">
+          <div className="desktop-only-widgets">
+            <OwnerHeader 
+              title="Archived Residents" 
+              subtitle="History of past tenants" 
+            />
+          </div>
+          <h2 className="mobile-page-title">Archived Residents</h2>
           <PageSkeleton type="tenants" />
         </main>
       </div>
@@ -59,61 +64,63 @@ const PastTenantsPage = () => {
       {!selectedTenant && (
         <OwnerSidebar />
       )}
+      <MobileOwnerHeader />
 
-      <main className="dashboard-content fade-in">
-        <OwnerHeader 
-          title="Archived Residents" 
-          subtitle="History of past tenants" 
-        />
+      <main className="dashboard-content fade-in mobile-pb">
+        <div className="desktop-only-widgets">
+          <OwnerHeader 
+            title="Archived Residents" 
+            subtitle="History of past tenants" 
+          />
+        </div>
+        <h2 className="mobile-page-title">Archived Residents</h2>
 
-        (
+        <div>
+          {/* Active Tenants List */}
           <div>
-            {/* Active Tenants List */}
-            <div>
-              <h3 className="mb-4">Archived Records</h3>
-              {tenants.length === 0 ? (
-                <p className="text-muted">No past tenants found for this hostel.</p>
-              ) : (
-                <div className="glass-panel" style={{ overflowX: 'auto', width: '100%', borderRadius: '7px', padding: '1rem' }}>
-                  <table style={{ width: '100%', minWidth: '600px', textAlign: 'left', borderCollapse: 'collapse' }}>
-                    <thead>
-                    <tr style={{ borderBottom:'1px solid var(--border-subtle)' }}>
-                        <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Name</th>
-                        <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Room</th>
-                        <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Join Date</th>
-                        <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Vacated On</th>
-                        <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em', textAlign:'right' }}>Details</th>
+            <h3 className="mb-4">Archived Records</h3>
+            {tenants.length === 0 ? (
+              <p className="text-muted">No past tenants found for this hostel.</p>
+            ) : (
+              <div className="glass-panel" style={{ overflowX: 'auto', width: '100%', borderRadius: '7px', padding: '1rem' }}>
+                <table style={{ width: '100%', minWidth: '600px', textAlign: 'left', borderCollapse: 'collapse' }}>
+                  <thead>
+                  <tr style={{ borderBottom:'1px solid var(--border-subtle)' }}>
+                      <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Name</th>
+                      <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Room</th>
+                      <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Join Date</th>
+                      <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em' }}>Vacated On</th>
+                      <th style={{ padding:'.9rem 1rem', color:'var(--text-dim)', fontSize:'.82rem', fontWeight:600, textTransform:'uppercase', letterSpacing:'.04em', textAlign:'right' }}>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tenants.map(t => (
+                      <tr key={t._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                        <td className="p-3 font-medium">
+                          {t.user?.name || t.fatherName || "Tenant User"}
+                        </td>
+                        <td className="p-3"><span className="badge" style={{ background: 'var(--accent-light)', color: 'var(--accent-primary)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{t.roomNumber}</span></td>
+                        <td className="p-3 text-muted">{new Date(t.admissionDate).toLocaleDateString()}</td>
+                        <td className="p-3 text-muted">
+                          {new Date(t.vacateDate).toLocaleDateString()}
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            className="btn"
+                            style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: 'var(--accent-primary)', fontSize: '0.8rem' }}
+                            onClick={() => setSelectedTenant(t)}
+                          >
+                            View
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {tenants.map(t => (
-                        <tr key={t._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                          <td className="p-3 font-medium">
-                            {t.user?.name || t.fatherName || "Tenant User"}
-                          </td>
-                          <td className="p-3"><span className="badge" style={{ background: 'var(--accent-light)', color: 'var(--accent-primary)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{t.roomNumber}</span></td>
-                          <td className="p-3 text-muted">{new Date(t.admissionDate).toLocaleDateString()}</td>
-                          <td className="p-3 text-muted">
-                            {new Date(t.vacateDate).toLocaleDateString()}
-                          </td>
-                          <td className="p-3 text-right">
-                            <button
-                              className="btn"
-                              style={{ padding: '0.4rem 0.8rem', background: 'transparent', color: 'var(--accent-primary)', fontSize: '0.8rem' }}
-                              onClick={() => setSelectedTenant(t)}
-                            >
-                              View
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        )
+        </div>
 
         {/* View Details Modal */}
         {selectedTenant && (

@@ -126,6 +126,37 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
 
   const [activeSlide, setActiveSlide] = React.useState(0);
   const carouselRef = React.useRef(null);
+  const carouselWidthRef = React.useRef(0);
+
+  // Cache carousel width to prevent layout thrashing inside onScroll
+  useEffect(() => {
+    const updateWidth = () => {
+      if (carouselRef.current) {
+        carouselWidthRef.current = carouselRef.current.clientWidth;
+      }
+    };
+    updateWidth();
+    // Use a small timeout to make sure element is fully rendered if width is 0
+    if (carouselWidthRef.current === 0) {
+      setTimeout(updateWidth, 100);
+    }
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
+  const handleScroll = () => {
+    if (carouselRef.current) {
+      const scrollLeft = carouselRef.current.scrollLeft;
+      const width = carouselWidthRef.current || carouselRef.current.clientWidth || 300;
+      const newIndex = Math.round(scrollLeft / width);
+      setActiveSlide((prev) => {
+        if (prev !== newIndex) {
+          return newIndex;
+        }
+        return prev;
+      });
+    }
+  };
 
   // Modal states
   const [showNoticeModal, setShowNoticeModal] = useState(false);
@@ -136,15 +167,6 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
   const [menuSuccess, setMenuSuccess] = useState(false);
   const [noticeForm, setNoticeForm] = useState({ title: '', message: '' });
   const [menuForm, setMenuForm] = useState({ breakfast: '', lunch: '', snacks: '', dinner: '' });
-
-  const handleScroll = () => {
-    if (carouselRef.current) {
-      const scrollLeft = carouselRef.current.scrollLeft;
-      const width = carouselRef.current.getBoundingClientRect().width;
-      const newIndex = Math.round(scrollLeft / width);
-      setActiveSlide(newIndex);
-    }
-  };
 
   const handlePostNotice = async (e) => {
     e.preventDefault();

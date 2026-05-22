@@ -398,6 +398,7 @@ const styles = {
     top: -200,
     left: -200,
     pointerEvents: 'none',
+    willChange: 'transform',
   },
   orb2: {
     position: 'absolute',
@@ -409,6 +410,7 @@ const styles = {
     bottom: -200,
     right: -200,
     pointerEvents: 'none',
+    willChange: 'transform',
   },
   headerNav: {
     width: '100%',
@@ -514,7 +516,7 @@ const styles = {
   },
   proCard: {
     background: 'rgba(17, 24, 39, 0.7)',
-    backdropFilter: 'blur(16px)',
+    backdropFilter: 'blur(8px)',
     border: '1px solid rgba(255, 255, 255, 0.08)',
     borderRadius: 24,
     padding: '2.5rem',

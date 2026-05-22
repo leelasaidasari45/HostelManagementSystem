@@ -33,7 +33,7 @@ const RoomsPage = () => {
       finally { setLoading(false); }
     };
     fetchRooms();
-  }, [activeHostel, loadingHostels]);
+  }, [activeHostel?._id, loadingHostels]);
 
   if (loadingHostels || loading) {
     return (

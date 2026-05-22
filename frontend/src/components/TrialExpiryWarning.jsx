@@ -31,7 +31,7 @@ const TrialExpiryWarning = ({ trialEndDate, user, onUpgradeClick }) => {
     checkExpiry();
     const interval = setInterval(checkExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
-  }, [trialEndDate, user]);
+  }, [trialEndDate, user?.subscription_status]);
 
   if (!show) return null;
 

@@ -103,7 +103,7 @@ const BillingPage = () => {
     calculateTimeLeft();
     const interval = setInterval(calculateTimeLeft, 60000);
     return () => clearInterval(interval);
-  }, [data]);
+  }, [data?.created_at]);
 
   // Detect Capacitor native (Android/iOS)
   const isNative = typeof window !== 'undefined' &&

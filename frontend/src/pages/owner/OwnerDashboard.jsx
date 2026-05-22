@@ -37,7 +37,7 @@ const OwnerDashboard = () => {
       } finally { setLoading(false); }
     };
     fetchAnalytics();
-  }, [activeHostel, loadingHostels]);
+  }, [activeHostel?._id, loadingHostels]);
 
   if (loadingHostels || (loading && !analytics && activeHostel)) {
     return (

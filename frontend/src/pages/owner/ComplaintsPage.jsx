@@ -4,6 +4,7 @@ import api from '../../api';
 import toast from 'react-hot-toast';
 import { useHostel } from '../../context/HostelContext';
 import OwnerHeader from '../../components/owner/OwnerHeader';
+import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './OwnerDashboard.css';
@@ -30,7 +31,7 @@ const ComplaintsPage = () => {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchComplaints(); }, [activeHostel, loadingHostels]);
+  useEffect(() => { fetchComplaints(); }, [activeHostel?._id, loadingHostels]);
 
   const handleResolve = async (id) => {
     try {
@@ -44,8 +45,12 @@ const ComplaintsPage = () => {
     return (
       <div className="dashboard-layout">
         <OwnerSidebar />
-        <main className="dashboard-content fade-in">
-          <OwnerHeader title="Complaints Center" subtitle="Issue tracking" />
+        <MobileOwnerHeader />
+        <main className="dashboard-content fade-in mobile-pb">
+          <div className="desktop-only-widgets">
+            <OwnerHeader title="Complaints Center" subtitle="Issue tracking" />
+          </div>
+          <h2 className="mobile-page-title">Complaints Center</h2>
           <PageSkeleton type="complaints" />
         </main>
       </div>
@@ -58,8 +63,12 @@ const ComplaintsPage = () => {
   return (
     <div className="dashboard-layout">
       <OwnerSidebar />
-      <main className="dashboard-content fade-in">
-        <OwnerHeader title="Complaints Center" subtitle="Issue tracking" />
+      <MobileOwnerHeader />
+      <main className="dashboard-content fade-in mobile-pb">
+        <div className="desktop-only-widgets">
+          <OwnerHeader title="Complaints Center" subtitle="Issue tracking" />
+        </div>
+        <h2 className="mobile-page-title">Complaints Center</h2>
 
         {complaints.length === 0 ? (
           <div className="glass-panel p-8 text-center" style={{ maxWidth:440, margin:'4rem auto' }}>
