@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Building2, Users, LogOut, Check, Star, Zap, Shield, BarChart3, Bell, CreditCard, Sparkles, ArrowRight } from 'lucide-react';
+import { Building2, Users, LogOut, Check, Shield, BarChart3, Bell, CreditCard, Sparkles, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import api from '../api';
@@ -132,11 +132,7 @@ const SelectRolePage = () => {
               opacity: loading && selected !== 'owner' ? 0.45 : 1,
             }}
           >
-            {/* Corner badge */}
-            <div style={{ ...s.cornerBadge, background: 'linear-gradient(135deg, #7c3aed, #4f46e5)' }}>
-              <Star size={10} fill="white" color="white" />
-              <span>2-Day Free Trial</span>
-            </div>
+
 
             {/* Icon */}
             <div style={{ ...s.iconWrap, background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.25)' }}>
@@ -156,20 +152,7 @@ const SelectRolePage = () => {
               ))}
             </div>
 
-            {/* Pricing callout */}
-            <div style={{ ...s.pricingBox, borderColor: 'rgba(124,58,237,0.2)', background: 'rgba(124,58,237,0.05)' }}>
-              <div style={s.pricingLeft}>
-                <span style={{ ...s.pricingFree, color: '#a78bfa' }}>FREE</span>
-                <span style={s.pricingFor}>for 2 days</span>
-              </div>
-              <div style={s.pricingDivider} />
-              <div style={s.pricingRight}>
-                <span style={s.pricingThen}>Then</span>
-                <span style={{ ...s.pricingAmount, color: '#a78bfa' }}>
-                  ₹40,000<span style={s.pricingPer}>/year</span>
-                </span>
-              </div>
-            </div>
+
 
             {/* CTA */}
             <div style={{
@@ -182,7 +165,7 @@ const SelectRolePage = () => {
                   <span style={s.spinner} /> Setting up…
                 </span>
               ) : (
-                <> Start Free Trial <ArrowRight size={16} /> </>
+                <> Continue as Owner <ArrowRight size={16} /> </>
               )}
             </div>
           </button>
@@ -208,11 +191,7 @@ const SelectRolePage = () => {
               opacity: loading && selected !== 'tenant' ? 0.45 : 1,
             }}
           >
-            {/* Corner badge */}
-            <div style={{ ...s.cornerBadge, background: 'linear-gradient(135deg, #059669, #0891b2)' }}>
-              <Zap size={10} fill="white" color="white" />
-              <span>Always Free</span>
-            </div>
+
 
             {/* Icon */}
             <div style={{ ...s.iconWrap, background: 'rgba(5,150,105,0.1)', border: '1px solid rgba(5,150,105,0.25)' }}>
@@ -232,13 +211,7 @@ const SelectRolePage = () => {
               ))}
             </div>
 
-            {/* Free callout */}
-            <div style={{ ...s.pricingBox, borderColor: 'rgba(5,150,105,0.2)', background: 'rgba(5,150,105,0.05)' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, alignItems: 'center' }}>
-                <span style={{ ...s.pricingFree, color: '#34d399' }}>₹0</span>
-                <span style={s.pricingFor}>forever, no hidden fees</span>
-              </div>
-            </div>
+
 
             {/* Benefit checklist */}
             <ul style={s.checklist}>
@@ -419,20 +392,7 @@ const s = {
     borderColor: 'rgba(5,150,105,0.6)',
   },
 
-  cornerBadge: {
-    position: 'absolute',
-    top: 14,
-    right: 14,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.3rem',
-    padding: '0.28rem 0.65rem',
-    borderRadius: 100,
-    fontSize: '0.7rem',
-    fontWeight: 700,
-    color: '#fff',
-    letterSpacing: '0.02em',
-  },
+
 
   iconWrap: {
     width: 68,
@@ -465,63 +425,7 @@ const s = {
     gap: '0.4rem',
   },
 
-  pricingBox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-    borderRadius: 10,
-    border: '1px solid',
-    padding: '0.85rem 1rem',
-  },
-  pricingLeft: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 2,
-    flex: 1,
-    alignItems: 'center',
-  },
-  pricingFree: {
-    fontSize: '1.4rem',
-    fontWeight: 800,
-    fontFamily: "'Space Grotesk', sans-serif",
-    lineHeight: 1,
-  },
-  pricingFor: {
-    fontSize: '0.7rem',
-    color: 'var(--text-dim)',
-    fontWeight: 500,
-  },
-  pricingDivider: {
-    width: 1,
-    height: 34,
-    background: 'var(--border-subtle)',
-    flexShrink: 0,
-  },
-  pricingRight: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 2,
-    flex: 1,
-    alignItems: 'center',
-  },
-  pricingThen: {
-    fontSize: '0.68rem',
-    color: 'var(--text-dim)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    fontWeight: 600,
-  },
-  pricingAmount: {
-    fontSize: '1.1rem',
-    fontWeight: 800,
-    fontFamily: "'Space Grotesk', sans-serif",
-    lineHeight: 1,
-  },
-  pricingPer: {
-    fontSize: '0.7rem',
-    fontWeight: 500,
-    opacity: 0.7,
-  },
+
 
   checklist: {
     listStyle: 'none',
