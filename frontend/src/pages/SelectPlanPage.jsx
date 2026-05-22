@@ -182,7 +182,7 @@ const SelectPlanPage = () => {
       {/* Header section */}
       <div className="slide-up" style={styles.headerBlock}>
         <div style={styles.badgeContainer}>
-          <Sparkles size={14} style={{ marginRight: 6, color: '#7c3aed' }} />
+          <Sparkles size={14} style={{ marginRight: 6, color: 'var(--aurora-1)' }} />
           <span>Premium Portal</span>
         </div>
         <h1 style={styles.title}>
@@ -198,15 +198,15 @@ const SelectPlanPage = () => {
         <div className="slide-up" style={styles.cardContainer}>
           <div style={{
             ...styles.proCard,
-            background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%)',
-            border: '1px solid rgba(124, 58, 237, 0.3)',
+            background: 'linear-gradient(135deg, rgba(var(--shadow-primary-color), 0.15) 0%, rgba(var(--shadow-primary-color), 0.08) 100%)',
+            border: '1px solid rgba(var(--shadow-primary-color), 0.3)',
             padding: '2rem',
             marginBottom: '2rem',
             textAlign: 'center'
           }}>
             <div style={styles.cardAccentBar} />
             <div style={{ marginBottom: '1rem' }}>
-              <Sparkles size={32} style={{ color: '#a78bfa', margin: '0 auto 0.5rem' }} />
+              <Sparkles size={32} style={{ color: 'var(--aurora-1)', margin: '0 auto 0.5rem' }} />
             </div>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', margin: '0 0 0.5rem 0' }}>
               Free Trial Active
@@ -216,25 +216,25 @@ const SelectPlanPage = () => {
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1.5rem' }}>
               <div style={{ 
-                background: 'rgba(124, 58, 237, 0.2)', 
+                background: 'rgba(var(--shadow-primary-color), 0.2)', 
                 padding: '1rem', 
                 borderRadius: 12,
                 flex: '0 1 auto',
                 minWidth: 100
               }}>
-                <div style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600, marginBottom: 4 }}>Days Left</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--aurora-1)', fontWeight: 600, marginBottom: 4 }}>Days Left</div>
                 <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff' }}>
                   {Math.max(0, Math.ceil((new Date(user.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)))}
                 </div>
               </div>
               <div style={{ 
-                background: 'rgba(124, 58, 237, 0.2)', 
+                background: 'rgba(var(--shadow-primary-color), 0.2)', 
                 padding: '1rem', 
                 borderRadius: 12,
                 flex: '0 1 auto',
                 minWidth: 120
               }}>
-                <div style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600, marginBottom: 4 }}>Expires</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--aurora-1)', fontWeight: 600, marginBottom: 4 }}>Expires</div>
                 <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>
                   {new Date(user.trial_end_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
                 </div>
@@ -358,7 +358,7 @@ const SelectPlanPage = () => {
         }
         #pay-annual-pro-btn:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+          box-shadow: 0 8px 24px rgba(var(--shadow-primary-color), 0.35);
           filter: brightness(1.1);
         }
         #pay-annual-pro-btn:active:not(:disabled) {
@@ -368,7 +368,7 @@ const SelectPlanPage = () => {
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         a[href*="#"]:hover {
-          color: #a78bfa !important;
+          color: var(--aurora-1) !important;
         }
       `}</style>
     </div>
@@ -393,7 +393,7 @@ const styles = {
     width: 600,
     height: 600,
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(var(--shadow-primary-color),0.1) 0%, transparent 70%)',
     filter: 'blur(100px)',
     top: -200,
     left: -200,
@@ -405,7 +405,7 @@ const styles = {
     width: 600,
     height: 600,
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(79,70,229,0.08) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(var(--shadow-primary-color),0.08) 0%, transparent 70%)',
     filter: 'blur(100px)',
     bottom: -200,
     right: -200,
@@ -439,7 +439,7 @@ const styles = {
     cursor: 'pointer',
     transition: 'color 0.2s',
     '&:hover': {
-      color: '#a78bfa',
+      color: 'var(--aurora-1)',
     },
   },
   navActions: {
@@ -481,12 +481,12 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     padding: '0.35rem 0.85rem',
-    background: 'rgba(124, 58, 237, 0.1)',
-    border: '1px solid rgba(124, 58, 237, 0.2)',
+    background: 'rgba(var(--shadow-primary-color), 0.1)',
+    border: '1px solid rgba(var(--shadow-primary-color), 0.2)',
     borderRadius: 99,
     fontSize: '0.78rem',
     fontWeight: 600,
-    color: '#a78bfa',
+    color: 'var(--aurora-1)',
     marginBottom: '1rem',
   },
   title: {
@@ -498,7 +498,7 @@ const styles = {
     letterSpacing: '-0.02em',
   },
   titleGradient: {
-    background: 'linear-gradient(135deg, #a78bfa, #818cf8)',
+    background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
@@ -530,7 +530,7 @@ const styles = {
     left: 0,
     right: 0,
     height: 4,
-    background: 'linear-gradient(90deg, #7c3aed, #4f46e5)',
+    background: 'linear-gradient(90deg, var(--aurora-1), var(--aurora-2))',
   },
   cardHeader: {
     display: 'flex',
@@ -647,7 +647,7 @@ const styles = {
     gap: '0.75rem',
   },
   checkIcon: {
-    color: '#7c3aed',
+    color: 'var(--aurora-1)',
     flexShrink: 0,
     marginTop: 2,
   },
@@ -666,7 +666,7 @@ const styles = {
   payBtn: {
     width: '100%',
     padding: '1.1rem 2rem',
-    background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+    background: 'linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%)',
     border: 'none',
     borderRadius: 14,
     cursor: 'pointer',
@@ -676,7 +676,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 4px 16px rgba(124, 58, 237, 0.25)',
+    boxShadow: '0 4px 16px rgba(var(--shadow-primary-color), 0.25)',
   },
   trustBadges: {
     display: 'flex',

@@ -22,8 +22,8 @@
 }
 
 .billing-hero-card.is-active {
-  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
-  box-shadow: 0 20px 50px rgba(124, 58, 237, 0.35);
+  background: linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%);
+  box-shadow: 0 20px 50px rgba(var(--shadow-primary-color), 0.35);
 }
 
 .billing-hero-card.is-inactive {
@@ -119,12 +119,12 @@
   width: 54px;
   height: 54px;
   border-radius: 14px;
-  background: rgba(124, 58, 237, 0.12);
-  border: 1px solid rgba(124, 58, 237, 0.25);
+  background: rgba(var(--shadow-primary-color), 0.12);
+  border: 1px solid rgba(var(--shadow-primary-color), 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a78bfa;
+  color: var(--aurora-1);
   flex-shrink: 0;
 }
 
@@ -232,7 +232,7 @@
 }
 
 .billing-invoice-item:hover {
-  border-color: var(--border-active, rgba(124,58,237,0.3));
+  border-color: var(--border-active, rgba(var(--shadow-primary-color),0.3));
 }
 
 .invoice-left {

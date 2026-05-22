@@ -184,10 +184,10 @@
     width: fit-content;
   }
   
-  .banner-purple {
+  .banner-orange {
     background: var(--bg-elevated);
-    border: 1px solid rgba(124, 58, 237, 0.3);
-    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
+    border: 1px solid rgba(var(--shadow-primary-color), 0.3);
+    box-shadow: 0 4px 20px rgba(var(--shadow-primary-color), 0.05);
   }
 
   .banner-blue {
@@ -272,19 +272,19 @@
   }
 
   /* Light mode overrides for banners */
-  .light-mode .banner-purple { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border: none; }
+  .light-mode .banner-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border: none; }
   .light-mode .banner-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; }
   .light-mode .banner-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; }
   .light-mode .feature-banner h3, .light-mode .feature-banner p { color: #ffffff !important; }
 
-  .light-mode .banner-purple .feature-btn,
+  .light-mode .banner-orange .feature-btn,
   .light-mode .banner-blue .feature-btn,
   .light-mode .banner-green .feature-btn {
     background: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
-  .light-mode .banner-purple .feature-btn { color: #4f46e5; }
+  .light-mode .banner-orange .feature-btn { color: #ea580c; }
   .light-mode .banner-blue .feature-btn { color: #2563eb; }
   .light-mode .banner-green .feature-btn { color: #059669; }
   
@@ -633,9 +633,9 @@
   }
 
   .ql-input:focus {
-    border-color: #6366f1;
+    border-color: var(--aurora-1);
     background: var(--bg-base, #ffffff);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 0 0 3px rgba(var(--shadow-primary-color), 0.1);
   }
 
   .ql-textarea {
