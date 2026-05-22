@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Building2, User, ChevronRight, BarChart3, Users, CreditCard, Bell, Lock, Zap } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Building2, User, ChevronRight, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from '../components/ThemeToggle';
 import api from '../api';
 import toast from 'react-hot-toast';
 
 const SelectRolePage = () => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(null);
-  const { loginContext, user } = useAuth();
+  const { loginContext, user, logoutContext } = useAuth();
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logoutContext();
+    navigate('/login', { replace: true });
+  };
 
   const handleRoleSelection = async (role) => {
     setSelected(role);
@@ -42,106 +48,81 @@ const SelectRolePage = () => {
       <div style={styles.orb1} />
       <div style={styles.orb2} />
 
-      <div style={styles.container}>
-        {/* Header Section */}
-        <div className="slide-up" style={styles.headerSection}>
-          <div style={styles.logoContainer}>
-            <img src="/logo.png" alt="easyPG" style={styles.logo} />
-          </div>
-          
-          <h1 style={styles.mainTitle}>
-            Welcome to <span style={styles.gradient}>easyPG</span>
-          </h1>
-          
-          <p style={styles.subtitle}>
-            Choose your role to get started with the ultimate hostel management platform
-          </p>
+      {/* Header Navigation */}
+      <header style={styles.header}>
+        <nav style={styles.nav}>
+          <Link to="/" style={styles.logo}>
+            <img src="/logo.png" alt="easyPG" style={{ height: 40, objectFit: 'contain' }} />
+          </Link>
 
-          <p style={styles.description}>
-            Whether you're managing a property or looking for a comfortable place to live, easyPG has everything you need.
+          <div style={styles.navActions}>
+            <ThemeToggle />
+            <button onClick={handleLogout} style={styles.logoutBtn}>
+              <LogOut size={16} /> Logout
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <div style={styles.container}>
+        {/* Hero Section */}
+        <div className="slide-up" style={styles.heroSection}>
+          <h1 style={styles.title}>
+            What's your role?
+          </h1>
+          <p style={styles.subtitle}>
+            Select how you'll be using easyPG to get started
           </p>
         </div>
 
-        {/* Role Cards Grid */}
+        {/* Role Cards */}
         <div style={styles.cardsGrid}>
           {/* Owner Card */}
           <button
             onClick={() => handleRoleSelection('owner')}
-            disabled={loading}
+            disabled={loading && selected !== 'owner'}
             style={{
-              ...styles.roleCard,
-              ...(selected === 'owner' && styles.roleCardSelected),
-              borderColor: selected === 'owner' ? '#7c3aed' : 'rgba(124, 58, 237, 0.2)',
-              boxShadow: selected === 'owner' ? '0 0 30px rgba(124, 58, 237, 0.3)' : 'none',
-              transform: selected === 'owner' ? 'translateY(-2px)' : 'translateY(0)',
+              ...styles.card,
+              ...styles.ownerCard,
+              ...(selected === 'owner' && styles.cardActive),
               opacity: loading && selected !== 'owner' ? 0.5 : 1,
             }}
             className="slide-up delay-100"
           >
-            {/* Card Top Badge */}
-            <div style={styles.cardBadge}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', color: '#a78bfa' }}>
-                FOR OWNERS
-              </span>
+            <div style={styles.cardIconContainer}>
+              <Building2 size={48} style={styles.ownerIcon} />
             </div>
-
-            {/* Icon */}
-            <div style={{
-              ...styles.iconContainer,
-              background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(79, 70, 229, 0.15) 100%)',
-            }}>
-              <div style={{
-                ...styles.iconInner,
-                background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-              }}>
-                <Building2 size={32} color="#fff" />
-              </div>
-            </div>
-
-            {/* Title & Subtitle */}
+            
             <h2 style={styles.cardTitle}>Hostel Owner</h2>
-            <p style={styles.cardSubtitle}>
-              Manage your property with powerful tools and automation
+            
+            <p style={styles.cardDescription}>
+              Manage properties, tenants, and payments from a powerful dashboard
             </p>
 
-            {/* Features List */}
-            <div style={styles.featuresList}>
-              {[
-                { icon: <BarChart3 size={16} />, text: 'Live Analytics Dashboard' },
-                { icon: <Users size={16} />, text: 'Manage Multiple Properties' },
-                { icon: <CreditCard size={16} />, text: 'Automated Rent Collection' },
-                { icon: <Bell size={16} />, text: 'Complaint Management' },
-                { icon: <Lock size={16} />, text: 'Tenant Verification' },
-                { icon: <Zap size={16} />, text: 'Smart Notifications' },
-              ].map((feature, i) => (
-                <div key={i} style={styles.featureItem}>
-                  <div style={{ color: '#7c3aed', marginRight: 8 }}>{feature.icon}</div>
-                  <span style={styles.featureText}>{feature.text}</span>
-                </div>
-              ))}
+            <ul style={styles.cardBenefits}>
+              <li style={styles.benefit}>✓ Multi-property management</li>
+              <li style={styles.benefit}>✓ Automated rent collection</li>
+              <li style={styles.benefit}>✓ Live analytics & reporting</li>
+              <li style={styles.benefit}>✓ Tenant verification</li>
+            </ul>
+
+            <div style={styles.priceTag}>
+              <span style={styles.priceLabel}>Start with</span>
+              <span style={styles.priceValue}>2-Day Free Trial</span>
             </div>
 
-            {/* Pricing Badge */}
-            <div style={styles.pricingBadge}>
-              <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: 4 }}>Start with</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>2-Day Free Trial</div>
-            </div>
-
-            {/* CTA Button */}
             <button
               style={{
-                ...styles.ctaButton,
-                background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+                ...styles.selectBtn,
+                ...styles.ownerBtn,
               }}
-              disabled={loading}
+              disabled={loading && selected !== 'owner'}
             >
               {loading && selected === 'owner' ? (
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className="spinner-sm" /> Continuing...
-                </span>
+                <span>Continuing...</span>
               ) : (
                 <>
-                  Get Started <ChevronRight size={16} style={{ marginLeft: 6 }} />
+                  Select <ChevronRight size={16} style={{ marginLeft: 6 }} />
                 </>
               )}
             </button>
@@ -150,108 +131,60 @@ const SelectRolePage = () => {
           {/* Tenant Card */}
           <button
             onClick={() => handleRoleSelection('tenant')}
-            disabled={loading}
+            disabled={loading && selected !== 'tenant'}
             style={{
-              ...styles.roleCard,
-              ...(selected === 'tenant' && styles.roleCardSelected),
-              borderColor: selected === 'tenant' ? '#059669' : 'rgba(5, 150, 105, 0.2)',
-              boxShadow: selected === 'tenant' ? '0 0 30px rgba(5, 150, 105, 0.3)' : 'none',
-              transform: selected === 'tenant' ? 'translateY(-2px)' : 'translateY(0)',
+              ...styles.card,
+              ...styles.tenantCard,
+              ...(selected === 'tenant' && styles.cardActive),
               opacity: loading && selected !== 'tenant' ? 0.5 : 1,
             }}
             className="slide-up delay-200"
           >
-            {/* Card Top Badge */}
-            <div style={styles.cardBadge}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', color: '#34d399' }}>
-                FOR RESIDENTS
-              </span>
+            <div style={styles.cardIconContainer}>
+              <User size={48} style={styles.tenantIcon} />
             </div>
-
-            {/* Icon */}
-            <div style={{
-              ...styles.iconContainer,
-              background: 'linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(8, 145, 178, 0.15) 100%)',
-            }}>
-              <div style={{
-                ...styles.iconInner,
-                background: 'linear-gradient(135deg, #059669, #0891b2)',
-              }}>
-                <User size={32} color="#fff" />
-              </div>
-            </div>
-
-            {/* Title & Subtitle */}
-            <h2 style={styles.cardTitle}>Resident / Tenant</h2>
-            <p style={styles.cardSubtitle}>
-              Your digital companion for hostel living
+            
+            <h2 style={styles.cardTitle}>Tenant / Resident</h2>
+            
+            <p style={styles.cardDescription}>
+              Your digital companion for managing hostel life
             </p>
 
-            {/* Features List */}
-            <div style={styles.featuresList}>
-              {[
-                { icon: <CreditCard size={16} />, text: 'Easy Rent Payments' },
-                { icon: <Bell size={16} />, text: 'Get Notices & Updates' },
-                { icon: <Lock size={16} />, text: 'Secure Digital Identity' },
-                { icon: <Users size={16} />, text: 'Connect with Roommates' },
-                { icon: <Zap size={16} />, text: 'Instant Issue Reporting' },
-                { icon: <BarChart3 size={16} />, text: 'Track Your Dues' },
-              ].map((feature, i) => (
-                <div key={i} style={styles.featureItem}>
-                  <div style={{ color: '#059669', marginRight: 8 }}>{feature.icon}</div>
-                  <span style={styles.featureText}>{feature.text}</span>
-                </div>
-              ))}
+            <ul style={styles.cardBenefits}>
+              <li style={styles.benefit}>✓ Easy rent payments</li>
+              <li style={styles.benefit}>✓ Get notices instantly</li>
+              <li style={styles.benefit}>✓ Report issues & complaints</li>
+              <li style={styles.benefit}>✓ Track your dues</li>
+            </ul>
+
+            <div style={styles.priceTag}>
+              <span style={styles.priceLabel}>Always</span>
+              <span style={styles.priceValue}>100% Free</span>
             </div>
 
-            {/* Badge */}
-            <div style={styles.pricingBadge}>
-              <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginBottom: 4 }}>Always</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>100% Free</div>
-            </div>
-
-            {/* CTA Button */}
             <button
               style={{
-                ...styles.ctaButton,
-                background: 'linear-gradient(135deg, #059669, #0891b2)',
+                ...styles.selectBtn,
+                ...styles.tenantBtn,
               }}
-              disabled={loading}
+              disabled={loading && selected !== 'tenant'}
             >
               {loading && selected === 'tenant' ? (
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className="spinner-sm" /> Continuing...
-                </span>
+                <span>Continuing...</span>
               ) : (
                 <>
-                  Join Now <ChevronRight size={16} style={{ marginLeft: 6 }} />
+                  Select <ChevronRight size={16} style={{ marginLeft: 6 }} />
                 </>
               )}
             </button>
           </button>
         </div>
 
-        {/* Footer Info */}
-        <div style={styles.footerInfo}>
-          <p style={styles.footerText}>
-            ⚠️ You can only select your role once. Choose the option that best fits your needs.
-          </p>
-        </div>
+        {/* Footer Note */}
+        <p style={styles.footer}>
+          💡 You can only select your role once. Choose wisely!
+        </p>
       </div>
-
-      <style>{`
-        .spinner-sm {
-          width: 14px;
-          height: 14px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-top-color: white;
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };
@@ -263,8 +196,7 @@ const styles = {
     color: '#f3f4f6',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    padding: '2rem 1.5rem 3rem',
+    padding: 0,
     fontFamily: "'Inter', sans-serif",
     position: 'relative',
     overflow: 'hidden',
@@ -291,154 +223,201 @@ const styles = {
     right: -150,
     pointerEvents: 'none',
   },
-  container: {
+  header: {
     width: '100%',
-    maxWidth: 1100,
+    padding: '1.5rem 2rem',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
     position: 'relative',
     zIndex: 10,
   },
-  headerSection: {
+  nav: {
+    maxWidth: 1200,
+    margin: '0 auto',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logo: {
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
+    cursor: 'pointer',
+  },
+  navActions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+  },
+  logoutBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    color: '#9ca3af',
+    padding: '0.5rem 1rem',
+    borderRadius: 8,
+    fontSize: '0.9rem',
+    fontWeight: 500,
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+  },
+  container: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '3rem 1.5rem',
+    maxWidth: 1200,
+    margin: '0 auto',
+    width: '100%',
+    position: 'relative',
+    zIndex: 5,
+  },
+  heroSection: {
     textAlign: 'center',
     marginBottom: '4rem',
   },
-  logoContainer: {
-    marginBottom: '2rem',
-  },
-  logo: {
-    height: 48,
-    objectFit: 'contain',
-  },
-  mainTitle: {
-    fontSize: 'clamp(2rem, 5vw, 3rem)',
+  title: {
+    fontSize: 'clamp(2rem, 6vw, 3.5rem)',
     fontWeight: 800,
     margin: '0 0 1rem 0',
     letterSpacing: '-0.02em',
-  },
-  gradient: {
-    background: 'linear-gradient(135deg, #a78bfa, #818cf8)',
+    background: 'linear-gradient(135deg, #fff, #a78bfa)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
   subtitle: {
-    fontSize: '1.2rem',
-    fontWeight: 600,
-    color: '#e5e7eb',
-    margin: '0 0 1rem 0',
-    lineHeight: 1.4,
-  },
-  description: {
-    fontSize: '1rem',
+    fontSize: '1.1rem',
     color: '#9ca3af',
-    maxWidth: 600,
-    margin: '0 auto',
-    lineHeight: 1.6,
+    margin: 0,
+    maxWidth: 500,
   },
   cardsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
     gap: '2rem',
+    width: '100%',
     marginBottom: '3rem',
   },
-  roleCard: {
-    position: 'relative',
-    padding: '2.5rem',
+  card: {
+    padding: '2.5rem 2rem',
     background: 'rgba(17, 24, 39, 0.6)',
     backdropFilter: 'blur(12px)',
     border: '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: 20,
+    borderRadius: 16,
     cursor: 'pointer',
-    textAlign: 'left',
+    textAlign: 'center',
     display: 'flex',
     flexDirection: 'column',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
     overflow: 'hidden',
   },
-  roleCardSelected: {
-    background: 'rgba(17, 24, 39, 0.8)',
+  ownerCard: {
+    borderColor: 'rgba(124, 58, 237, 0.2)',
   },
-  cardBadge: {
-    marginBottom: '1.5rem',
+  tenantCard: {
+    borderColor: 'rgba(5, 150, 105, 0.2)',
   },
-  iconContainer: {
+  cardActive: {
+    background: 'rgba(17, 24, 39, 0.9)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    transform: 'translateY(-4px)',
+    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+  },
+  cardIconContainer: {
     width: 80,
     height: 80,
     borderRadius: 16,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '1.5rem',
+    margin: '0 auto 1.5rem',
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
   },
-  iconInner: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+  ownerIcon: {
+    color: '#7c3aed',
+  },
+  tenantIcon: {
+    color: '#059669',
   },
   cardTitle: {
     fontSize: '1.5rem',
     fontWeight: 700,
-    margin: '0 0 0.5rem 0',
+    margin: '0 0 0.75rem 0',
     color: '#fff',
   },
-  cardSubtitle: {
+  cardDescription: {
     fontSize: '0.95rem',
-    color: '#9ca3af',
+    color: '#d1d5db',
     margin: '0 0 1.5rem 0',
+    lineHeight: 1.6,
+  },
+  cardBenefits: {
+    listStyle: 'none',
+    padding: 0,
+    margin: '0 0 1.5rem 0',
+    textAlign: 'left',
+  },
+  benefit: {
+    fontSize: '0.9rem',
+    color: '#9ca3af',
+    margin: '0.5rem 0',
     lineHeight: 1.5,
   },
-  featuresList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-    marginBottom: '1.5rem',
-    flex: 1,
-  },
-  featureItem: {
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: '0.9rem',
-    color: '#d1d5db',
-  },
-  featureText: {
-    lineHeight: 1.4,
-  },
-  pricingBadge: {
+  priceTag: {
     padding: '1rem',
     background: 'rgba(255, 255, 255, 0.05)',
     border: '1px solid rgba(255, 255, 255, 0.08)',
     borderRadius: 12,
     marginBottom: '1.5rem',
-    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
   },
-  ctaButton: {
-    width: '100%',
-    padding: '1rem 1.5rem',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 12,
-    fontSize: '1rem',
+  priceLabel: {
+    fontSize: '0.8rem',
+    color: '#6b7280',
+  },
+  priceValue: {
+    fontSize: '1.1rem',
     fontWeight: 700,
+    color: '#fff',
+  },
+  selectBtn: {
+    padding: '0.9rem 1.5rem',
+    border: 'none',
+    borderRadius: 10,
+    fontSize: '1rem',
+    fontWeight: 600,
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     gap: '0.5rem',
     transition: 'all 0.2s',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+    color: '#fff',
+    width: '100%',
   },
-  footerInfo: {
+  ownerBtn: {
+    background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+    boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)',
+  },
+  tenantBtn: {
+    background: 'linear-gradient(135deg, #059669, #0891b2)',
+    boxShadow: '0 4px 15px rgba(5, 150, 105, 0.2)',
+  },
+  footer: {
+    fontSize: '0.9rem',
+    color: '#6b7280',
+    margin: 0,
     textAlign: 'center',
     paddingTop: '2rem',
     borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-  },
-  footerText: {
-    fontSize: '0.85rem',
-    color: '#6b7280',
-    margin: 0,
-    lineHeight: 1.5,
+    width: '100%',
   },
 };
 
