@@ -1,10 +1,121 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench, X, Send, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench, X, Send, CheckCircle2, Clock, CreditCard, AlertTriangle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
 import api from '../../api';
+import { useAuth } from '../../context/AuthContext';
 import './MobileDashboardSections.css';
+
+/* ─── Trial Countdown Banner ─── */
+const TrialCountdownBanner = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [timeInfo, setTimeInfo] = useState(null);
+
+  useEffect(() => {
+    if (!user?.trial_end_date || user?.subscription_status !== 'trial') return;
+
+    const compute = () => {
+      const end = new Date(user.trial_end_date);
+      const diff = end - Date.now();
+      if (diff <= 0) { setTimeInfo({ expired: true }); return; }
+
+      const totalHours = Math.floor(diff / (1000 * 60 * 60));
+      const days = Math.floor(totalHours / 24);
+      const hours = totalHours % 24;
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      setTimeInfo({ days, hours, minutes, expired: false });
+    };
+
+    compute();
+    const id = setInterval(compute, 60000);
+    return () => clearInterval(id);
+  }, [user]);
+
+  if (!timeInfo || user?.subscription_status !== 'trial') return null;
+
+  // Color based on urgency
+  const urgent = timeInfo.days === 0;          // < 1 day
+  const warning = timeInfo.days <= 1;          // 1 day
+  const color   = urgent  ? '#ef4444'
+                : warning ? '#f97316'
+                :           '#7c3aed';
+  const bg      = urgent  ? 'rgba(239,68,68,0.10)'
+                : warning ? 'rgba(249,115,22,0.10)'
+                :           'rgba(124,58,237,0.10)';
+  const border  = urgent  ? 'rgba(239,68,68,0.25)'
+                : warning ? 'rgba(249,115,22,0.25)'
+                :           'rgba(124,58,237,0.25)';
+
+  const label = timeInfo.expired
+    ? 'Trial Expired'
+    : timeInfo.days > 0
+      ? `${timeInfo.days}d ${timeInfo.hours}h left`
+      : `${timeInfo.hours}h ${timeInfo.minutes}m left`;
+
+  const Icon = urgent ? AlertTriangle : Clock;
+
+  return (
+    <div style={{
+      margin: '0 0 12px 0',
+      padding: '12px 14px',
+      borderRadius: 14,
+      background: bg,
+      border: `1px solid ${border}`,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+    }}>
+      {/* Icon */}
+      <div style={{
+        width: 38, height: 38, borderRadius: 10,
+        background: `rgba(${urgent ? '239,68,68' : warning ? '249,115,22' : '124,58,237'},0.15)`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        <Icon size={18} style={{ color }} />
+      </div>
+
+      {/* Text */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '0.78rem', color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
+          {timeInfo.expired ? '⚠️ Trial Expired' : '⏳ Free Trial'}
+        </div>
+        <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-bright)', lineHeight: 1.2 }}>
+          {timeInfo.expired ? 'Access locked' : label}
+        </div>
+        {!timeInfo.expired && (
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: 2 }}>
+            Trial ends {new Date(user.trial_end_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+          </div>
+        )}
+      </div>
+
+      {/* CTA */}
+      <button
+        onClick={() => navigate('/owner/billing')}
+        style={{
+          flexShrink: 0,
+          padding: '7px 12px',
+          borderRadius: 8,
+          border: 'none',
+          background: color,
+          color: '#fff',
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <CreditCard size={13} /> Upgrade
+      </button>
+    </div>
+  );
+};
 
 const MobileDashboardSections = ({ analytics, activeHostel }) => {
   const now = new Date();
@@ -87,7 +198,10 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
 
   return (
     <div className="mobile-only-sections">
-      
+
+      {/* ── Trial Countdown Banner (always visible during trial) ── */}
+      <TrialCountdownBanner />
+
       {/* Summary Section */}
       <section className="dashboard-section summary-section">
         <div className="summary-header">
