@@ -115,9 +115,10 @@ const BillingPage = () => {
       });
 
       const userCancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
-                            result?.error?.type === 'user_cancelled';
+                            result?.error?.type === 'user_cancelled' ||
+                            result?.error?.message?.toLowerCase().includes('cancel');
       if (userCancelled) {
-        toast('Payment cancelled.', { icon: 'ℹ️' });
+        toast.error('❌ Payment cancelled. No charges were made.', { duration: 4000 });
         setProcessing(false);
         return;
       }
@@ -339,7 +340,8 @@ const BillingPage = () => {
                 ))}
               </ul>
 
-              {!isActive && (
+              {/* Upgrade Plan — shown during trial OR when subscription not active */}
+              {(userStatus === 'trial' || !isActive) && (
                 <button
                   className="btn btn-primary btn-lg w-full mt-6"
                   onClick={handleUpgrade}
@@ -353,13 +355,14 @@ const BillingPage = () => {
                   ) : (
                     <>
                       <Zap size={16} />
-                      <span>{paymentDone ? 'Renew Subscription' : 'Upgrade to Annual Pro'}</span>
+                      <span>{userStatus === 'active' ? 'Renew Subscription' : 'Upgrade Plan'}</span>
                     </>
                   )}
                 </button>
               )}
 
-              {isActive && (
+              {/* Cancel Subscription — shown ONLY when user has a paid active plan */}
+              {userStatus === 'active' && isActive && (
                 <button
                   className="btn btn-danger w-full mt-6"
                   onClick={handleCancel}
