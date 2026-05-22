@@ -140,22 +140,7 @@ const BillingPage = () => {
       const cashfree = await window.Cashfree({ mode: CF_MODE });
 
       // Step 3: Launch checkout
-      // On Capacitor (Android/iOS): use _self + Vercel return URL to avoid localhost error
-      // On Web: use _modal (no redirect needed)
-      if (isNative) {
-        // Native: Cashfree will redirect to Vercel after payment
-        // Vercel page detects ?payment=success and shows result
-        await cashfree.checkout({
-          paymentSessionId: payment_session_id,
-          redirectTarget: '_self',
-        });
-        // On native, execution continues after redirect comes back (if user cancelled)
-        toast.error('❌ Payment cancelled. No charges were made.', { duration: 4000 });
-        setProcessing(false);
-        return;
-      }
-
-      // Web modal flow
+      // Web modal flow (works for Capacitor too since hostname is now whitelisted)
       const result = await cashfree.checkout({
         paymentSessionId: payment_session_id,
         redirectTarget: '_modal',
