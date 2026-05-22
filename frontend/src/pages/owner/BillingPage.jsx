@@ -7,6 +7,7 @@ import {
 import api from '../../api';
 import toast from 'react-hot-toast';
 import OwnerHeader from '../../components/owner/OwnerHeader';
+import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import OwnerSidebar from '../../components/owner/OwnerSidebar';
 import PageSkeleton from '../../components/ui/SkeletonLoader';
 import './BillingPage.css';
@@ -165,8 +166,11 @@ const BillingPage = () => {
   if (loading) return (
     <div className="dashboard-layout">
       <OwnerSidebar />
-      <main className="dashboard-content fade-in">
-        <OwnerHeader title="Billing & Plans" subtitle="Manage your subscription" />
+      <MobileOwnerHeader />
+      <main className="dashboard-content fade-in mobile-pb">
+        <div className="desktop-only-widgets">
+          <OwnerHeader title="Billing & Plans" subtitle="Manage your subscription" />
+        </div>
         <PageSkeleton type="billing" />
       </main>
     </div>
@@ -184,8 +188,11 @@ const BillingPage = () => {
   return (
     <div className="dashboard-layout">
       <OwnerSidebar />
-      <main className="dashboard-content fade-in">
-        <OwnerHeader title="Billing & Subscription" subtitle="Manage your easyPG Pro plan" />
+      <MobileOwnerHeader />
+      <main className="dashboard-content fade-in mobile-pb">
+        <div className="desktop-only-widgets">
+          <OwnerHeader title="Billing & Subscription" subtitle="Manage your easyPG Pro plan" />
+        </div>
 
         <div className="billing-container slide-up">
 
