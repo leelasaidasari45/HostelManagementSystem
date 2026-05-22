@@ -174,9 +174,63 @@ const SelectPlanPage = () => {
           Scale your hostel business with <span style={styles.titleGradient}>Annual Pro</span>
         </h1>
         <p style={styles.subtitle}>
-          Your free trial has expired. Subscribe to standard easyPG Annual Pro to reactivate your dashboard access.
+          Choose your plan and unlock full dashboard access with advanced features.
         </p>
       </div>
+
+      {/* Free Trial Card First */}
+      {user?.subscription_status === 'trial' && user?.trial_end_date && new Date(user.trial_end_date) > new Date() && (
+        <div className="slide-up" style={styles.cardContainer}>
+          <div style={{
+            ...styles.proCard,
+            background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%)',
+            border: '1px solid rgba(124, 58, 237, 0.3)',
+            padding: '2rem',
+            marginBottom: '2rem',
+            textAlign: 'center'
+          }}>
+            <div style={styles.cardAccentBar} />
+            <div style={{ marginBottom: '1rem' }}>
+              <Sparkles size={32} style={{ color: '#a78bfa', margin: '0 auto 0.5rem' }} />
+            </div>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', margin: '0 0 0.5rem 0' }}>
+              Free Trial Active
+            </h3>
+            <p style={{ fontSize: '0.95rem', color: '#d1d5db', margin: '0 0 1.5rem 0', lineHeight: 1.5 }}>
+              Your 2-day free trial is active. Experience all features of Annual Pro at no cost.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <div style={{ 
+                background: 'rgba(124, 58, 237, 0.2)', 
+                padding: '1rem', 
+                borderRadius: 12,
+                flex: '0 1 auto',
+                minWidth: 100
+              }}>
+                <div style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600, marginBottom: 4 }}>Days Left</div>
+                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#fff' }}>
+                  {Math.max(0, Math.ceil((new Date(user.trial_end_date) - new Date()) / (1000 * 60 * 60 * 24)))}
+                </div>
+              </div>
+              <div style={{ 
+                background: 'rgba(124, 58, 237, 0.2)', 
+                padding: '1rem', 
+                borderRadius: 12,
+                flex: '0 1 auto',
+                minWidth: 120
+              }}>
+                <div style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600, marginBottom: 4 }}>Expires</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>
+                  {new Date(user.trial_end_date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                </div>
+              </div>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#9ca3af', margin: '0 0 1.5rem 0' }}>
+              Upgrade to Annual Pro (₹40,000/year) below to extend your access beyond the trial period.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Centered Premium Card */}
       <div className="slide-up" style={styles.cardContainer}>

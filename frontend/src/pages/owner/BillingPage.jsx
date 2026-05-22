@@ -190,43 +190,78 @@ const BillingPage = () => {
         <div className="billing-container slide-up">
 
           {/* ── Status Hero Card ── */}
-          <div className={`billing-hero-card ${isActive ? 'is-active' : 'is-inactive'}`}>
-            <div className="billing-hero-left">
-              <div className="billing-status-badge" style={{ background: statusCfg.bg, color: statusCfg.color }}>
-                {isActive ? <Sparkles size={14} /> : <Clock size={14} />}
-                {isActive ? statusCfg.label : 'Expired'}
-              </div>
-              <h2>
-                {userStatus === 'trial' && isActive && 'Free Trial Active'}
-                {userStatus === 'trial' && !isActive && 'Free Trial Expired'}
-                {userStatus === 'active' && isActive && 'Pro Plan Active'}
-                {userStatus === 'active' && !isActive && 'Pro Plan Expired'}
-                {userStatus === 'pending' && 'Setup Incomplete'}
-                {userStatus === 'cancelled' && 'Subscription Cancelled'}
-                {userStatus === 'none' && 'No Active Subscription'}
-              </h2>
-              <p>
-                {userStatus === 'trial' && isActive && `Trial ends on ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}. Subscribe to standard easyPG Annual Pro to retain access.`}
-                {userStatus === 'trial' && !isActive && `Trial ended on ${trialEnd?.toLocaleDateString('en-IN')}. Please pay ₹40,000/year to reactivate dashboard access.`}
-                {userStatus === 'active' && isActive && `Subscription active until ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.`}
-                {userStatus === 'active' && !isActive && `Subscription expired on ${trialEnd?.toLocaleDateString('en-IN')}. Please renew to reactivate dashboard access.`}
-                {userStatus === 'pending' && 'Complete payment setup to activate your account.'}
-                {(userStatus === 'cancelled' || userStatus === 'none') && 'Resubscribe to unlock full hostel management features.'}
-              </p>
-            </div>
-            <div className="billing-hero-metrics">
-              {isActive && (
-                <div className="billing-metric">
-                  <span className="billing-metric-label">Days Remaining</span>
-                  <span className="billing-metric-value">{daysLeft}</span>
+          {userStatus === 'trial' && isActive ? (
+            <div className="billing-hero-card trial-hero" style={{
+              background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+              color: '#fff',
+              padding: '2rem',
+              borderRadius: 16,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '2rem',
+              boxShadow: '0 8px 24px rgba(124, 58, 237, 0.2)'
+            }}>
+              <div className="trial-hero-left" style={{ flex: 1 }}>
+                <div className="billing-status-badge" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', width: 'fit-content' }}>
+                  <Sparkles size={14} /> Free Trial
                 </div>
-              )}
-              <div className="billing-metric">
-                <span className="billing-metric-label">Plan</span>
-                <span className="billing-metric-value" style={{ fontSize: '1.2rem' }}>₹40,000/yr</span>
+                <h2 style={{ color: '#fff', marginTop: '0.8rem', fontSize: '1.8rem', fontWeight: 700 }}>Free Trial Active</h2>
+                <p style={{ color: 'rgba(255,255,255,0.9)', marginTop: '0.8rem', lineHeight: 1.5 }}>
+                  Trial ends on {trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}. Subscribe to Annual Pro to retain full access.
+                </p>
+              </div>
+              <div className="trial-hero-right" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                <div className="trial-days" style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>Days Remaining</div>
+                  <div style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', marginTop: 8, lineHeight: 1 }}>{daysLeft}</div>
+                </div>
+                <div style={{ width: '1px', height: '60px', background: 'rgba(255,255,255,0.3)' }} />
+                <div className="trial-plan" style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>Annual Pro</div>
+                  <div style={{ fontSize: '1.3rem', fontWeight: 700, color: '#fff', marginTop: 8 }}>₹40,000/yr</div>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className={`billing-hero-card ${isActive ? 'is-active' : 'is-inactive'}`}>
+              <div className="billing-hero-left">
+                <div className="billing-status-badge" style={{ background: statusCfg.bg, color: statusCfg.color }}>
+                  {isActive ? <Sparkles size={14} /> : <Clock size={14} />}
+                  {isActive ? statusCfg.label : 'Expired'}
+                </div>
+                <h2>
+                  {userStatus === 'trial' && isActive && 'Free Trial Active'}
+                  {userStatus === 'trial' && !isActive && 'Free Trial Expired'}
+                  {userStatus === 'active' && isActive && 'Pro Plan Active'}
+                  {userStatus === 'active' && !isActive && 'Pro Plan Expired'}
+                  {userStatus === 'pending' && 'Setup Incomplete'}
+                  {userStatus === 'cancelled' && 'Subscription Cancelled'}
+                  {userStatus === 'none' && 'No Active Subscription'}
+                </h2>
+                <p>
+                  {userStatus === 'trial' && isActive && `Trial ends on ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}. Subscribe to standard easyPG Annual Pro to retain access.`}
+                  {userStatus === 'trial' && !isActive && `Trial ended on ${trialEnd?.toLocaleDateString('en-IN')}. Please pay ₹40,000/year to reactivate dashboard access.`}
+                  {userStatus === 'active' && isActive && `Subscription active until ${trialEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.`}
+                  {userStatus === 'active' && !isActive && `Subscription expired on ${trialEnd?.toLocaleDateString('en-IN')}. Please renew to reactivate dashboard access.`}
+                  {userStatus === 'pending' && 'Complete payment setup to activate your account.'}
+                  {(userStatus === 'cancelled' || userStatus === 'none') && 'Resubscribe to unlock full hostel management features.'}
+                </p>
+              </div>
+              <div className="billing-hero-metrics">
+                {isActive && (
+                  <div className="billing-metric">
+                    <span className="billing-metric-label">Days Remaining</span>
+                    <span className="billing-metric-value">{daysLeft}</span>
+                  </div>
+                )}
+                <div className="billing-metric">
+                  <span className="billing-metric-label">Plan</span>
+                  <span className="billing-metric-value" style={{ fontSize: '1.2rem' }}>₹40,000/yr</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* ── Dynamic Promo Banner ── */}
           {isPromoActive && !paymentDone && (
