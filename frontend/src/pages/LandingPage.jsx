@@ -42,8 +42,8 @@ const LandingPage = () => {
             <img src="/logo.png" alt="easyPG" className="logo-img-full" />
           </Link>
 
-          <Link to="/" className="navbar-center-brand">
-            easyPG
+          <Link to="/" className="center-brand-logo-wrap" style={{ textDecoration: 'none' }}>
+            <span className="center-brand-logo" data-text="easyPG">easyPG</span>
           </Link>
 
           <div className="nav-actions">
