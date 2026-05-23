@@ -46,7 +46,6 @@ const LandingPage = () => {
             <a href="#features" className="nav-link">Features</a>
             <a href="#how-it-works" className="nav-link">How it Works</a>
             <a href="#testimonials" className="nav-link">Testimonials</a>
-            <a href="#pricing" className="nav-link">Pricing</a>
           </div>
 
           <div className="nav-actions">
@@ -90,7 +89,6 @@ const LandingPage = () => {
               <a href="#features" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
               <a href="#how-it-works" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
               <a href="#testimonials" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</a>
-              <a href="#pricing" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
             </div>
             <div className="mobile-nav-divider" />
             <div className="mobile-nav-actions">
@@ -210,41 +208,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="landing-section bg-alt">
-        <h2 className="section-title">Simple <span className="text-gradient">Pricing</span></h2>
-        <div className="pricing-grid">
-          <div className="pricing-card glass-panel reveal-up delay-100">
-            <h3>Free Trial</h3>
-            <div className="price">Free<span> / 7 days</span></div>
-            <p className="pricing-desc">Experience the full power of easyPG risk-free for a week.</p>
-            <ul className="pricing-features">
-              <li>✓ Unlimited Tenants</li>
-              <li>✓ Multi-Property Management</li>
-              <li>✓ Full Analytics Access</li>
-              <li>✓ Community Support</li>
-            </ul>
-            <Link to="/register" className="btn btn-secondary btn-full">Start 7-Day Trial</Link>
-          </div>
-          
-          <div className="pricing-card premium glass-panel reveal-up delay-200">
-            <div className="popular-badge">Special Offer</div>
-            <h3>Annual Pro</h3>
-            <div className="price">₹40,000<span> / year</span></div>
-            <div className="offer-banner mt-2 mb-2 p-2 text-center text-sm" style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '8px', color: '#10b981' }}>
-              🔥 Subscribe within 7 days and get <strong style={{color: '#34d399'}}>+5 Months FREE</strong>!
-            </div>
-            <p className="pricing-desc">Complete hostel management solution. Best value for serious owners.</p>
-            <ul className="pricing-features">
-              <li>✓ Everything in Free Trial</li>
-              <li>✓ Automated Rent Collection</li>
-              <li>✓ Dedicated Account Manager</li>
-              <li>✓ Priority 24/7 Support</li>
-            </ul>
-            <Link to="/register" className="btn btn-primary btn-full">Get Annual Pro <ArrowRight size={16} /></Link>
-          </div>
-        </div>
-      </section>
+
       {/* Founders Section */}
       <section id="founders" className="landing-section">
         <h2 className="section-title">Behind the <span className="text-gradient">Success</span></h2>
