@@ -31,31 +31,44 @@
         font-family: 'Inter', system-ui, sans-serif;
         color: white;
       }
+      .ambient-orb {
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.25) 0%, transparent 70%);
+        filter: blur(60px);
+        top: -80px;
+        left: -60px;
+        pointer-events: none;
+      }
       .splash-logo {
-        width: 200px;
+        width: 160px;
         height: auto;
-        margin-bottom: 36px;
         object-fit: contain;
-        animation: splash-float 2.4s ease-in-out infinite;
+        animation: splash-float 2.5s ease-in-out infinite;
         filter: drop-shadow(0 0 20px rgba(0, 212, 170, 0.35));
+        position: relative;
+        z-index: 1;
       }
-      .splash-brand {
-        font-family: 'Space Grotesk', system-ui, sans-serif;
-        font-size: 22px;
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        margin-bottom: 32px;
-        color: #f1f5f9;
+      .splash-bottom {
+        position: absolute;
+        bottom: 3.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
       }
-      .splash-brand span { color: #7c3aed; }
       .loader-track {
-        width: 140px;
+        width: 120px;
         height: 2px;
         background: rgba(255, 255, 255, 0.06);
         border-radius: 99px;
         overflow: hidden;
+        position: relative;
       }
       .loader-fill {
+        position: absolute;
         width: 45%;
         height: 100%;
         background: linear-gradient(90deg, #00d4aa, #2563eb);
@@ -63,10 +76,8 @@
         animation: loader-sweep 1.4s ease-in-out infinite;
       }
       .splash-caption {
-        margin-top: 20px;
-        font-size: 11px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
         color: rgba(255, 255, 255, 0.3);
         font-weight: 500;
       }
@@ -75,17 +86,20 @@
         50% { transform: translateY(-6px); }
       }
       @keyframes loader-sweep {
-        0% { transform: translateX(-120%); }
-        100% { transform: translateX(280%); }
+        0% { transform: translateX(-150%); }
+        100% { transform: translateX(320%); }
       }
     </style>
   </head>
   <body>
     <div id="root">
       <div id="initial-loader">
+        <div class="ambient-orb"></div>
         <img src="/logo.png" class="splash-logo" alt="easyPG" />
-        <div class="loader-track"><div class="loader-fill"></div></div>
-        <div class="splash-caption">Initializing workspace</div>
+        <div class="splash-bottom">
+          <div class="loader-track"><div class="loader-fill"></div></div>
+          <div class="splash-caption">Initializing...</div>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>

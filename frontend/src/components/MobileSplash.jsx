@@ -25,7 +25,7 @@ const MobileSplash = () => {
       display:'flex', flexDirection:'column',
       alignItems:'center', justifyContent:'center',
       zIndex:9999, fontFamily:"'Inter', system-ui, sans-serif",
-      animation:'splashFadeOut 0.4s ease-in-out 2.4s forwards'
+      animation:'splashFadeOut 0.4s ease-in-out 2.6s forwards'
     }}>
       {/* Ambient orb */}
       <div style={{

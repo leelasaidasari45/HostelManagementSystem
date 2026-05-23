@@ -105,22 +105,14 @@ const isNative = typeof window !== 'undefined' &&
    /android/i.test(navigator.userAgent) && window.location.protocol === 'file:');
 
 function AppContent() {
-  // Show splash: always on native app, or on mobile browser first visit
-  const [showSplash, setShowSplash] = React.useState(() => {
-    const sessionSplashed = sessionStorage.getItem('hasSplashed');
-    if (sessionSplashed) return false;
-    // Always show splash on native Capacitor app
-    if (isNative) return true;
-    // On mobile browser, only show on first visit
-    return window.innerWidth <= 900;
-  });
+  // Show splash: always show for 3 seconds when the website is opened
+  const [showSplash, setShowSplash] = React.useState(true);
 
   React.useEffect(() => {
     if (showSplash) {
       const timer = setTimeout(() => {
         setShowSplash(false);
-        sessionStorage.setItem('hasSplashed', 'true');
-      }, 2800);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [showSplash]);
