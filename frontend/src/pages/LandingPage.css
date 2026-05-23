@@ -161,6 +161,9 @@
   width: auto;
   object-fit: contain;
 }
+.light-mode .logo-img-full {
+  mix-blend-mode: multiply;
+}
 .logo-icon-wrap {
   width: 36px; height: 36px;
   background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
@@ -766,6 +769,25 @@
     border-radius: var(--r-lg);
   }
   .landing-nav { padding: 0 1.25rem; }
+  .logo-img-full {
+    height: 32px;
+  }
+  .nav-actions {
+    gap: 0.4rem;
+  }
+  .nav-actions .btn {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.82rem;
+    border-radius: var(--r-md);
+  }
+  .nav-actions .btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .nav-actions .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
   .hero-cta { flex-direction: column; width: 100%; gap: 1rem; }
   .hero-cta .btn { 
     width: 100%; 
@@ -777,4 +799,34 @@
   .stats-bar { gap: 1rem; padding: .75rem 1rem; }
   .stat-divider { display: none; }
   .landing-footer { flex-direction: column; gap: .5rem; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .landing-header {
+    width: calc(100% - 1rem);
+    top: 0.75rem;
+  }
+  .landing-nav {
+    padding: 0 0.6rem;
+  }
+  .logo-img-full {
+    height: 26px;
+  }
+  .nav-actions {
+    gap: 0.3rem;
+  }
+  .nav-actions .btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.78rem;
+    border-radius: var(--r-sm);
+    gap: 0.2rem;
+  }
+  .nav-actions .btn svg {
+    display: none;
+  }
+  .nav-actions .icon-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0.35rem;
+  }
 }
