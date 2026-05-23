@@ -166,6 +166,18 @@
 }
 .mobile-menu-toggle {
   display: none;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+}
+.light-mode .mobile-menu-toggle {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.dark-mode .mobile-menu-toggle {
+  background: #161b27 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 .logo-icon-wrap {
   width: 36px; height: 36px;
@@ -819,36 +831,74 @@
   }
 }
 
-/* Mobile dropdown menu container */
-.mobile-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.75rem);
-  left: 0;
+/* Mobile backdrop overlay */
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 8, 16, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 998;
+  animation: fade-in 0.3s ease forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobile sidebar drawer */
+.mobile-sidebar-drawer {
+  position: fixed;
+  top: 0;
   right: 0;
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-muted);
-  border-radius: var(--r-xl);
+  bottom: 0;
+  width: 290px;
+  background: var(--bg-surface) !important;
+  border-left: 1px solid var(--border-muted);
   padding: 1.5rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  z-index: 99;
-  animation: slide-down-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: top center;
+  z-index: 999;
+  animation: slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes slide-down-fade {
+.light-mode .mobile-sidebar-drawer {
+  background: #ffffff !important;
+}
+
+.dark-mode .mobile-sidebar-drawer {
+  background: #0d1117 !important;
+}
+
+@keyframes slide-in-right {
   from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.98);
+    transform: translateX(100%);
   }
   to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(0);
   }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.25rem;
+}
+
+.drawer-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.drawer-close {
+  width: 32px;
+  height: 32px;
 }
 
 .mobile-nav-links {
