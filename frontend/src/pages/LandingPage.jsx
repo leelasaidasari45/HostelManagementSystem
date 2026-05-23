@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
@@ -8,6 +8,7 @@ import './LandingPage.css';
 const LandingPage = () => {
   const { user, loadingAuth } = useAuth();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   // Detect Capacitor native platform
   const isNative = typeof window !== 'undefined' &&
@@ -55,6 +56,36 @@ const LandingPage = () => {
               Get Started <ArrowRight size={16} />
             </Link>
           </div>
+
+          <button 
+            className="mobile-menu-toggle icon-btn"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          {isMobileMenuOpen && (
+            <div className="mobile-dropdown-menu">
+              <div className="mobile-nav-links">
+                <a href="#features" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
+                <a href="#how-it-works" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
+                <a href="#testimonials" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</a>
+                <a href="#pricing" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
+              </div>
+              <div className="mobile-nav-divider" />
+              <div className="mobile-nav-actions">
+                <div className="mobile-theme-row">
+                  <span>Theme Mode</span>
+                  <ThemeToggle />
+                </div>
+                <Link to="/login" className="btn btn-secondary w-full" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+                <Link to="/register" className="btn btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                  Get Started <ArrowRight size={16} />
+                </Link>
+              </div>
+            </div>
+          )}
         </nav>
       </header>
 

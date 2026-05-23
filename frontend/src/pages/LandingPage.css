@@ -754,6 +754,8 @@
 @media (max-width: 900px) {
   .features-grid { grid-template-columns: 1fr 1fr; }
   .nav-links { display: none; }
+  .nav-actions { display: none; }
+  .mobile-menu-toggle { display: flex; }
 }
 @media (max-width: 768px) {
   .pricing-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
@@ -812,21 +814,93 @@
   .logo-img-full {
     height: 26px;
   }
-  .nav-actions {
-    gap: 0.3rem;
+}
+
+/* Mobile Menu Toggler */
+.mobile-menu-toggle {
+  display: none;
+}
+
+/* Mobile dropdown menu container */
+.mobile-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  left: 0;
+  right: 0;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--r-xl);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  z-index: 99;
+  animation: slide-down-fade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+}
+
+@keyframes slide-down-fade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
   }
-  .nav-actions .btn {
-    padding: 0.4rem 0.65rem;
-    font-size: 0.78rem;
-    border-radius: var(--r-sm);
-    gap: 0.2rem;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
-  .nav-actions .btn svg {
-    display: none;
-  }
-  .nav-actions .icon-btn {
-    width: 30px;
-    height: 30px;
-    padding: 0.35rem;
-  }
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mobile-nav-link {
+  color: var(--text-bright);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.6rem 0.25rem;
+  transition: color var(--transition);
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.mobile-nav-link:last-child {
+  border-bottom: none;
+}
+
+.mobile-nav-link:hover {
+  color: var(--aurora-1);
+}
+
+.mobile-nav-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0.25rem 0;
+}
+
+.mobile-nav-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.mobile-theme-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  padding: 0 0.25rem;
+}
+
+.w-full {
+  width: 100%;
 }
