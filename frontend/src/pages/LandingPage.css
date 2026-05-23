@@ -164,6 +164,9 @@
 .light-mode .logo-img-full {
   mix-blend-mode: multiply;
 }
+.mobile-menu-toggle {
+  display: none;
+}
 .logo-icon-wrap {
   width: 36px; height: 36px;
   background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
@@ -814,11 +817,6 @@
   .logo-img-full {
     height: 26px;
   }
-}
-
-/* Mobile Menu Toggler */
-.mobile-menu-toggle {
-  display: none;
 }
 
 /* Mobile dropdown menu container */
