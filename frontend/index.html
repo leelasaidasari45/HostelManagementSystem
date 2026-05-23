@@ -17,37 +17,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <style>
-      /* Initial splash loader — Obsidian Nexus */
+      /* Initial splash loader — Obsidian Nexus Light */
       * { margin: 0; padding: 0; box-sizing: border-box; }
       #initial-loader {
         position: fixed;
         inset: 0;
-        background: #060810;
+        background: #f8fafc;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         z-index: 99999;
         font-family: 'Inter', system-ui, sans-serif;
-        color: white;
+        color: #1e293b;
       }
       .ambient-orb {
         position: absolute;
-        width: 350px;
-        height: 350px;
+        width: 400px;
+        height: 400px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(124, 58, 237, 0.25) 0%, transparent 70%);
-        filter: blur(60px);
-        top: -80px;
-        left: -60px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+        filter: blur(80px);
+        top: -100px;
+        left: -80px;
         pointer-events: none;
       }
       .splash-logo {
-        width: 160px;
+        width: 170px;
         height: auto;
         object-fit: contain;
-        animation: splash-float 2.5s ease-in-out infinite;
-        filter: drop-shadow(0 0 20px rgba(0, 212, 170, 0.35));
+        animation: splash-float 3s ease-in-out infinite;
+        filter: drop-shadow(0 8px 30px rgba(124,58,237,0.15));
         position: relative;
         z-index: 1;
       }
@@ -60,9 +60,9 @@
         gap: 0.75rem;
       }
       .loader-track {
-        width: 120px;
-        height: 2px;
-        background: rgba(255, 255, 255, 0.06);
+        width: 130px;
+        height: 3px;
+        background: rgba(15, 23, 42, 0.06);
         border-radius: 99px;
         overflow: hidden;
         position: relative;
@@ -71,19 +71,19 @@
         position: absolute;
         width: 45%;
         height: 100%;
-        background: linear-gradient(90deg, #00d4aa, #2563eb);
+        background: linear-gradient(90deg, #7c3aed, #3b82f6);
         border-radius: 99px;
         animation: loader-sweep 1.4s ease-in-out infinite;
       }
       .splash-caption {
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         letter-spacing: 0.04em;
-        color: rgba(255, 255, 255, 0.3);
+        color: #64748b;
         font-weight: 500;
       }
       @keyframes splash-float {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-6px); }
+        50% { transform: translateY(-8px); }
       }
       @keyframes loader-sweep {
         0% { transform: translateX(-150%); }
