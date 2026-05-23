@@ -65,46 +65,47 @@ const LandingPage = () => {
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {isMobileMenuOpen && (
-            <>
-              <div 
-                className="mobile-menu-backdrop" 
-                onClick={() => setIsMobileMenuOpen(false)}
-              />
-              <div className="mobile-sidebar-drawer">
-                <div className="drawer-header">
-                  <span className="drawer-title">Menu</span>
-                  <button 
-                    className="drawer-close icon-btn"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    aria-label="Close menu"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-                <div className="mobile-nav-divider" />
-                <div className="mobile-nav-links">
-                  <a href="#features" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
-                  <a href="#how-it-works" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
-                  <a href="#testimonials" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</a>
-                  <a href="#pricing" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
-                </div>
-                <div className="mobile-nav-divider" />
-                <div className="mobile-nav-actions">
-                  <div className="mobile-theme-row">
-                    <span>Theme Mode</span>
-                    <ThemeToggle />
-                  </div>
-                  <Link to="/login" className="btn btn-secondary w-full" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
-                  <Link to="/register" className="btn btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
-                    Get Started <ArrowRight size={16} />
-                  </Link>
-                </div>
-              </div>
-            </>
-          )}
         </nav>
       </header>
+
+      {isMobileMenuOpen && (
+        <>
+          <div 
+            className="mobile-menu-backdrop" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="mobile-sidebar-drawer">
+            <div className="drawer-header">
+              <span className="drawer-title">Menu</span>
+              <button 
+                className="drawer-close icon-btn"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="mobile-nav-divider" />
+            <div className="mobile-nav-links">
+              <a href="#features" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
+              <a href="#how-it-works" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
+              <a href="#testimonials" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</a>
+              <a href="#pricing" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Pricing</a>
+            </div>
+            <div className="mobile-nav-divider" />
+            <div className="mobile-nav-actions">
+              <div className="mobile-theme-row">
+                <span>Theme Mode</span>
+                <ThemeToggle />
+              </div>
+              <Link to="/login" className="btn btn-secondary w-full" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+              <Link to="/register" className="btn btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                Get Started <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Hero */}
       <main className="hero-section">
