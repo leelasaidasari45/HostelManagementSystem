@@ -42,10 +42,9 @@ const LandingPage = () => {
             <Link to="/" className="landing-logo" style={{ textDecoration: 'none' }}>
               <img src="/logo.png" alt="easyPG" className="logo-img-full" />
             </Link>
-            <div className="nav-links">
+            <div className="nav-links-left">
               <a href="#features" className="nav-link">Features</a>
               <a href="#how-it-works" className="nav-link">How it Works</a>
-              <a href="#testimonials" className="nav-link">Testimonials</a>
             </div>
           </div>
 
@@ -53,12 +52,17 @@ const LandingPage = () => {
             <span className="center-brand-logo" data-text="easyPG">easyPG</span>
           </Link>
 
-          <div className="nav-actions">
-            <ThemeToggle />
-            <Link to="/login" className="btn btn-ghost">Login</Link>
-            <Link to="/register" className="btn btn-primary">
-              Get Started <ArrowRight size={16} />
-            </Link>
+          <div className="nav-right">
+            <div className="nav-links-right">
+              <a href="#testimonials" className="nav-link">Testimonials</a>
+            </div>
+            <div className="nav-actions">
+              <ThemeToggle />
+              <Link to="/login" className="btn btn-ghost">Login</Link>
+              <Link to="/register" className="btn btn-primary">
+                Get Started <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
 
           <button 
