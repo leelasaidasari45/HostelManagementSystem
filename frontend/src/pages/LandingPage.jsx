@@ -42,11 +42,9 @@ const LandingPage = () => {
             <img src="/logo.png" alt="easyPG" className="logo-img-full" />
           </Link>
 
-          <div className="nav-links">
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#how-it-works" className="nav-link">How it Works</a>
-            <a href="#testimonials" className="nav-link">Testimonials</a>
-          </div>
+          <Link to="/" className="navbar-center-brand">
+            easyPG
+          </Link>
 
           <div className="nav-actions">
             <ThemeToggle />
