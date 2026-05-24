@@ -246,7 +246,15 @@
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: .75rem;
+  gap: 0.5rem;
+}
+.nav-actions .btn {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  height: 38px;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Hero */
@@ -1272,6 +1280,8 @@
   transition: transform var(--transition-slow), border-color var(--transition-slow), box-shadow var(--transition-slow), background var(--transition-slow);
   z-index: 1;
   will-change: transform, border-color, box-shadow;
+  text-decoration: none;
+  color: inherit;
 
   /* Card specific color presets (defaults to email/purple) */
   --accent-color: var(--aurora-1);
