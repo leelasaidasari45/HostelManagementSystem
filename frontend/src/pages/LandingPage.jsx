@@ -28,6 +28,32 @@ const LandingPage = () => {
     }
   }, [user, loadingAuth, navigate]);
 
+  // Scroll reveal observer
+  React.useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px -10% -10% 0px',
+      threshold: 0.05,
+    };
+
+    const handleIntersection = (entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersection, observerOptions);
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => {
+      revealElements.forEach(el => observer.unobserve(el));
+    };
+  }, []);
+
   // Prevent flash of landing page while redirecting or if on native app
   if (user || isNative) {
     return null; 
@@ -116,22 +142,26 @@ const LandingPage = () => {
 
       {/* Hero */}
       <main className="hero-section">
-        <div className="hero-badge reveal-up">
+        <div className="hero-badge scroll-reveal reveal-fade-in delay-1">
           <Rocket size={14} style={{ color: '#7c3aed' }} />
           <span>Hostel Management System</span>
         </div>
 
-        <h1 className="hero-title reveal-up delay-100">
-          Manage Your Properties<br />
-          with <span className="text-gradient">Intelligent Automation</span>
+        <h1 className="hero-title scroll-reveal reveal-slide-up">
+          <span className="reveal-line">
+            <span className="reveal-inner">Manage Your Properties</span>
+          </span>
+          <span className="reveal-line">
+            <span className="reveal-inner">with <span className="text-gradient">Intelligent Automation</span></span>
+          </span>
         </h1>
 
-        <p className="hero-subtitle reveal-up delay-200">
+        <p className="hero-subtitle scroll-reveal reveal-fade-in delay-2">
           From QR-based tenant onboarding to automated payments and issue tracking.
           Everything you need in one powerful platform.
         </p>
 
-        <div className="hero-cta reveal-up delay-300">
+        <div className="hero-cta scroll-reveal reveal-fade-in delay-3">
           <Link to="/register" className="btn btn-primary btn-lg pulse-glow">
             Start Free Trial <ArrowRight size={18} />
           </Link>
@@ -141,7 +171,7 @@ const LandingPage = () => {
         </div>
 
         {/* Stats bar */}
-        <div className="stats-bar reveal-up delay-400">
+        <div className="stats-bar scroll-reveal reveal-fade-in delay-4">
           <div className="stat-pill"><strong>500+</strong> <span>Properties</span></div>
           <div className="stat-divider" />
           <div className="stat-pill"><strong>12k+</strong> <span>Tenants</span></div>
@@ -155,7 +185,11 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <section id="features" className="landing-section">
-        <h2 className="section-title">Powerful <span className="text-gradient">Features</span></h2>
+        <h2 className="section-title scroll-reveal reveal-slide-up">
+          <span className="reveal-line">
+            <span className="reveal-inner">Powerful <span className="text-gradient">Features</span></span>
+          </span>
+        </h2>
         <div className="features-grid">
           {[
             { icon: <Building2 size={22} />, title: 'Multi-Property', desc: 'Manage all hostels from a single unified dashboard.' },
@@ -165,7 +199,7 @@ const LandingPage = () => {
             { icon: <Users size={22} />, title: 'Tenant Portal', desc: 'Dedicated portal for notices, complaints & vacate.' },
             { icon: <Shield size={22} />, title: 'Bank-Grade Security', desc: 'Supabase-powered auth with role-based access.' },
           ].map((f, i) => (
-            <div key={i} className={`feature-card glass-panel slide-up delay-${(i % 3 + 1) * 100}`}>
+            <div key={i} className={`feature-card glass-panel scroll-reveal reveal-card delay-${(i % 3 + 1) * 100}`}>
               <div className="feature-icon">{f.icon}</div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
@@ -176,7 +210,11 @@ const LandingPage = () => {
 
       {/* How it Works Section */}
       <section id="how-it-works" className="landing-section bg-alt">
-        <h2 className="section-title">How It <span className="text-gradient">Works</span></h2>
+        <h2 className="section-title scroll-reveal reveal-slide-up">
+          <span className="reveal-line">
+            <span className="reveal-inner">How It <span className="text-gradient">Works</span></span>
+          </span>
+        </h2>
         <div className="steps-grid">
           {[
             { step: '01', title: 'Register Property', desc: 'Add your hostel details and configure your rooms and pricing in minutes.' },
@@ -184,7 +222,7 @@ const LandingPage = () => {
             { step: '03', title: 'Tenants Scan & Join', desc: 'Tenants scan the QR to fill their details, upload ID, and pay deposit.' },
             { step: '04', title: 'Manage Effortlessly', desc: 'Track everything from a single dashboard. Automated reminders do the rest.' },
           ].map((s, i) => (
-            <div key={i} className="step-card reveal-up delay-100">
+            <div key={i} className={`step-card scroll-reveal reveal-card delay-${(i % 4 + 1) * 100}`}>
               <div className="step-number-large">{s.step}</div>
               <h3>{s.title}</h3>
               <p>{s.desc}</p>
@@ -195,14 +233,18 @@ const LandingPage = () => {
 
       {/* Testimonials Section */}
       <section id="testimonials" className="landing-section">
-        <h2 className="section-title">Trusted By <span className="text-gradient">Owners</span></h2>
+        <h2 className="section-title scroll-reveal reveal-slide-up">
+          <span className="reveal-line">
+            <span className="reveal-inner">Trusted By <span className="text-gradient">Owners</span></span>
+          </span>
+        </h2>
         <div className="testimonials-grid">
           {[
             { quote: "easyPG completely transformed how we run our 5 hostels. The QR onboarding alone saved us hundreds of hours.", name: "Sarah Jenkins", role: "Property Manager", avatar: "SJ" },
             { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Rahul Verma", role: "Hostel Owner", avatar: "RV" },
             { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Priya Sharma", role: "Admin", avatar: "PS" }
           ].map((t, i) => (
-            <div key={i} className="testimonial-card glass-panel reveal-up delay-200">
+            <div key={i} className={`testimonial-card glass-panel scroll-reveal reveal-card delay-${(i % 3 + 1) * 100}`}>
               <div className="stars">★★★★★</div>
               <p className="quote">"{t.quote}"</p>
               <div className="author-info">
@@ -220,9 +262,13 @@ const LandingPage = () => {
 
       {/* Founders Section */}
       <section id="founders" className="landing-section">
-        <h2 className="section-title">Behind the <span className="text-gradient">Success</span></h2>
+        <h2 className="section-title scroll-reveal reveal-slide-up">
+          <span className="reveal-line">
+            <span className="reveal-inner">Behind the <span className="text-gradient">Success</span></span>
+          </span>
+        </h2>
         <div className="founders-grid">
-          <div className="founder-card reveal-up delay-100">
+          <div className={`founder-card scroll-reveal reveal-card delay-100`}>
             <div className="founder-avatar-container">
               <img src="/founder.png" alt="Leela Sai Dasari" className="founder-img" style={{ objectPosition: 'center 25%' }} />
             </div>
@@ -232,7 +278,7 @@ const LandingPage = () => {
               <p className="founder-bio">Driving the core vision, crafting intuitive user experiences, leading the development, and architecting the technology behind easyPG.</p>
             </div>
           </div>
-          <div className="founder-card reveal-up delay-200">
+          <div className={`founder-card scroll-reveal reveal-card delay-200`}>
             <div className="founder-avatar-container">
               <img src="/cofounder.png" alt="Vamshi Krishna" className="founder-img" />
             </div>
@@ -242,7 +288,7 @@ const LandingPage = () => {
               <p className="founder-bio">Focused on engineering a robust, scalable platform while actively driving business growth and onboarding new property owners.</p>
             </div>
           </div>
-          <div className="founder-card special-thanks-card reveal-up delay-300">
+          <div className={`founder-card special-thanks-card scroll-reveal reveal-card delay-300`}>
             <div className="founder-avatar-container">
               <img src="/thanks.png" alt="Ram Charan" className="founder-img" />
             </div>

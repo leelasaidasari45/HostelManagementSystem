@@ -7,49 +7,28 @@
   overflow-x: hidden;
 }
 
-/* Animated grid background layer */
+/* Animated ambient background layer (Plain) */
 .landing-page::before {
   content: '';
   position: absolute;
-  top: -40px; left: -40px; right: -40px; height: calc(120vh + 80px);
+  top: 0; left: 0; right: 0; height: 120vh;
   z-index: 0;
   pointer-events: none;
-  background-image: 
-    radial-gradient(circle at center, rgba(124, 58, 237, 0.15) 0%, transparent 65%),
-    linear-gradient(45deg, transparent calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
-    linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px));
-  background-size: 100% 100%, 60px 60px, 60px 60px;
-  background-position: center, 0 0, 0 0;
-  animation: water-wave 15s ease-in-out infinite;
+  background-image: radial-gradient(circle at center, rgba(124, 58, 237, 0.06) 0%, transparent 65%);
+  animation: pulse-glow-bg 8s ease-in-out infinite;
   mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
   transition: opacity 1s ease-in-out;
-  will-change: transform, opacity;
+  will-change: opacity;
 }
 
 .light-mode .landing-page::before {
-  background-image: 
-    radial-gradient(circle at center, rgba(109, 40, 217, 0.1) 0%, transparent 65%),
-    linear-gradient(45deg, transparent calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
-    linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% + 0.5px), transparent calc(50% + 0.5px));
-  background-size: 100% 100%, 60px 60px, 60px 60px;
-  mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
+  background-image: radial-gradient(circle at center, rgba(109, 40, 217, 0.04) 0%, transparent 65%);
 }
 
-@keyframes water-wave {
-  0% {
-    transform: translate(0, 0);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translate(30px, -30px);
-    opacity: 0.85;
-  }
-  100% {
-    transform: translate(0, 0);
-    opacity: 0.5;
-  }
+@keyframes pulse-glow-bg {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
 }
 
 /* Ambient orbs */
@@ -168,11 +147,12 @@
   content: '';
   position: absolute;
   bottom: -6px;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 0%;
   height: 2px;
   background: var(--aurora-1);
-  transition: width var(--transition);
+  transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border-radius: var(--r-full);
 }
 
@@ -789,15 +769,51 @@
   animation: spin 1s linear infinite;
 }
 
-/* Entry Animations */
-@keyframes revealUp {
-  0% { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(10px); }
-  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+/* Entry & Scroll Reveal Animations */
+.scroll-reveal {
+  /* Base hook state */
 }
 
-.reveal-up {
+/* Split Line Reveal style */
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  line-height: 1.25;
+}
+
+.reveal-inner {
+  display: block;
+  transform: translateY(105%);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.reveal-slide-up.revealed .reveal-inner {
+  transform: translateY(0);
+}
+
+/* Fade-In reveal styles */
+.scroll-reveal.reveal-fade-in {
   opacity: 0;
-  animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.reveal-fade-in.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card reveals (Slide up + scale) */
+.scroll-reveal.reveal-card {
+  opacity: 0;
+  transform: translateY(40px) scale(0.97);
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1), transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.reveal-card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .pulse-glow {
@@ -808,10 +824,17 @@
   to { box-shadow: 0 0 0 20px rgba(124, 58, 237, 0); }
 }
 
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-400 { animation-delay: 400ms; }
+/* Staggered transition delays */
+.delay-1 { transition-delay: 100ms !important; }
+.delay-2 { transition-delay: 200ms !important; }
+.delay-3 { transition-delay: 350ms !important; }
+.delay-4 { transition-delay: 500ms !important; }
+.delay-5 { transition-delay: 650ms !important; }
+
+.delay-100 { transition-delay: 100ms !important; }
+.delay-200 { transition-delay: 200ms !important; }
+.delay-300 { transition-delay: 300ms !important; }
+.delay-400 { transition-delay: 400ms !important; }
 
 /* Responsive */
 @media (max-width: 1200px) {
