@@ -110,10 +110,10 @@ const LandingPage = () => {
           <div className="nav-right">
             <div className="nav-links-right">
               <a href="#testimonials" className="nav-link">Testimonials</a>
+              <a href="#support" className="nav-link">Help</a>
             </div>
             <div className="nav-actions">
               <ThemeToggle />
-              <a href="#support" className="btn btn-ghost">Help</a>
               <Link to="/login" className="btn btn-ghost">Login</Link>
               <Link to="/register" className="btn btn-primary">
                 Get Started <ArrowRight size={14} />
