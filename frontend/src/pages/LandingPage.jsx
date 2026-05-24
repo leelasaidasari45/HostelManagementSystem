@@ -110,7 +110,7 @@ const LandingPage = () => {
           <div className="nav-right">
             <div className="nav-links-right">
               <a href="#testimonials" className="nav-link">Testimonials</a>
-              <a href="#support" className="nav-link">Help</a>
+              <a href="#support" className="nav-link contact-us-link">Contact Us</a>
             </div>
             <div className="nav-actions">
               <ThemeToggle />
@@ -154,7 +154,7 @@ const LandingPage = () => {
               <a href="#features" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
               <a href="#how-it-works" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
               <a href="#testimonials" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</a>
-              <a href="#support" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Help</a>
+              <a href="#support" className="mobile-nav-link contact-us-link" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</a>
             </div>
             <div className="mobile-nav-divider" />
             <div className="mobile-nav-actions">
@@ -221,7 +221,7 @@ const LandingPage = () => {
         </div>
         <h2 className="section-title scroll-reveal reveal-slide-up">
           <span className="reveal-line">
-            <span className="reveal-inner"><span className="text-gradient">Features</span></span>
+            <span className="reveal-inner">Core <span className="text-gradient">Features</span></span>
           </span>
         </h2>
         <p className="section-subtitle scroll-reveal reveal-fade-in delay-200">

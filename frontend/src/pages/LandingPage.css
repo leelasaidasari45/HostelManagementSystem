@@ -127,6 +127,7 @@
 .nav-links-right {
   display: flex;
   align-items: center;
+  gap: 1.5rem;
 }
 
 .nav-link {
@@ -142,6 +143,7 @@
 .nav-link:hover {
   color: var(--text-bright);
 }
+
 
 .nav-link::after {
   content: '';
