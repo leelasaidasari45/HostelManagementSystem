@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
@@ -100,6 +100,7 @@ const LandingPage = () => {
             <div className="nav-links-left">
               <a href="#features" className="nav-link">Features</a>
               <a href="#how-it-works" className="nav-link">How it Works</a>
+              <a href="#demo-video" className="nav-link">Demo Video</a>
             </div>
           </div>
 
@@ -153,6 +154,7 @@ const LandingPage = () => {
             <div className="mobile-nav-links">
               <a href="#features" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
               <a href="#how-it-works" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>How it Works</a>
+              <a href="#demo-video" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Demo Video</a>
               <a href="#testimonials" className="mobile-nav-link" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</a>
               <a href="#support" className="mobile-nav-link contact-us-link" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</a>
             </div>
@@ -173,45 +175,65 @@ const LandingPage = () => {
 
       {/* Hero */}
       <main className="hero-section">
-        <div className="hero-badge scroll-reveal reveal-fade-in delay-1">
-          <Rocket size={14} style={{ color: '#7c3aed' }} />
-          <span>Hostel Management System</span>
+        <div className="hero-container">
+          <div className="hero-content-left">
+            <div className="hero-badge scroll-reveal reveal-fade-in delay-1">
+              <Rocket size={14} style={{ color: '#7c3aed' }} />
+              <span>Hostel Management System</span>
+            </div>
+
+            <h1 className="hero-title scroll-reveal reveal-slide-up">
+              <span className="reveal-line">
+                <span className="reveal-inner">Manage Your Properties</span>
+              </span>
+              <span className="reveal-line">
+                <span className="reveal-inner">with <span className="text-gradient">Intelligent Automation</span></span>
+              </span>
+            </h1>
+
+            <p className="hero-subtitle scroll-reveal reveal-fade-in delay-2">
+              From QR-based tenant onboarding to automated payments and issue tracking.
+              Everything you need in one powerful platform.
+            </p>
+
+            <div className="hero-cta scroll-reveal reveal-fade-in delay-3">
+              <Link to="/register" className="btn btn-primary btn-lg pulse-glow hero-primary-btn">
+                Start Free Trial <ArrowRight size={18} />
+              </Link>
+              <button className="btn btn-secondary btn-lg demo-video-btn">
+                <span className="play-icon-ripple">
+                  <Play size={16} fill="currentColor" />
+                </span>
+                Demo Video
+              </button>
+              <Link to="/login" className="btn btn-ghost btn-lg hero-signin-btn">
+                Sign In
+              </Link>
+            </div>
+
+            {/* Stats bar */}
+            <div className="stats-bar scroll-reveal reveal-fade-in delay-4">
+              <div className="stat-pill"><strong>500+</strong> <span>Properties</span></div>
+              <div className="stat-divider" />
+              <div className="stat-pill"><strong>12k+</strong> <span>Tenants</span></div>
+              <div className="stat-divider" />
+              <div className="stat-pill"><strong>99.9%</strong> <span>Uptime</span></div>
+              <div className="stat-divider" />
+              <div className="stat-pill"><strong>₹2Cr+</strong> <span>Processed</span></div>
+            </div>
+          </div>
+
+          <div className="hero-visual-right scroll-reveal reveal-fade-in delay-3">
+            <div className="moon-system">
+              <div className="moon-glow" />
+              <div className="moon-body">
+                <div className="moon-texture" />
+              </div>
+              <div className="orbit-ring" />
+              <div className="satellite" />
+            </div>
+          </div>
         </div>
-
-        <h1 className="hero-title scroll-reveal reveal-slide-up">
-          <span className="reveal-line">
-            <span className="reveal-inner">Manage Your Properties</span>
-          </span>
-          <span className="reveal-line">
-            <span className="reveal-inner">with <span className="text-gradient">Intelligent Automation</span></span>
-          </span>
-        </h1>
-
-        <p className="hero-subtitle scroll-reveal reveal-fade-in delay-2">
-          From QR-based tenant onboarding to automated payments and issue tracking.
-          Everything you need in one powerful platform.
-        </p>
-
-        <div className="hero-cta scroll-reveal reveal-fade-in delay-3">
-          <Link to="/register" className="btn btn-primary btn-lg pulse-glow">
-            Start Free Trial <ArrowRight size={18} />
-          </Link>
-          <Link to="/login" className="btn btn-secondary btn-lg">
-            Sign In
-          </Link>
-        </div>
-
-        {/* Stats bar */}
-        <div className="stats-bar scroll-reveal reveal-fade-in delay-4">
-          <div className="stat-pill"><strong>500+</strong> <span>Properties</span></div>
-          <div className="stat-divider" />
-          <div className="stat-pill"><strong>12k+</strong> <span>Tenants</span></div>
-          <div className="stat-divider" />
-          <div className="stat-pill"><strong>99.9%</strong> <span>Uptime</span></div>
-          <div className="stat-divider" />
-          <div className="stat-pill"><strong>₹2Cr+</strong> <span>Processed</span></div>
-        </div>
-
       </main>
 
       {/* Features Section */}
