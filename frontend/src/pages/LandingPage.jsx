@@ -327,7 +327,7 @@ const LandingPage = () => {
             </div>
             <div className="founder-info">
               <h3>Vamshi Krishna</h3>
-              <span className="founder-role">Building Project & Searching Clients</span>
+              <span className="founder-role">Marketing & Support Manager</span>
               <p className="founder-bio">Focused on engineering a robust, scalable platform while actively driving business growth and onboarding new property owners.</p>
             </div>
           </div>
