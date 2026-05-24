@@ -193,13 +193,23 @@
   gap: .75rem;
 }
 .logo-img-full {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
+  height: 52px;
+  width: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-subtle);
+  background: var(--bg-surface);
+  transition: transform var(--transition), border-color var(--transition);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
+.logo-img-full:hover {
+  transform: scale(1.08) rotate(5deg);
+  border-color: var(--aurora-1);
+}
+
 .light-mode .logo-img-full {
-  mix-blend-mode: multiply;
-  filter: contrast(1.1) brightness(1.03);
+  mix-blend-mode: normal; /* Normal mode looks cleaner with a circular border */
 }
 .mobile-menu-toggle {
   display: none;
@@ -919,7 +929,8 @@
   }
   .landing-nav { padding: 0 1rem; }
   .logo-img-full {
-    height: 30px;
+    height: 40px;
+    width: 40px;
   }
   .center-brand-logo {
     font-size: 1.25rem;
@@ -943,7 +954,8 @@
     top: 0;
   }
   .logo-img-full {
-    height: 24px;
+    height: 34px;
+    width: 34px;
   }
   .center-brand-logo {
     font-size: 1.15rem;
