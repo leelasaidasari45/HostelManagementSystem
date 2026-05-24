@@ -30,7 +30,7 @@
 .auth-container::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: -40px; left: -40px; right: -40px; bottom: -40px;
   z-index: 0;
   pointer-events: none;
   background-image: 
@@ -40,8 +40,8 @@
   background-size: 100% 100%, 60px 60px, 60px 60px;
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
-  animation: water-wave-auth 12s ease-in-out infinite;
-  will-change: opacity;
+  animation: water-wave-auth 15s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .light-mode .auth-container {
@@ -59,8 +59,18 @@
 
 /* bg-drift removal */
 @keyframes water-wave-auth {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.85; }
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(30px, -30px);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
 }
 
 .auth-card {

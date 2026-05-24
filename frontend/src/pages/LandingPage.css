@@ -11,7 +11,7 @@
 .landing-page::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; height: 120vh;
+  top: -40px; left: -40px; right: -40px; height: calc(120vh + 80px);
   z-index: 0;
   pointer-events: none;
   background-image: 
@@ -20,11 +20,11 @@
     linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   background-size: 100% 100%, 60px 60px, 60px 60px;
   background-position: center, 0 0, 0 0;
-  animation: water-wave 8s ease-in-out infinite;
+  animation: water-wave 15s ease-in-out infinite;
   mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
   -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
   transition: opacity 1s ease-in-out;
-  will-change: opacity;
+  will-change: transform, opacity;
 }
 
 .light-mode .landing-page::before {
@@ -38,8 +38,18 @@
 }
 
 @keyframes water-wave {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.85; }
+  0% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(30px, -30px);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
 }
 
 /* Ambient orbs */
