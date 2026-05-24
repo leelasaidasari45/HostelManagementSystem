@@ -359,7 +359,7 @@ const LandingPage = () => {
         </p>
 
         <div className="support-grid">
-          <div className="support-card glass-panel scroll-reveal reveal-card delay-100">
+          <div className="support-card email-card glass-panel scroll-reveal reveal-card delay-100">
             <div className="support-icon-wrapper">
               <Mail size={24} />
             </div>
@@ -368,7 +368,7 @@ const LandingPage = () => {
             <a href="mailto:easypghms@gmail.com" className="support-link">easypghms@gmail.com</a>
           </div>
 
-          <div className="support-card glass-panel scroll-reveal reveal-card delay-200">
+          <div className="support-card call-card glass-panel scroll-reveal reveal-card delay-200">
             <div className="support-icon-wrapper">
               <Phone size={24} />
             </div>
@@ -377,7 +377,7 @@ const LandingPage = () => {
             <a href="tel:+917569621094" className="support-link">+91 75696 21094</a>
           </div>
 
-          <div className="support-card glass-panel scroll-reveal reveal-card delay-300">
+          <div className="support-card whatsapp-card glass-panel scroll-reveal reveal-card delay-300">
             <div className="support-icon-wrapper">
               <svg size={24} viewBox="0 0 24 24" fill="currentColor">
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.003 5.324 5.328 0 11.859 0c3.166.001 6.142 1.233 8.38 3.472 2.238 2.239 3.467 5.216 3.466 8.386-.003 6.536-5.328 11.86-11.859 11.86-2.007-.001-3.98-.513-5.735-1.488L0 24zm6.59-4.862c1.63.967 3.39 1.478 5.24 1.479 5.541 0 10.051-4.509 10.054-10.052.002-2.685-1.042-5.21-2.94-7.11C17.043 1.543 14.517.498 11.84.498c-5.543 0-10.053 4.51-10.056 10.056-.001 1.838.48 3.633 1.39 5.226L2.146 20.89l5.093-1.336c1.17.653 2.45.992 3.75.992zM17.06 13.88c-.282-.143-1.67-.823-1.929-.917-.259-.095-.448-.143-.637.14-.19.284-.736.918-.901 1.11-.165.193-.33.217-.613.073-.282-.14-1.192-.44-2.27-1.4-.84-.75-1.406-1.675-1.57-1.96-.165-.285-.018-.44.124-.58.127-.128.282-.33.424-.496.142-.165.19-.283.283-.472.09-.19.047-.355-.024-.497-.07-.143-.637-1.533-.873-2.102-.23-.554-.462-.48-.637-.488-.164-.008-.353-.01-.542-.01-.19 0-.495.07-.754.353-.259.284-1 .978-1 2.387 0 1.41 1.025 2.77 1.166 2.96.142.19 2.017 3.08 4.887 4.316.684.296 1.218.473 1.635.604.687.218 1.312.187 1.806.114.55-.08 1.67-.68 1.905-1.34.236-.658.236-1.223.165-1.34-.07-.118-.259-.19-.541-.333z" />
