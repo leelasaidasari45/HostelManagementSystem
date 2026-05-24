@@ -1250,3 +1250,163 @@
 .w-full {
   width: 100%;
 }
+
+/* Support Section */
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+.support-card {
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+  border-radius: var(--r-xl);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-subtle);
+  transition: transform var(--transition-slow), border-color var(--transition-slow), box-shadow var(--transition-slow), background var(--transition-slow);
+  z-index: 1;
+  will-change: transform, border-color, box-shadow;
+}
+
+/* Spotlight hooks for support-card */
+.support-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(124, 58, 237, 0.08),
+    transparent 80%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+.light-mode .support-card::before {
+  background: radial-gradient(
+    300px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(109, 40, 217, 0.04),
+    transparent 80%
+  );
+}
+
+.support-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-xl);
+  padding: 1px;
+  background: radial-gradient(
+    250px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(124, 58, 237, 0.45),
+    transparent 80%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+.light-mode .support-card::after {
+  background: radial-gradient(
+    250px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(109, 40, 217, 0.35),
+    transparent 80%
+  );
+}
+
+.support-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(124, 58, 237, 0.25);
+  background: var(--bg-glass-hover);
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.22), 
+    0 0 20px rgba(124, 58, 237, 0.06);
+}
+.light-mode .support-card:hover {
+  border-color: rgba(109, 40, 217, 0.2);
+  box-shadow: 
+    0 12px 30px rgba(15, 23, 42, 0.05), 
+    0 0 16px rgba(109, 40, 217, 0.04);
+}
+
+.support-card:hover::before,
+.support-card:hover::after {
+  opacity: 1;
+}
+
+.support-icon-wrapper {
+  position: relative;
+  width: fit-content;
+  margin-bottom: 0.25rem;
+  z-index: 3;
+}
+.support-icon-wrapper svg {
+  width: 52px;
+  height: 52px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aurora-1);
+  padding: 13px;
+  transition: all var(--transition-slow);
+}
+.support-card:hover .support-icon-wrapper svg {
+  background: var(--aurora-1);
+  color: #ffffff;
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+.light-mode .support-card:hover .support-icon-wrapper svg {
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.2);
+}
+
+.support-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  z-index: 3;
+}
+.support-card p {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  z-index: 3;
+}
+.support-link {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  color: var(--aurora-1);
+  text-decoration: none;
+  font-size: 0.95rem;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  z-index: 3;
+  transition: color var(--transition);
+}
+.support-link:hover {
+  color: var(--accent-hover);
+}
+
+/* Media queries for support grid */
+@media (max-width: 900px) {
+  .support-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .support-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+}

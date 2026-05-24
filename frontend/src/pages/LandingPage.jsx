@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
@@ -54,13 +54,10 @@ const LandingPage = () => {
     };
   }, []);
 
-  // Framer-style card spotlight hover effect
+  // Framer-style card spotlight hover effect for features and support grids
   React.useEffect(() => {
-    const grid = document.querySelector('.features-grid');
-    if (!grid) return;
-
-    const handleMouseMove = (e) => {
-      const cards = grid.querySelectorAll('.feature-card');
+    const handleMouseMove = (e, grid) => {
+      const cards = grid.querySelectorAll('.feature-card, .support-card');
       cards.forEach(card => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -70,9 +67,19 @@ const LandingPage = () => {
       });
     };
 
-    grid.addEventListener('mousemove', handleMouseMove);
+    const grids = document.querySelectorAll('.features-grid, .support-grid');
+    const listeners = [];
+
+    grids.forEach(grid => {
+      const listener = (e) => handleMouseMove(e, grid);
+      grid.addEventListener('mousemove', listener);
+      listeners.push({ grid, listener });
+    });
+
     return () => {
-      grid.removeEventListener('mousemove', handleMouseMove);
+      listeners.forEach(({ grid, listener }) => {
+        grid.removeEventListener('mousemove', listener);
+      });
     };
   }, []);
 
@@ -331,6 +338,50 @@ const LandingPage = () => {
               <span className="founder-role">Special Thank You</span>
               <p className="founder-bio">A massive thank you for the incredible support, motivation, and guidance that made starting this project a reality.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Support Section */}
+      <section id="support" className="landing-section bg-alt">
+        <div className="section-badge scroll-reveal reveal-fade-in delay-100">
+          <span>HELP & ASSISTANCE</span>
+        </div>
+        <h2 className="section-title scroll-reveal reveal-slide-up">
+          <span className="reveal-line">
+            <span className="reveal-inner">Support <span className="text-gradient">Center</span></span>
+          </span>
+        </h2>
+        <p className="section-subtitle scroll-reveal reveal-fade-in delay-200">
+          Got questions? Our support team is here to help you get the most out of easyPG. Contact us directly or browse our resources.
+        </p>
+
+        <div className="support-grid">
+          <div className="support-card glass-panel scroll-reveal reveal-card delay-100">
+            <div className="support-icon-wrapper">
+              <Mail size={24} />
+            </div>
+            <h3>Email Support</h3>
+            <p>Send us your queries and get detailed help from our technical specialists.</p>
+            <a href="mailto:support@easypg.in" className="support-link">support@easypg.in</a>
+          </div>
+
+          <div className="support-card glass-panel scroll-reveal reveal-card delay-200">
+            <div className="support-icon-wrapper">
+              <Phone size={24} />
+            </div>
+            <h3>Direct Call</h3>
+            <p>Speak to our operations team for immediate assistance with your account.</p>
+            <a href="tel:+919876543210" className="support-link">+91 98765 43210</a>
+          </div>
+
+          <div className="support-card glass-panel scroll-reveal reveal-card delay-300">
+            <div className="support-icon-wrapper">
+              <LifeBuoy size={24} />
+            </div>
+            <h3>Help Center</h3>
+            <p>Access extensive documentation, step-by-step video tutorials, and user guides.</p>
+            <a href="#how-it-works" className="support-link">Browse Guides &rarr;</a>
           </div>
         </div>
       </section>
