@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, Lock, GraduationCap } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
@@ -51,6 +51,28 @@ const LandingPage = () => {
 
     return () => {
       revealElements.forEach(el => observer.unobserve(el));
+    };
+  }, []);
+
+  // Framer-style card spotlight hover effect
+  React.useEffect(() => {
+    const grid = document.querySelector('.features-grid');
+    if (!grid) return;
+
+    const handleMouseMove = (e) => {
+      const cards = grid.querySelectorAll('.feature-card');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    };
+
+    grid.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      grid.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -185,43 +207,34 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <section id="features" className="landing-section">
-        <h2 className="section-title scroll-reveal reveal-slide-up" style={{ marginBottom: '1rem' }}>
+        <div className="section-badge scroll-reveal reveal-fade-in delay-100">
+          <span>WHAT WE OFFER</span>
+        </div>
+        <h2 className="section-title scroll-reveal reveal-slide-up">
           <span className="reveal-line">
-            <span className="reveal-inner">Designed for Every Stakeholder</span>
+            <span className="reveal-inner"><span className="text-gradient">Features</span></span>
           </span>
         </h2>
-        <p className="section-subtitle scroll-reveal reveal-fade-in delay-2">
-          A unified ecosystem providing tailored experiences for every role in the accommodation process.
+        <p className="section-subtitle scroll-reveal reveal-fade-in delay-200">
+          A fully integrated hostel management suite engineered to automate operations, simplify onboarding, and streamline billing.
         </p>
         <div className="features-grid">
           {[
-            {
-              icon: <Building2 size={24} />,
-              title: 'Owner / Admin',
-              desc: 'Super Admin control over all colleges, global settings, & detailed analytics.',
-              colorClass: 'purple-bg'
-            },
-            {
-              icon: <Shield size={24} />,
-              title: 'Management',
-              desc: 'Oversee campus operations, manage wardens, & monitor capacity limits.',
-              colorClass: 'teal-bg'
-            },
-            {
-              icon: <Lock size={24} />,
-              title: 'Warden',
-              desc: 'Direct student supervision, room allocation, & daily attendance tracking.',
-              colorClass: 'orange-bg'
-            },
-            {
-              icon: <GraduationCap size={24} />,
-              title: 'Student',
-              desc: 'Apply for rooms, view allocation status, & raise maintenance requests.',
-              colorClass: 'teal-bg'
-            },
+            { icon: <Building2 size={24} />, title: 'Multi-Property', desc: 'Manage all hostels from a single unified dashboard.' },
+            { icon: <QrCode size={24} />, title: 'QR Onboarding', desc: 'Tenants scan and join instantly — zero friction.' },
+            { icon: <Zap size={24} />, title: 'Smart Payments', desc: 'Integrated ledgers and automated rent reminders.' },
+            { icon: <BarChart3 size={24} />, title: 'Live Analytics', desc: 'Real-time occupancy, revenue and trend insights.' },
+            { icon: <Users size={24} />, title: 'Tenant Portal', desc: 'Dedicated portal for notices, complaints & vacate.' },
+            { icon: <Shield size={24} />, title: 'Bank-Grade Security', desc: 'Supabase-powered auth with role-based access.' },
           ].map((f, i) => (
-            <div key={i} className={`stakeholder-card scroll-reveal reveal-card delay-${(i % 4 + 1) * 100}`}>
-              <div className={`stakeholder-icon-wrap ${f.colorClass}`}>{f.icon}</div>
+            <div 
+              key={i} 
+              className={`feature-card glass-panel scroll-reveal reveal-card delay-${(i % 3 + 1) * 100}`}
+            >
+              <span className="feature-number">0{i + 1}</span>
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">{f.icon}</div>
+              </div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </div>
