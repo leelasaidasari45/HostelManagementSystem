@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, Lock, GraduationCap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import './LandingPage.css';
@@ -185,22 +185,43 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <section id="features" className="landing-section">
-        <h2 className="section-title scroll-reveal reveal-slide-up">
+        <h2 className="section-title scroll-reveal reveal-slide-up" style={{ marginBottom: '1rem' }}>
           <span className="reveal-line">
-            <span className="reveal-inner">Powerful <span className="text-gradient">Features</span></span>
+            <span className="reveal-inner">Designed for Every Stakeholder</span>
           </span>
         </h2>
+        <p className="section-subtitle scroll-reveal reveal-fade-in delay-2">
+          A unified ecosystem providing tailored experiences for every role in the accommodation process.
+        </p>
         <div className="features-grid">
           {[
-            { icon: <Building2 size={22} />, title: 'Multi-Property', desc: 'Manage all hostels from a single unified dashboard.' },
-            { icon: <QrCode size={22} />, title: 'QR Onboarding', desc: 'Tenants scan and join instantly — zero friction.' },
-            { icon: <Zap size={22} />, title: 'Smart Payments', desc: 'Integrated ledgers and automated rent reminders.' },
-            { icon: <BarChart3 size={22} />, title: 'Live Analytics', desc: 'Real-time occupancy, revenue and trend insights.' },
-            { icon: <Users size={22} />, title: 'Tenant Portal', desc: 'Dedicated portal for notices, complaints & vacate.' },
-            { icon: <Shield size={22} />, title: 'Bank-Grade Security', desc: 'Supabase-powered auth with role-based access.' },
+            {
+              icon: <Building2 size={24} />,
+              title: 'Owner / Admin',
+              desc: 'Super Admin control over all colleges, global settings, & detailed analytics.',
+              colorClass: 'purple-bg'
+            },
+            {
+              icon: <Shield size={24} />,
+              title: 'Management',
+              desc: 'Oversee campus operations, manage wardens, & monitor capacity limits.',
+              colorClass: 'teal-bg'
+            },
+            {
+              icon: <Lock size={24} />,
+              title: 'Warden',
+              desc: 'Direct student supervision, room allocation, & daily attendance tracking.',
+              colorClass: 'orange-bg'
+            },
+            {
+              icon: <GraduationCap size={24} />,
+              title: 'Student',
+              desc: 'Apply for rooms, view allocation status, & raise maintenance requests.',
+              colorClass: 'teal-bg'
+            },
           ].map((f, i) => (
-            <div key={i} className={`feature-card glass-panel scroll-reveal reveal-card delay-${(i % 3 + 1) * 100}`}>
-              <div className="feature-icon">{f.icon}</div>
+            <div key={i} className={`stakeholder-card scroll-reveal reveal-card delay-${(i % 4 + 1) * 100}`}>
+              <div className={`stakeholder-icon-wrap ${f.colorClass}`}>{f.icon}</div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </div>
