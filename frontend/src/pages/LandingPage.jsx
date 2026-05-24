@@ -307,7 +307,7 @@ const LandingPage = () => {
       <section id="founders" className="landing-section">
         <h2 className="section-title scroll-reveal reveal-slide-up">
           <span className="reveal-line">
-            <span className="reveal-inner">Behind the <span className="text-gradient">Success</span></span>
+            <span className="reveal-inner">Developed <span className="text-gradient">By</span></span>
           </span>
         </h2>
         <div className="founders-grid">
