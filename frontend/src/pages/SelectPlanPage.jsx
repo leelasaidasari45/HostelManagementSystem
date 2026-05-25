@@ -165,7 +165,12 @@ const SelectPlanPage = () => {
         <div style={styles.orb2} />
 
         {/* Top Actions */}
-        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 20 }}>
+        <div style={{ 
+          position: 'absolute', 
+          top: 'calc(1.25rem + env(safe-area-inset-top, 0px))', 
+          right: '1.25rem', 
+          zIndex: 20 
+        }}>
           <ThemeToggle />
         </div>
 

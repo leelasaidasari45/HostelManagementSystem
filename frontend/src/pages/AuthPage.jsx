@@ -394,7 +394,30 @@ const AuthPage = () => {
           <div className="mobile-auth-container lang-selection-screen">
             <div className="mobile-auth-header-row">
               <h2>{t.chooseLang}</h2>
-              <button className="close-btn" onClick={() => setMobileStep('email')}>&times;</button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <button 
+                  onClick={toggleTheme}
+                  className="icon-btn"
+                  style={{
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-muted)',
+                    color: 'var(--text-bright)',
+                    cursor: 'pointer',
+                    padding: '0.5rem',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: 'var(--shadow-sm)',
+                    width: 36,
+                    height: 36,
+                  }}
+                  title="Toggle theme"
+                >
+                  {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+                </button>
+                <button className="close-btn" style={{ fontSize: '1.5rem', padding: '0.25rem' }} onClick={() => setMobileStep('email')}>&times;</button>
+              </div>
             </div>
             <p className="lang-note">
               {t.langNote}
@@ -440,9 +463,30 @@ const AuthPage = () => {
         {/* Step 2: Email input screen */}
         {mobileStep === 'email' && (
           <div className="mobile-auth-container email-entry-screen">
-            <div className="mobile-auth-top-actions">
+            <div className="mobile-auth-top-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '1.5rem' }}>
               <button className="lang-select-btn" onClick={() => setMobileStep('language')}>
                 🌐 {languages.find(l => l.id === selectedLang)?.english || 'English'}
+              </button>
+              <button 
+                onClick={toggleTheme}
+                className="icon-btn"
+                style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-muted)',
+                  color: 'var(--text-bright)',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 'var(--shadow-sm)',
+                  width: 36,
+                  height: 36,
+                }}
+                title="Toggle theme"
+              >
+                {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
               </button>
             </div>
             
@@ -537,6 +581,29 @@ const AuthPage = () => {
         {/* Step 3: Password Login screen */}
         {mobileStep === 'password_login' && (
           <div className="mobile-auth-container password-entry-screen">
+            <div className="mobile-auth-top-actions" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginBottom: '1rem' }}>
+              <button 
+                onClick={toggleTheme}
+                className="icon-btn"
+                style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-muted)',
+                  color: 'var(--text-bright)',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 'var(--shadow-sm)',
+                  width: 36,
+                  height: 36,
+                }}
+                title="Toggle theme"
+              >
+                {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+            </div>
             <div className="mobile-auth-hero">
               <div className="app-circle-logo">
                 <span>easyPG</span>
@@ -616,6 +683,29 @@ const AuthPage = () => {
         {/* Step 4: Register Profile screen */}
         {mobileStep === 'register' && (
           <div className="mobile-auth-container register-screen">
+            <div className="mobile-auth-top-actions" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginBottom: '1rem' }}>
+              <button 
+                onClick={toggleTheme}
+                className="icon-btn"
+                style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-muted)',
+                  color: 'var(--text-bright)',
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: 'var(--shadow-sm)',
+                  width: 36,
+                  height: 36,
+                }}
+                title="Toggle theme"
+              >
+                {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+            </div>
             <div className="mobile-auth-hero">
               <div className="app-circle-logo">
                 <span>easyPG</span>
