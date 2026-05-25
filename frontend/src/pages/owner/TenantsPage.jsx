@@ -231,6 +231,74 @@ const TenantsPage = () => {
         <h2 className="mobile-page-title">Tenants Management</h2>
 
         <div>
+            {/* Summary Metrics Row */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.85rem', 
+              justifyContent: 'center', 
+              maxWidth: 600, 
+              width: '100%', 
+              margin: '0 auto 1.5rem auto' 
+            }}>
+              {/* Card 1: Total Tenants Present */}
+              <div style={{
+                flex: 1,
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-muted)',
+                borderRadius: 16,
+                padding: '0.85rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div style={{
+                  background: 'rgba(99, 102, 241, 0.1)',
+                  color: 'var(--aurora-1)',
+                  padding: '0.5rem',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Users size={18} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Present Tenants</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-bright)' }}>{activeTenants.length}</div>
+                </div>
+              </div>
+
+              {/* Card 2: Tenants with Dues */}
+              <div style={{
+                flex: 1,
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-muted)',
+                borderRadius: 16,
+                padding: '0.85rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: '#ef4444',
+                  padding: '0.5rem',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IndianRupee size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Tenants Due</div>
+                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ef4444' }}>{duesTenants.length}</div>
+                </div>
+              </div>
+            </div>
+
             {/* Redesigned Search Bar */}
             <div style={{ display:'flex', justifyContent:'center', marginBottom:'1.5rem' }}>
               <div className="search-container" style={{ maxWidth:600, width:'100%' }}>
