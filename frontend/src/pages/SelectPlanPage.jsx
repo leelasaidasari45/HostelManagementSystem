@@ -13,6 +13,17 @@ const SelectPlanPage = () => {
   const [promoTimeLeft, setPromoTimeLeft] = useState('');
   const [isPromoActive, setIsPromoActive] = useState(false);
 
+  const isNative = typeof window !== 'undefined' &&
+    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Handle Paytm/Cashfree callback redirects
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -151,6 +162,150 @@ const SelectPlanPage = () => {
     }
   };
 
+  if (isNative) {
+    return (
+      <div style={styles.page}>
+        {/* Background Ambient Orbs */}
+        <div style={styles.orb1} />
+        <div style={styles.orb2} />
+
+        {/* Top Actions */}
+        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 20 }}>
+          <ThemeToggle />
+        </div>
+
+        {/* Clean Logo Header */}
+        <div style={{ marginTop: '2rem', marginBottom: '4rem', textAlign: 'center', zIndex: 10 }}>
+          <img src="/logo.png" alt="easyPG" style={{ height: 50, objectFit: 'contain' }} />
+        </div>
+
+        {/* Premium Native Subscription Card */}
+        <div className="slide-up" style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '420px',
+          textAlign: 'center',
+          padding: '2.5rem 2rem',
+          background: 'linear-gradient(135deg, rgba(30, 37, 54, 0.95) 0%, rgba(22, 27, 39, 0.95) 100%)',
+          border: '1px solid rgba(124, 58, 237, 0.25)',
+          borderRadius: 24,
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+          zIndex: 10,
+        }}>
+          {/* Accent Purple Top Border */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 4,
+            background: 'linear-gradient(90deg, #7c3aed, #4f46e5)',
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+          }} />
+
+          {/* Glowing Warning Icon */}
+          <div className="pulse-warning-glow" style={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            background: 'rgba(245, 158, 11, 0.08)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 2rem',
+            boxShadow: '0 0 20px rgba(245, 158, 11, 0.1)',
+          }}>
+            <Clock size={36} style={{ color: '#f59e0b' }} />
+          </div>
+
+          <h2 style={{
+            fontSize: '1.6rem',
+            fontWeight: 800,
+            color: '#ffffff',
+            marginBottom: '1rem',
+            fontFamily: "'Space Grotesk', sans-serif"
+          }}>
+            Subscription Required
+          </h2>
+
+          <p style={{
+            fontSize: '0.95rem',
+            color: '#9ca3af',
+            lineHeight: 1.6,
+            marginBottom: '2.5rem',
+            fontWeight: 500,
+          }}>
+            Your trial or subscription period has ended. To continue managing your properties on easyPG, please visit our website on a computer to renew or upgrade your plan.
+          </p>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              borderRadius: 12,
+              padding: '1rem',
+              fontSize: '0.88rem',
+              color: '#d1d5db',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+            }}>
+              <span style={{ color: '#7c3aed' }}>Web Portal:</span>
+              <span style={{ color: '#34d399' }}>easypg.in</span>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="native-logout-btn"
+              style={{
+                width: '100%',
+                padding: '1rem 1.5rem',
+                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: 14,
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <LogOut size={16} /> Log Out
+            </button>
+          </div>
+        </div>
+
+        <style>{`
+          .pulse-warning-glow {
+            animation: pulseGlow 2s infinite ease-in-out;
+          }
+          @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }
+            50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px rgba(245, 158, 11, 0.25); }
+          }
+          .native-logout-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .native-logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
+          }
+          .native-logout-btn:active {
+            transform: translateY(0);
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.page}>
       {/* Aurora Background Orbs */}
@@ -164,11 +319,13 @@ const SelectPlanPage = () => {
             <img src="/logo.png" alt="easyPG" style={{ height: 42, objectFit: 'contain' }} />
           </Link>
 
-          <div style={styles.navLinks}>
-            <a href="#features" style={styles.navLink}>Features</a>
-            <a href="#how-it-works" style={styles.navLink}>How it Works</a>
-            <a href="#pricing" style={styles.navLink}>Pricing</a>
-          </div>
+          {!isMobile && (
+            <div style={styles.navLinks}>
+              <a href="#features" style={styles.navLink}>Features</a>
+              <a href="#how-it-works" style={styles.navLink}>How it Works</a>
+              <a href="#pricing" style={styles.navLink}>Pricing</a>
+            </div>
+          )}
 
           <div style={styles.navActions}>
             <ThemeToggle />
