@@ -454,59 +454,72 @@ const TenantsPage = () => {
                 ) : (
                   <div className="flex-col gap-3">
                     {activeTenants.map(t => (
-                      <div key={t._id} className="glass-panel p-4 slide-up relative overflow-hidden tenant-row-item"
+                      <div key={t._id} className="tenant-premium-card slide-up relative overflow-hidden"
                         style={{
-                          border: '1px solid var(--border-color)',
-                          background: t.status === 'vacating' ? 'rgba(245, 158, 11, 0.05)' : 'var(--bg-secondary)',
-                          width: '100%'
+                          background: t.status === 'vacating' ? 'rgba(245, 158, 11, 0.05)' : 'var(--bg-surface)',
+                          borderColor: t.status === 'vacating' ? '#f59e0b' : 'var(--border-muted)',
                         }}>
 
                         {t.status === 'vacating' && (
-                          <div className="absolute top-0 right-0 px-2 py-0.5 bg-warning text-black text-[10px] font-bold uppercase tracking-wider">
+                          <div className="absolute top-0 right-0 px-3 py-0.5 bg-warning text-black text-[10px] font-bold uppercase tracking-wider" style={{ borderRadius: '0 0 0 8px' }}>
                             Notice
                           </div>
                         )}
 
-                        <div className="tenant-row-grid">
-                          {/* Name Column */}
-                          <div className="flex-col">
-                            <span className="tenant-label">Name</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <span className="tenant-value">{t.user?.name || t.fatherName || "Tenant User"}</span>
+                        {/* Left section: Avatar & Name & Status Badge */}
+                        <div className="tenant-pc-left">
+                          <div className="tenant-pc-avatar">
+                            {(t.user?.name || t.fatherName || 'T')[0].toUpperCase()}
+                          </div>
+                          <div className="tenant-pc-info">
+                            <div className="tenant-pc-name-row">
+                              <span className="tenant-pc-name">{t.user?.name || t.fatherName || "Tenant User"}</span>
                               <span style={getPaymentBadgeStyle(t.payment_status)}>
                                 {t.payment_status === 'paid' ? 'Paid' : t.payment_status === 'partial' ? 'Partial' : 'Unpaid'}
                               </span>
                             </div>
+                            {t.mobile && <span className="tenant-pc-subtext">{t.mobile}</span>}
+                          </div>
+                        </div>
+
+                        {/* Middle section: Metrics */}
+                        <div className="tenant-pc-middle">
+                          <div className="tenant-pc-metric">
+                            <span className="tenant-pc-metric-label">Room</span>
+                            <span className="tenant-pc-metric-value">
+                              <Home size={14} style={{ color: 'var(--aurora-1)' }} />
+                              <span>{t.roomNumber || 'N/A'}</span>
+                            </span>
                           </div>
 
-                          {/* Room Column */}
-                          <div className="flex-col">
-                            <span className="tenant-label">Room</span>
-                            <span className="tenant-value">{t.roomNumber}</span>
+                          <div className="tenant-pc-metric">
+                            <span className="tenant-pc-metric-label">Join Date</span>
+                            <span className="tenant-pc-metric-value">
+                              <Calendar size={14} style={{ color: 'var(--aurora-1)' }} />
+                              <span>
+                                {t.admissionDate && t.admissionDate !== 'N/A' && !isNaN(Date.parse(t.admissionDate))
+                                  ? new Date(t.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                                  : 'N/A'}
+                              </span>
+                            </span>
                           </div>
+                        </div>
 
-                          {/* Date Column */}
-                          <div className="flex-col">
-                            <span className="tenant-label">joindate</span>
-                            <span className="tenant-value">{new Date(t.admissionDate).toLocaleDateString()}</span>
-                          </div>
+                        {/* Right section: Action links */}
+                        <div className="tenant-pc-right">
+                          <button
+                            className="tenant-btn-details"
+                            onClick={() => openTenantDetail(t)}
+                          >
+                            View Details
+                          </button>
 
-                          {/* Actions Column - Aligned to headers/values */}
-                          <div className="flex-col">
-                            <button
-                              className="tenant-action-link"
-                              onClick={() => openTenantDetail(t)}
-                            >
-                              View Details
-                            </button>
-
-                            <button
-                              className="tenant-action-link"
-                              onClick={() => handleCompleteVacate(t._id)}
-                            >
-                              {t.status === 'vacating' ? 'Finalize' : 'Vacate'}
-                            </button>
-                          </div>
+                          <button
+                            className="tenant-btn-vacate"
+                            onClick={() => handleCompleteVacate(t._id)}
+                          >
+                            {t.status === 'vacating' ? 'Finalize' : 'Vacate'}
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -520,64 +533,71 @@ const TenantsPage = () => {
                 ) : (
                   <div className="flex-col gap-3">
                     {duesTenants.map(t => (
-                      <div key={t._id} className="glass-panel p-4 slide-up relative overflow-hidden tenant-row-item"
+                      <div key={t._id} className="tenant-premium-card slide-up relative overflow-hidden"
                         style={{
-                          border: '1px solid var(--border-color)',
-                          background: t.status === 'vacating' ? 'rgba(245, 158, 11, 0.05)' : 'var(--bg-secondary)',
-                          width: '100%'
+                          background: t.status === 'vacating' ? 'rgba(245, 158, 11, 0.05)' : 'var(--bg-surface)',
+                          borderColor: t.status === 'vacating' ? '#f59e0b' : 'var(--border-muted)',
                         }}>
 
                         {t.status === 'vacating' && (
-                          <div className="absolute top-0 right-0 px-2 py-0.5 bg-warning text-black text-[10px] font-bold uppercase tracking-wider">
+                          <div className="absolute top-0 right-0 px-3 py-0.5 bg-warning text-black text-[10px] font-bold uppercase tracking-wider" style={{ borderRadius: '0 0 0 8px' }}>
                             Notice
                           </div>
                         )}
 
-                        <div className="tenant-row-grid">
-                          {/* Name Column */}
-                          <div className="flex-col">
-                            <span className="tenant-label">Name</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                              <span className="tenant-value">{t.user?.name || t.fatherName || "Tenant User"}</span>
+                        {/* Left section: Avatar & Name & Status Badge */}
+                        <div className="tenant-pc-left">
+                          <div className="tenant-pc-avatar">
+                            {(t.user?.name || t.fatherName || 'T')[0].toUpperCase()}
+                          </div>
+                          <div className="tenant-pc-info">
+                            <div className="tenant-pc-name-row">
+                              <span className="tenant-pc-name">{t.user?.name || t.fatherName || "Tenant User"}</span>
                               <span style={getPaymentBadgeStyle(t.payment_status)}>
                                 {t.payment_status === 'paid' ? 'Paid' : t.payment_status === 'partial' ? 'Partial' : 'Unpaid'}
                               </span>
                             </div>
+                            {t.mobile && <span className="tenant-pc-subtext">{t.mobile}</span>}
+                          </div>
+                        </div>
+
+                        {/* Middle section: Metrics */}
+                        <div className="tenant-pc-middle">
+                          <div className="tenant-pc-metric">
+                            <span className="tenant-pc-metric-label">Room</span>
+                            <span className="tenant-pc-metric-value">
+                              <Home size={14} style={{ color: 'var(--aurora-1)' }} />
+                              <span>{t.roomNumber || 'N/A'}</span>
+                            </span>
                           </div>
 
-                          {/* Room Column */}
-                          <div className="flex-col">
-                            <span className="tenant-label">Room</span>
-                            <span className="tenant-value">{t.roomNumber}</span>
-                          </div>
-
-                          {/* Dues Column */}
-                          <div className="flex-col">
-                            <span className="tenant-label">Dues This Month</span>
-                            <span className="tenant-value" style={{ color: '#ef4444', fontWeight: '700' }}>
-                              ₹{(t.due_amount || 0).toLocaleString('en-IN')}
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-ghost)', fontWeight: '500', marginLeft: '0.35rem', whiteSpace: 'nowrap' }}>
+                          <div className="tenant-pc-metric">
+                            <span className="tenant-pc-metric-label">Dues This Month</span>
+                            <span className="tenant-pc-metric-value" style={{ color: '#ef4444' }}>
+                              <IndianRupee size={14} />
+                              <span style={{ fontWeight: 700 }}>{(t.due_amount || 0).toLocaleString('en-IN')}</span>
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-ghost)', fontWeight: 500, marginLeft: '0.15rem' }}>
                                 (Paid: ₹{(t.paid_amount || 0).toLocaleString('en-IN')})
                               </span>
                             </span>
                           </div>
+                        </div>
 
-                          {/* Actions Column */}
-                          <div className="flex-col">
-                            <button
-                              className="tenant-action-link"
-                              onClick={() => openTenantDetail(t)}
-                            >
-                              View Details
-                            </button>
+                        {/* Right section: Action links */}
+                        <div className="tenant-pc-right">
+                          <button
+                            className="tenant-btn-details"
+                            onClick={() => openTenantDetail(t)}
+                          >
+                            View Details
+                          </button>
 
-                            <button
-                              className="tenant-action-link"
-                              onClick={() => handleCompleteVacate(t._id)}
-                            >
-                              {t.status === 'vacating' ? 'Finalize' : 'Vacate'}
-                            </button>
-                          </div>
+                          <button
+                            className="tenant-btn-vacate"
+                            onClick={() => handleCompleteVacate(t._id)}
+                          >
+                            {t.status === 'vacating' ? 'Finalize' : 'Vacate'}
+                          </button>
                         </div>
                       </div>
                     ))}
