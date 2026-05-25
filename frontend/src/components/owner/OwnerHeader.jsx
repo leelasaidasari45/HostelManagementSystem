@@ -12,6 +12,8 @@ const OwnerHeader = ({ title, subtitle }) => {
   const navigate = useNavigate();
   const { activeHostel, hostels, switchHostel } = useHostel();
   const { logoutContext, user } = useAuth();
+  const isNative = typeof window !== 'undefined' &&
+    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
   const { isDarkMode, toggleTheme } = useTheme();
   const [showQrModal, setShowQrModal] = useState(false);
 
@@ -67,7 +69,7 @@ const OwnerHeader = ({ title, subtitle }) => {
           )}
 
           {/* Trial Badge */}
-          {user?.subscription_status === 'trial' && (
+          {!isNative && user?.subscription_status === 'trial' && (
             <TrialBadge
               trialEndDate={user.trial_end_date}
               subscription_status={user.subscription_status}

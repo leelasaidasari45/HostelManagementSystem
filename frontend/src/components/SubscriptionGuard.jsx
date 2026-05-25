@@ -16,6 +16,15 @@ const SubscriptionGuard = ({ children }) => {
   useEffect(() => {
     if (!user || user.role !== 'owner') return;
 
+    // Detect native mobile platform to bypass subscription check
+    const isNative = typeof window !== 'undefined' &&
+      (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+
+    if (isNative) {
+      setHasCheckedExpiry(true);
+      return;
+    }
+
     const checkSubscription = () => {
       const now = new Date();
       const trialEnd = user.trial_end_date ? new Date(user.trial_end_date) : null;

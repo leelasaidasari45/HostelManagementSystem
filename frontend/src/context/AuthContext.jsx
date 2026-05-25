@@ -27,6 +27,11 @@ export const AuthProvider = ({ children }) => {
 
   // Check if subscription is valid (owner-specific check)
   const isSubscriptionValid = useCallback((userData) => {
+    // If it's a native mobile app (Capacitor/Cordova), subscription is always valid
+    const isNative = typeof window !== 'undefined' &&
+      (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+    if (isNative) return true;
+
     if (!userData || userData.role !== 'owner') return true; // Tenants don't have subscriptions
     
     const now = new Date();
