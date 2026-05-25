@@ -143,3 +143,21 @@ CREATE TABLE vacate_requests (
   status TEXT NOT NULL DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 12. Leads Table (Landing Page popup leads)
+CREATE TABLE leads (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  hostel_capacity INTEGER,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 13. Page Visits Table (App analytics)
+CREATE TABLE page_visits (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  page TEXT NOT NULL,
+  ip_address TEXT,
+  user_agent TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);

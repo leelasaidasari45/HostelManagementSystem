@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
+import toast from 'react-hot-toast';
+import api from '../api';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -10,11 +12,62 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
+  // Lead capture states
+  const [showLeadPopup, setShowLeadPopup] = React.useState(false);
+  const [leadForm, setLeadForm] = React.useState({ name: '', phone: '', hostelCapacity: '' });
+  const [leadSubmitting, setLeadSubmitting] = React.useState(false);
+
   // Detect Capacitor native platform
   const isNative = typeof window !== 'undefined' &&
     (window.Capacitor?.isNativePlatform?.() ||
      window.cordova !== undefined ||
      (/android/i.test(navigator.userAgent) && window.location.protocol === 'file:'));
+
+  // Trigger popup after 6 seconds
+  React.useEffect(() => {
+    if (loadingAuth || user || isNative) return;
+    const hasSubmitted = localStorage.getItem('easyPG_lead_submitted');
+    const hasClosed = localStorage.getItem('easyPG_lead_closed_at');
+    
+    // Don't show again for 1 day if they manually closed it
+    const oneDay = 24 * 60 * 60 * 1000;
+    const closedRecently = hasClosed && (Date.now() - parseInt(hasClosed)) < oneDay;
+
+    if (!hasSubmitted && !closedRecently) {
+      const timer = setTimeout(() => {
+        setShowLeadPopup(true);
+      }, 6000); // 6 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [user, loadingAuth, isNative]);
+
+  const handleLeadSubmit = async (e) => {
+    e.preventDefault();
+    if (!leadForm.name || !leadForm.phone) {
+      toast.error('Name and Mobile Number are required');
+      return;
+    }
+    setLeadSubmitting(true);
+    try {
+      const res = await api.post('/api/admin/lead', leadForm);
+      if (res.data.success) {
+        toast.success('Thank you! Our operations team will contact you shortly.');
+        localStorage.setItem('easyPG_lead_submitted', 'true');
+        setShowLeadPopup(false);
+      } else {
+        toast.error(res.data.error || 'Failed to submit form');
+      }
+    } catch (err) {
+      toast.error('Something went wrong. Please check details and try again.');
+    } finally {
+      setLeadSubmitting(false);
+    }
+  };
+
+  const closeLeadPopup = () => {
+    localStorage.setItem('easyPG_lead_closed_at', Date.now().toString());
+    setShowLeadPopup(false);
+  };
 
   React.useEffect(() => {
     if (loadingAuth) return;
@@ -399,6 +452,66 @@ const LandingPage = () => {
         <img src="/logo.png" alt="easyPG" style={{ height: 32, objectFit: 'contain' }} />
         <span style={{ color: 'var(--text-ghost)', fontSize: '.82rem' }}>© 2026 easyPG. All rights reserved.</span>
       </footer>
+
+      {/* Lead Capture Popup Modal */}
+      {showLeadPopup && (
+        <div className="lead-modal-backdrop" onClick={closeLeadPopup}>
+          <div className="lead-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="lead-close-btn" onClick={closeLeadPopup}>
+              <X size={18} />
+            </button>
+            <div className="lead-modal-header">
+              <h2 className="lead-modal-title">Get easyPG for Your Hostel</h2>
+              <p className="lead-modal-subtitle">
+                Enter your details to schedule a free demo and get personalized pricing for your property.
+              </p>
+            </div>
+            <form onSubmit={handleLeadSubmit} className="lead-form">
+              <div className="lead-input-group">
+                <label className="lead-label">Your Name</label>
+                <input
+                  type="text"
+                  required
+                  className="lead-input"
+                  placeholder="e.g. Ram Charan"
+                  value={leadForm.name}
+                  onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
+                />
+              </div>
+
+              <div className="lead-input-group">
+                <label className="lead-label">Mobile Number</label>
+                <input
+                  type="tel"
+                  required
+                  pattern="[0-9]{10}"
+                  title="Please enter a valid 10-digit phone number"
+                  className="lead-input"
+                  placeholder="e.g. 7569621094"
+                  value={leadForm.phone}
+                  onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
+                />
+              </div>
+
+              <div className="lead-input-group">
+                <label className="lead-label">Hostel Capacity (No. of Beds)</label>
+                <input
+                  type="number"
+                  min="1"
+                  className="lead-input"
+                  placeholder="e.g. 150"
+                  value={leadForm.hostelCapacity}
+                  onChange={(e) => setLeadForm({ ...leadForm, hostelCapacity: e.target.value })}
+                />
+              </div>
+
+              <button type="submit" disabled={leadSubmitting} className="lead-submit-btn">
+                {leadSubmitting ? 'Submitting...' : 'Request Free Demo'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

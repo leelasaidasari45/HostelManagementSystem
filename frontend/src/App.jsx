@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import api from './api';
 
@@ -26,6 +26,8 @@ const JoinHostel = lazy(() => import('./pages/tenant/JoinHostel'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 
 import { Navigate } from 'react-router-dom';
 import { HostelProvider } from './context/HostelContext';
@@ -105,6 +107,13 @@ const isNative = typeof window !== 'undefined' &&
    /android/i.test(navigator.userAgent) && window.location.protocol === 'file:');
 
 function AppContent() {
+  const location = useLocation();
+
+  // Log page visits on path change
+  React.useEffect(() => {
+    api.post('/api/admin/visit', { page: location.pathname }).catch(() => {});
+  }, [location.pathname]);
+
   // Show splash: always show for 3 seconds when the website is opened
   const [showSplash, setShowSplash] = React.useState(true);
 
@@ -183,6 +192,8 @@ function AppContent() {
           <Route path="/owner/past-tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><PastTenantsPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
           <Route path="/tenant/dashboard" element={<ProtectedRoute roleType="tenant"><TenantDashboard /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
       </Suspense>
     </div>

@@ -46,3 +46,33 @@ export const sendResetEmail = async (to, name, resetUrl) => {
     throw error;
   }
 };
+
+export const sendLeadNotificationEmail = async (leadName, leadPhone, leadCapacity) => {
+  const mailOptions = {
+    from: `"easyPG Lead Capture" <${process.env.SMTP_USER}>`,
+    to: "leelasaidasari@gmail.com",
+    subject: "🔥 New Lead Captured - easyPG",
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h2 style="color: #6366f1;">New Lead Form Submission</h2>
+        <p>A new potential customer has filled out the lead form on the landing page!</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #6366f1;">
+          <p style="margin: 5px 0;"><strong>Name:</strong> ${leadName}</p>
+          <p style="margin: 5px 0;"><strong>Mobile:</strong> ${leadPhone}</p>
+          <p style="margin: 5px 0;"><strong>Hostel Capacity:</strong> ${leadCapacity || 'N/A'} beds</p>
+        </div>
+        <p>Log in to your admin dashboard to see all leads.</p>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+        <p style="color: #94a3b8; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} easyPG. All rights reserved.</p>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Lead notification email sent successfully:", info.messageId);
+    return info;
+  } catch (error) {
+    console.error("Error sending lead notification email:", error);
+  }
+};

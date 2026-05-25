@@ -1554,3 +1554,152 @@
 @media (max-width: 640px) {
   .support-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
 }
+
+/* Glassmorphic Lead Popup Modal */
+.lead-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(6, 8, 16, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInLead 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lead-modal-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-muted);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  width: 90%;
+  max-width: 440px;
+  overflow: hidden;
+  position: relative;
+  animation: scaleUpLead 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.lead-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.lead-modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  background: linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 50%, var(--aurora-3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.lead-modal-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.lead-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: var(--border-subtle);
+  border: none;
+  color: var(--text-ghost);
+  cursor: pointer;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.lead-close-btn:hover {
+  background: var(--border-muted);
+  color: var(--text-bright);
+  transform: rotate(90deg);
+}
+
+.lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.lead-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.lead-label {
+  font-size: 0.78rem;
+  color: var(--text-ghost);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.lead-input {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  color: var(--text-bright);
+  outline: none;
+  transition: all 0.2s;
+}
+
+.lead-input:focus {
+  border-color: var(--aurora-1);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.lead-submit-btn {
+  background: linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 0.95rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.25);
+  margin-top: 0.5rem;
+}
+
+.lead-submit-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+}
+
+.lead-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@keyframes fadeInLead {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUpLead {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
