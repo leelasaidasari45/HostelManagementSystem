@@ -115,6 +115,35 @@ const TenantsPage = () => {
     }
   };
 
+  const getFooterStatusMessage = () => {
+    if (!selectedTenant) return { text: '', icon: null };
+    if (selectedTenant.due_amount > 0) {
+      return {
+        text: 'Payment Not Done',
+        icon: <AlertCircle size={14} />,
+        bg: 'rgba(239, 68, 68, 0.08)',
+        color: '#ef4444',
+        border: '1px solid rgba(239, 68, 68, 0.15)'
+      };
+    }
+    if (!selectedTenant.aadhaarFile) {
+      return {
+        text: 'Aadhaar Document Missing',
+        icon: <AlertCircle size={14} />,
+        bg: 'rgba(245, 158, 11, 0.08)',
+        color: '#f59e0b',
+        border: '1px solid rgba(245, 158, 11, 0.15)'
+      };
+    }
+    return {
+      text: 'Payment Completed',
+      icon: <CheckCircle size={14} />,
+      bg: 'rgba(16, 185, 129, 0.08)',
+      color: '#10b981',
+      border: '1px solid rgba(16, 185, 129, 0.15)'
+    };
+  };
+
   const filteredTenants = React.useMemo(() => {
     return tenants.filter(t => {
       const q = searchTerm.toLowerCase();
@@ -869,6 +898,62 @@ const TenantsPage = () => {
                     </div>
                   </div>
                 )}
+              </div>
+
+              {/* ── Modal Footer (Sticky) ── */}
+              <div style={{
+                padding: '1rem 1.25rem',
+                borderTop: '1px solid var(--border-muted)',
+                background: 'var(--bg-secondary)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '1rem',
+                zIndex: 10
+              }}>
+                {/* Left Bottom Corner: Status / Warning Alert */}
+                <div>
+                  {(() => {
+                    const status = getFooterStatusMessage();
+                    return (
+                      <div style={{
+                        background: status.bg,
+                        border: status.border,
+                        borderRadius: 10,
+                        padding: '0.35rem 0.75rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        color: status.color,
+                        fontSize: '0.78rem',
+                        fontWeight: 700
+                      }}>
+                        {status.icon}
+                        <span>{status.text}</span>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Right Bottom Corner: Close Button */}
+                <button 
+                  onClick={() => setSelectedTenant(null)}
+                  className="btn"
+                  style={{
+                    padding: '0.5rem 1.25rem',
+                    borderRadius: 10,
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    background: 'var(--border-subtle)',
+                    border: '1px solid var(--border-muted)',
+                    color: 'var(--text-bright)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    border: 'none'
+                  }}
+                >
+                  Close
+                </button>
               </div>
 
               {/* Dynamic bottom drawer layout stylesheet */}
