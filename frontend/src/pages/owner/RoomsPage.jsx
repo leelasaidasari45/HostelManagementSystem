@@ -407,7 +407,9 @@ const RoomsPage = () => {
                           <div>
                             <span style={{ color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, fontSize: '0.68rem', display: 'block', marginBottom: '0.15rem' }}>Admission Date</span>
                             <span style={{ color: 'var(--text-bright)', fontWeight: 500 }}>
-                              {occ.admissionDate !== 'N/A' ? new Date(occ.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A'}
+                              {occ.admissionDate && occ.admissionDate !== 'N/A' && !isNaN(Date.parse(occ.admissionDate)) 
+                                ? new Date(occ.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) 
+                                : 'N/A'}
                             </span>
                           </div>
                         </div>
