@@ -67,6 +67,7 @@ const TenantsPage = () => {
   const [loadingPayments, setLoadingPayments] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active'); // 'active' or 'dues'
+  const [modalTab, setModalTab] = useState('profile'); // 'profile', 'payments', 'actions'
   const { logoutContext } = useAuth();
 
   // Reset loading when hostel changes to prevent displaying stale property data
@@ -100,6 +101,7 @@ const TenantsPage = () => {
   // Fetch payment history when a tenant is selected
   const openTenantDetail = async (tenant) => {
     setSelectedTenant(tenant);
+    setModalTab('profile');
     setTenantPayments([]);
     if (!tenant?.tenant_id) return;
     setLoadingPayments(true);
@@ -490,8 +492,9 @@ const TenantsPage = () => {
 
         {/* View Details Modal */}
         {selectedTenant && (
-          <div className="modal-backdrop fade-in" onClick={() => setSelectedTenant(null)}>
-            <div className="modal-card slide-up" style={{ maxWidth: 600, padding: 0, overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+          <div className="detail-modal-backdrop" onClick={() => setSelectedTenant(null)}>
+            <div className="detail-modal-card" onClick={e => e.stopPropagation()}>
+              <div className="modal-drag-handle" />
 
               {/* ── Modal Header Banner ── */}
               <div style={{
@@ -500,22 +503,22 @@ const TenantsPage = () => {
                 position: 'relative',
               }}>
                 <button onClick={() => setSelectedTenant(null)}
-                  style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', border: 'none' }}>
                   <X size={18} />
                 </button>
                 <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '.78rem', marginBottom: '.3rem', fontWeight: 600, letterSpacing: '.08em' }}>TENANT PROFILE</p>
-                <h2 style={{ color: '#fff', margin: 0, fontSize: '1.5rem' }}>{selectedTenant.user?.name || 'Tenant'}</h2>
+                <h2 style={{ color: '#fff', margin: 0, fontSize: '1.5rem', fontFamily: "'Space Grotesk', sans-serif" }}>{selectedTenant.user?.name || 'Tenant'}</h2>
               </div>
 
               {/* ── Avatar overlapping banner ── */}
-              <div style={{ padding: '0 1.75rem', marginTop: -36, marginBottom: '1rem', display: 'flex', alignItems: 'flex-end', gap: '1rem' }}>
+              <div style={{ padding: '0 1.75rem', marginTop: -36, marginBottom: '1.25rem', display: 'flex', alignItems: 'flex-end', gap: '1rem', zIndex: 5 }}>
                 <div style={{
                   width: 72, height: 72, borderRadius: '50%',
                   background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.75rem', fontWeight: 800, color: '#fff',
                   border: '3px solid var(--bg-surface)',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
                   flexShrink: 0,
                 }}>
                   {(selectedTenant.user?.name || 'T')[0].toUpperCase()}
@@ -523,125 +526,391 @@ const TenantsPage = () => {
                 {/* Status badge */}
                 <div style={{ paddingBottom: '.5rem' }}>
                   <span style={{
-                    padding: '.3rem .9rem', borderRadius: 99, fontSize: '.75rem', fontWeight: 700, letterSpacing: '.05em',
-                    background: selectedTenant.status === 'active' ? 'rgba(52,211,153,0.15)' : selectedTenant.status === 'pending' ? 'rgba(251,191,36,0.15)' : 'rgba(248,113,113,0.15)',
+                    padding: '.35rem 1rem', borderRadius: 99, fontSize: '.75rem', fontWeight: 700, letterSpacing: '.05em',
+                    background: selectedTenant.status === 'active' ? 'rgba(52,211,153,0.12)' : selectedTenant.status === 'pending' ? 'rgba(251,191,36,0.12)' : 'rgba(248,113,113,0.12)',
                     color: selectedTenant.status === 'active' ? '#34d399' : selectedTenant.status === 'pending' ? '#fbbf24' : '#f87171',
-                    border: `1px solid ${selectedTenant.status === 'active' ? 'rgba(52,211,153,0.3)' : selectedTenant.status === 'pending' ? 'rgba(251,191,36,0.3)' : 'rgba(248,113,113,0.3)'}`,
+                    border: `1px solid ${selectedTenant.status === 'active' ? 'rgba(52,211,153,0.2)' : selectedTenant.status === 'pending' ? 'rgba(251,191,36,0.2)' : 'rgba(248,113,113,0.2)'}`,
+                    textTransform: 'uppercase'
                   }}>
-                    {selectedTenant.status === 'active' ? '✓ Active' : selectedTenant.status === 'pending' ? '⏳ Pending Approval' : selectedTenant.status?.toUpperCase()}
+                    {selectedTenant.status === 'active' ? '✓ Active' : selectedTenant.status === 'pending' ? '⏳ Pending' : selectedTenant.status}
                   </span>
                 </div>
               </div>
 
-              {/* ── Body ── */}
-              <div style={{ padding: '0 1.75rem 1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', maxHeight: '65vh', overflowY: 'auto' }}>
+              {/* Tab Navigation */}
+              <div style={{ display: 'flex', borderBottom: '1px solid var(--border-muted)', padding: '0 1.25rem', background: 'var(--bg-secondary)' }}>
+                <button 
+                  onClick={() => setModalTab('profile')} 
+                  className={`modal-tab-btn ${modalTab === 'profile' ? 'active' : ''}`}
+                >
+                  <User size={15} />
+                  <span>Profile Info</span>
+                </button>
+                <button 
+                  onClick={() => setModalTab('payments')} 
+                  className={`modal-tab-btn ${modalTab === 'payments' ? 'active' : ''}`}
+                >
+                  <IndianRupee size={15} />
+                  <span>Payments</span>
+                </button>
+                <button 
+                  onClick={() => setModalTab('actions')} 
+                  className={`modal-tab-btn ${modalTab === 'actions' ? 'active' : ''}`}
+                >
+                  <AlertCircle size={15} />
+                  <span>Manage</span>
+                </button>
+              </div>
 
-                {/* Personal Info Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.85rem' }}>
-                  {[
-                    { icon: <User size={14} />,     label: 'Full Name',      value: selectedTenant.user?.name || 'N/A' },
-                    { icon: <User size={14} />,     label: "Father's Name",  value: selectedTenant.fatherName || 'N/A' },
-                    { icon: <Phone size={14} />,    label: 'Mobile',         value: selectedTenant.mobile || 'N/A' },
-                    { icon: <Hash size={14} />,     label: 'Room Number',    value: selectedTenant.roomNumber || 'N/A' },
-                    { icon: <Calendar size={14} />, label: selectedTenant.status === 'pending' ? 'Expected Join' : 'Joined On', value: selectedTenant.admissionDate ? new Date(selectedTenant.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A' },
-                    { icon: <Car size={14} />,      label: 'Vehicle No.',    value: selectedTenant.vehicleNumber || 'N/A' },
-                  ].map(({ icon, label, value }) => (
-                    <div key={label} style={{ padding: '.75rem', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border-muted)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '.35rem', color: 'var(--text-ghost)', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.06em', marginBottom: '.35rem', textTransform: 'uppercase' }}>
-                        {icon} {label}
-                      </div>
-                      <div style={{ fontSize: '.92rem', fontWeight: 600, color: 'var(--text-bright)', wordBreak: 'break-word' }}>{value}</div>
-                    </div>
-                  ))}
-                  {/* Full-width address */}
-                  <div style={{ gridColumn: '1 / -1', padding: '.75rem', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border-muted)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '.35rem', color: 'var(--text-ghost)', fontSize: '.72rem', fontWeight: 700, letterSpacing: '.06em', marginBottom: '.35rem', textTransform: 'uppercase' }}>
-                      <Home size={14} /> Permanent Address
-                    </div>
-                    <div style={{ fontSize: '.92rem', fontWeight: 600, color: 'var(--text-bright)' }}>{selectedTenant.address || 'N/A'}</div>
-                  </div>
-                </div>
-
-                {/* Aadhaar Download */}
-                {selectedTenant.aadhaarFile && (
-                  <div style={{ padding: '.9rem', background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
-                      <ShieldCheck size={18} style={{ color: 'var(--aurora-1)' }} />
-                      <div>
-                        <div style={{ fontSize: '.85rem', fontWeight: 600 }}>Identity Verification</div>
-                        <div style={{ fontSize: '.75rem', color: 'var(--text-ghost)' }}>Aadhaar document uploaded</div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleAadhaarDownload(selectedTenant.aadhaarFile, selectedTenant.user?.name || 'Tenant')}
-                      style={{ padding: '.5rem 1rem', background: 'var(--aurora-1)', color: '#fff', border: 'none', borderRadius: 8, fontSize: '.82rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '.4rem', flexShrink: 0 }}
-                    >
-                      <FileText size={14} /> Download
-                    </button>
-                  </div>
-                )}
-
-                {/* Payment History */}
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.85rem' }}>
-                    <IndianRupee size={16} style={{ color: 'var(--aurora-1)' }} />
-                    <h4 style={{ margin: 0, fontSize: '.95rem' }}>Payment History</h4>
-                  </div>
-
-                  {loadingPayments ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-                      <SkeletonRect height="44px" marginBottom="0" />
-                      <SkeletonRect height="44px" marginBottom="0" />
-                    </div>
-                  ) : tenantPayments.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '.5rem' }}>
-                      {tenantPayments.map((p, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '.75rem 1rem', background: 'var(--bg-elevated)', borderRadius: 10, border: '1px solid var(--border-muted)' }}>
-                          <div>
-                            <div style={{ fontSize: '.88rem', fontWeight: 600 }}>{p.month} {p.year}</div>
-                            {p.paid_at && <div style={{ fontSize: '.74rem', color: 'var(--text-ghost)' }}>Paid on {new Date(p.paid_at).toLocaleDateString('en-IN')}</div>}
+              {/* ── Modal Content Body ── */}
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                {modalTab === 'profile' && (
+                  <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', overflowY: 'auto', flex: 1 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+                      {[
+                        { icon: <User size={14} />,     label: 'Full Name',      value: selectedTenant.user?.name || 'N/A' },
+                        { icon: <User size={14} />,     label: "Father's Name",  value: selectedTenant.fatherName || 'N/A' },
+                        { icon: <Phone size={14} />,    label: 'Mobile',         value: selectedTenant.mobile || 'N/A' },
+                        { icon: <Hash size={14} />,     label: 'Room Number',    value: selectedTenant.roomNumber || 'N/A' },
+                        { icon: <Calendar size={14} />, label: selectedTenant.status === 'pending' ? 'Expected Join' : 'Joined On', value: selectedTenant.admissionDate ? new Date(selectedTenant.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A' },
+                        { icon: <Car size={14} />,      label: 'Vehicle No.',    value: selectedTenant.vehicleNumber || 'N/A' },
+                      ].map(({ icon, label, value }) => (
+                        <div key={label} style={{ padding: '0.85rem', background: 'var(--bg-elevated)', borderRadius: 16, border: '1px solid var(--border-muted)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-ghost)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                            {icon} {label}
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem' }}>
-                            <span style={{ fontWeight: 700, fontSize: '.95rem' }}>₹{Number(p.amount).toLocaleString('en-IN')}</span>
-                            <span style={{
-                              padding: '.2rem .6rem', borderRadius: 99, fontSize: '.72rem', fontWeight: 700,
-                              background: p.status === 'completed' ? 'rgba(52,211,153,0.15)' : 'rgba(251,191,36,0.15)',
-                              color: p.status === 'completed' ? '#34d399' : '#fbbf24',
-                            }}>
-                              {p.status === 'completed' ? '✓ Paid' : '⏳ Pending'}
-                            </span>
-                          </div>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-bright)', wordBreak: 'break-word' }}>{value}</div>
                         </div>
                       ))}
+                      
+                      <div style={{ gridColumn: '1 / -1', padding: '0.85rem', background: 'var(--bg-elevated)', borderRadius: 16, border: '1px solid var(--border-muted)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--text-ghost)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
+                          <Home size={14} /> Permanent Address
+                        </div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-bright)' }}>{selectedTenant.address || 'N/A'}</div>
+                      </div>
                     </div>
-                  ) : (
-                    <div style={{ padding: '1.25rem', background: 'var(--bg-elevated)', borderRadius: 12, textAlign: 'center', color: 'var(--text-ghost)', fontSize: '.85rem' }}>
-                      <AlertCircle size={20} style={{ margin: '0 auto .5rem', display: 'block' }} />
-                      No payment records yet
-                    </div>
-                  )}
-                </div>
 
-                {/* Action Buttons */}
-                {selectedTenant.status === 'pending' && (
-                  <div style={{ display: 'flex', gap: '.75rem', paddingTop: '.5rem' }}>
-                    <button className="btn btn-primary flex-1" style={{ padding: '.85rem' }}
-                      onClick={() => { handleApprove(selectedTenant._id); setSelectedTenant(null); }}>
-                      <CheckCircle size={16} /> Approve Tenant
-                    </button>
-                    <button className="btn flex-1" style={{ padding: '.85rem', background: 'rgba(239,68,68,0.1)', color: 'var(--danger)', border: '1px solid rgba(239,68,68,0.2)' }}
-                      onClick={() => { handleReject(selectedTenant._id); setSelectedTenant(null); }}>
-                      <XCircle size={16} /> Reject
-                    </button>
+                    {selectedTenant.aadhaarFile && (
+                      <div style={{ 
+                        padding: '1rem', 
+                        background: 'rgba(124, 58, 237, 0.04)', 
+                        border: '1px solid rgba(124, 58, 237, 0.15)', 
+                        borderRadius: 16, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between', 
+                        gap: '1rem',
+                        marginTop: '0.25rem'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <div style={{ background: 'rgba(124, 58, 237, 0.1)', padding: '0.5rem', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <ShieldCheck size={20} style={{ color: 'var(--aurora-1)' }} />
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-bright)' }}>Identity Verification</div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-ghost)' }}>Aadhaar document uploaded</div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleAadhaarDownload(selectedTenant.aadhaarFile, selectedTenant.user?.name || 'Tenant')}
+                          style={{ 
+                            padding: '0.5rem 1rem', 
+                            background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)', 
+                            color: '#fff', 
+                            border: 'none', 
+                            borderRadius: 10, 
+                            fontSize: '0.82rem', 
+                            fontWeight: 700, 
+                            cursor: 'pointer', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '0.4rem', 
+                            flexShrink: 0,
+                            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
+                          }}
+                        >
+                          <FileText size={14} /> Download
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
-                {(selectedTenant.status === 'active' || selectedTenant.status === 'vacating') && (
-                  <button className="btn w-full" style={{ padding: '.85rem', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.2)' }}
-                    onClick={() => { handleCompleteVacate(selectedTenant._id); setSelectedTenant(null); }}>
-                    {selectedTenant.status === 'vacating' ? 'Finalize Move-Out' : 'Mark as Vacated'}
-                  </button>
+
+                {modalTab === 'payments' && (
+                  <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', overflowY: 'auto', flex: 1 }}>
+                    <div style={{ padding: '1.25rem', background: 'var(--bg-elevated)', borderRadius: 20, border: '1px solid var(--border-muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Rent Configuration</span>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: '0.25rem 0 0', color: 'var(--text-bright)' }}>
+                          ₹{(selectedTenant.rent_amount || 0).toLocaleString('en-IN')}
+                          <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)', fontWeight: 500 }}> / month</span>
+                        </h3>
+                      </div>
+                      {selectedTenant.status === 'active' || selectedTenant.status === 'vacating' ? (
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', display: 'block', marginBottom: '0.25rem' }}>Current Due</span>
+                          <span style={{
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '99px',
+                            fontSize: '0.82rem',
+                            fontWeight: '700',
+                            ...getPaymentBadgeStyle(selectedTenant.payment_status)
+                          }}>
+                            {selectedTenant.payment_status === 'paid' ? 'Paid' : selectedTenant.payment_status === 'partial' ? `Due: ₹${selectedTenant.due_amount}` : `Unpaid: ₹${selectedTenant.due_amount}`}
+                          </span>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <div>
+                      <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-bright)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                        <IndianRupee size={15} style={{ color: 'var(--aurora-1)' }} />
+                        <span>Payment History</span>
+                      </h4>
+
+                      {loadingPayments ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <SkeletonRect height="52px" marginBottom="0" />
+                          <SkeletonRect height="52px" marginBottom="0" />
+                        </div>
+                      ) : tenantPayments.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {tenantPayments.map((p, i) => (
+                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1rem', background: 'var(--bg-elevated)', borderRadius: 14, border: '1px solid var(--border-muted)' }}>
+                              <div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-bright)' }}>{p.month} {p.year}</div>
+                                {p.paid_at && <div style={{ fontSize: '0.75rem', color: 'var(--text-ghost)' }}>Paid on {new Date(p.paid_at).toLocaleDateString('en-IN')}</div>}
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <span style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-bright)' }}>₹{Number(p.amount).toLocaleString('en-IN')}</span>
+                                <span style={{
+                                  padding: '0.2rem 0.6rem', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700,
+                                  background: p.status === 'completed' ? 'rgba(52,211,153,0.12)' : 'rgba(251,191,36,0.12)',
+                                  color: p.status === 'completed' ? '#34d399' : '#fbbf24',
+                                  border: `1px solid ${p.status === 'completed' ? 'rgba(52,211,153,0.2)' : 'rgba(251,191,36,0.2)'}`
+                                }}>
+                                  {p.status === 'completed' ? '✓ Paid' : '⏳ Pending'}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ padding: '2rem 1.25rem', background: 'var(--bg-elevated)', borderRadius: 16, border: '1px solid var(--border-muted)', textAlign: 'center', color: 'var(--text-ghost)', fontSize: '0.85rem' }}>
+                          <AlertCircle size={24} style={{ margin: '0 auto 0.5rem', display: 'block', color: 'var(--text-ghost)' }} />
+                          <span>No historical payment records found</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {modalTab === 'actions' && (
+                  <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', overflowY: 'auto', flex: 1 }}>
+                    <div style={{ padding: '1rem', background: 'var(--bg-elevated)', borderRadius: 16, border: '1px solid var(--border-muted)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Current Status</span>
+                        <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-bright)', marginTop: '0.15rem' }}>
+                          {selectedTenant.status === 'active' ? 'Active Resident' : selectedTenant.status === 'pending' ? 'Pending Approval' : selectedTenant.status === 'vacating' ? 'Notice Period (Vacating)' : selectedTenant.status?.toUpperCase()}
+                        </div>
+                      </div>
+                      <span style={{
+                        padding: '0.3rem 0.85rem', borderRadius: 99, fontSize: '0.78rem', fontWeight: 700,
+                        background: selectedTenant.status === 'active' ? 'rgba(52,211,153,0.12)' : selectedTenant.status === 'pending' ? 'rgba(251,191,36,0.12)' : 'rgba(248,113,113,0.12)',
+                        color: selectedTenant.status === 'active' ? '#34d399' : selectedTenant.status === 'pending' ? '#fbbf24' : '#f87171',
+                        border: `1px solid ${selectedTenant.status === 'active' ? 'rgba(52,211,153,0.2)' : selectedTenant.status === 'pending' ? 'rgba(251,191,36,0.2)' : 'rgba(248,113,113,0.2)'}`
+                      }}>
+                        {selectedTenant.status === 'active' ? 'Active' : selectedTenant.status === 'pending' ? 'Pending' : selectedTenant.status}
+                      </span>
+                    </div>
+
+                    {selectedTenant.mobile && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Quick Contact</span>
+                        <a
+                          href={`tel:${selectedTenant.mobile}`}
+                          style={{
+                            textDecoration: 'none',
+                            padding: '0.85rem',
+                            background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%)',
+                            border: '1px solid rgba(124, 58, 237, 0.2)',
+                            borderRadius: 14,
+                            color: 'var(--aurora-1)',
+                            fontWeight: 700,
+                            fontSize: '0.9rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.5rem',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            textAlign: 'center'
+                          }}
+                        >
+                          <Phone size={16} /> Direct Call ({selectedTenant.mobile})
+                        </a>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Administrative Controls</span>
+                      
+                      {selectedTenant.status === 'pending' && (
+                        <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
+                          <button 
+                            className="btn btn-primary" 
+                            style={{ padding: '0.85rem', flex: 1, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+                            onClick={() => { handleApprove(selectedTenant._id); setSelectedTenant(null); }}
+                          >
+                            <CheckCircle size={16} /> Approve
+                          </button>
+                          <button 
+                            className="btn" 
+                            style={{ padding: '0.85rem', flex: 1, borderRadius: 14, background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem' }}
+                            onClick={() => { handleReject(selectedTenant._id); setSelectedTenant(null); }}
+                          >
+                            <XCircle size={16} /> Reject
+                          </button>
+                        </div>
+                      )}
+
+                      {(selectedTenant.status === 'active' || selectedTenant.status === 'vacating') && (
+                        <button 
+                          className="btn" 
+                          style={{ 
+                            width: '100%', 
+                            padding: '0.85rem', 
+                            background: 'rgba(239, 68, 68, 0.08)', 
+                            color: '#ef4444', 
+                            border: '1px solid rgba(239, 68, 68, 0.2)',
+                            borderRadius: 14,
+                            fontWeight: 700,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '0.5rem',
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => { handleCompleteVacate(selectedTenant._id); setSelectedTenant(null); }}
+                        >
+                          <XCircle size={16} />
+                          {selectedTenant.status === 'vacating' ? 'Finalize Move-Out & Evict' : 'Mark Resident as Vacated'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
+
+              {/* Dynamic bottom drawer layout stylesheet */}
+              <style>{`
+                .detail-modal-backdrop {
+                  position: fixed;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background: rgba(6, 8, 16, 0.75);
+                  backdrop-filter: blur(8px);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  z-index: 1000;
+                  animation: fadeInDetails 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                .detail-modal-card {
+                  background: var(--bg-surface);
+                  border: 1px solid var(--border-muted);
+                  border-radius: 24px;
+                  box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+                  width: 92%;
+                  max-width: 580px;
+                  max-height: 85vh;
+                  overflow: hidden;
+                  display: flex;
+                  flex-direction: column;
+                  position: relative;
+                  animation: scaleUpDetails 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                @media (max-width: 640px) {
+                  .detail-modal-backdrop {
+                    align-items: flex-end;
+                  }
+                  .detail-modal-card {
+                    width: 100%;
+                    max-width: 100%;
+                    border-radius: 28px 28px 0 0;
+                    border-bottom: none;
+                    max-height: 90vh;
+                    animation: slideUpDetailsSheet 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+                    padding-bottom: env(safe-area-inset-bottom, 0px);
+                  }
+                }
+
+                .modal-drag-handle {
+                  display: none;
+                }
+                @media (max-width: 640px) {
+                  .modal-drag-handle {
+                    display: block;
+                    width: 36px;
+                    height: 4px;
+                    background: rgba(255, 255, 255, 0.3);
+                    border-radius: 99px;
+                    margin: 8px auto 0;
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 10;
+                  }
+                }
+
+                .modal-tab-btn {
+                  flex: 1;
+                  background: transparent;
+                  border: none;
+                  color: var(--text-ghost);
+                  font-size: 0.85rem;
+                  font-weight: 700;
+                  text-transform: uppercase;
+                  letter-spacing: 0.04em;
+                  cursor: pointer;
+                  padding: 1rem 0.5rem;
+                  border-bottom: 2px solid transparent;
+                  transition: all 0.2s ease;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 0.4rem;
+                }
+                .modal-tab-btn.active {
+                  color: var(--aurora-1);
+                  border-bottom-color: var(--aurora-1);
+                }
+                .modal-tab-btn:hover:not(.active) {
+                  color: var(--text-dim);
+                }
+
+                @keyframes fadeInDetails {
+                  from { opacity: 0; }
+                  to { opacity: 1; }
+                }
+
+                @keyframes scaleUpDetails {
+                  from { transform: scale(0.95); opacity: 0; }
+                  to { transform: scale(1); opacity: 1; }
+                }
+
+                @keyframes slideUpDetailsSheet {
+                  from { transform: translateY(100%); }
+                  to { transform: translateY(0); }
+                }
+              `}</style>
+
             </div>
           </div>
         )}
