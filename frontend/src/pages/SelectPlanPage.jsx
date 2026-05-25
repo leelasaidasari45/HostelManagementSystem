@@ -181,10 +181,10 @@ const SelectPlanPage = () => {
           maxWidth: '420px',
           textAlign: 'center',
           padding: '2.5rem 2rem',
-          background: 'linear-gradient(135deg, rgba(30, 37, 54, 0.95) 0%, rgba(22, 27, 39, 0.95) 100%)',
-          border: '1px solid rgba(124, 58, 237, 0.25)',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-muted)',
           borderRadius: 24,
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+          boxShadow: 'var(--shadow-md)',
           zIndex: 10,
         }}>
           {/* Accent Purple Top Border */}
@@ -194,7 +194,7 @@ const SelectPlanPage = () => {
             left: 0,
             right: 0,
             height: 4,
-            background: 'linear-gradient(90deg, #7c3aed, #4f46e5)',
+            background: 'linear-gradient(90deg, var(--aurora-1), #4f46e5)',
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
           }} />
@@ -218,7 +218,7 @@ const SelectPlanPage = () => {
           <h2 style={{
             fontSize: '1.6rem',
             fontWeight: 800,
-            color: '#ffffff',
+            color: 'var(--text-bright)',
             marginBottom: '1rem',
             fontFamily: "'Space Grotesk', sans-serif"
           }}>
@@ -227,7 +227,7 @@ const SelectPlanPage = () => {
 
           <p style={{
             fontSize: '0.95rem',
-            color: '#9ca3af',
+            color: 'var(--text-dim)',
             lineHeight: 1.6,
             marginBottom: '2.5rem',
             fontWeight: 500,
@@ -243,7 +243,7 @@ const SelectPlanPage = () => {
               style={{
                 width: '100%',
                 padding: '1rem 1.5rem',
-                background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+                background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)',
                 border: 'none',
                 borderRadius: 14,
                 cursor: 'pointer',
@@ -254,7 +254,7 @@ const SelectPlanPage = () => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 8,
-                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
+                boxShadow: 'var(--shadow-glow)',
               }}
             >
               Pay to Continue
@@ -266,8 +266,8 @@ const SelectPlanPage = () => {
               style={{
                 width: '100%',
                 padding: '1rem 1.5rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--border-subtle)',
+                border: '1px solid var(--border-muted)',
                 borderRadius: 14,
                 cursor: 'pointer',
                 fontSize: '0.95rem',
@@ -534,8 +534,8 @@ const SelectPlanPage = () => {
 const styles = {
   page: {
     minHeight: '100vh',
-    background: '#0a0d18',
-    color: '#f3f4f6',
+    background: 'var(--bg-base)',
+    color: 'var(--text-bright)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -590,12 +590,12 @@ const styles = {
   },
   navLink: {
     fontSize: '0.95rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     textDecoration: 'none',
     cursor: 'pointer',
     transition: 'color 0.2s',
     '&:hover': {
-      color: '#a78bfa',
+      color: 'var(--aurora-1)',
     },
   },
   navActions: {
@@ -617,10 +617,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '0.5rem',
-    background: 'rgba(255, 255, 255, 0.05)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
+    background: 'var(--border-subtle)',
+    border: '1px solid var(--border-muted)',
     cursor: 'pointer',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     fontSize: '0.87rem',
     padding: '0.5rem 1rem',
     borderRadius: 99,
@@ -642,25 +642,25 @@ const styles = {
     borderRadius: 99,
     fontSize: '0.78rem',
     fontWeight: 600,
-    color: '#a78bfa',
+    color: 'var(--aurora-1)',
     marginBottom: '1rem',
   },
   title: {
     fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
     fontWeight: 800,
-    color: '#ffffff',
+    color: 'var(--text-bright)',
     margin: '0 0 1rem 0',
     lineHeight: 1.25,
     letterSpacing: '-0.02em',
   },
   titleGradient: {
-    background: 'linear-gradient(135deg, #a78bfa, #818cf8)',
+    background: 'linear-gradient(135deg, var(--aurora-1), #818cf8)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
   subtitle: {
     fontSize: '1rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     margin: 0,
     lineHeight: 1.5,
   },
@@ -671,12 +671,12 @@ const styles = {
     zIndex: 10,
   },
   proCard: {
-    background: 'rgba(17, 24, 39, 0.7)',
+    background: 'var(--bg-surface)',
     backdropFilter: 'blur(8px)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
+    border: '1px solid var(--border-muted)',
     borderRadius: 24,
     padding: '2.5rem',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+    boxShadow: 'var(--shadow-md)',
     position: 'relative',
     overflow: 'hidden',
   },
@@ -686,7 +686,7 @@ const styles = {
     left: 0,
     right: 0,
     height: 4,
-    background: 'linear-gradient(90deg, #7c3aed, #4f46e5)',
+    background: 'linear-gradient(90deg, var(--aurora-1), #4f46e5)',
   },
   cardHeader: {
     display: 'flex',
@@ -699,14 +699,14 @@ const styles = {
   planLabel: {
     fontSize: '0.75rem',
     fontWeight: 700,
-    color: '#a78bfa',
+    color: 'var(--aurora-1)',
     letterSpacing: '0.1em',
     margin: '0 0 0.25rem 0',
   },
   planTitle: {
     fontSize: '1.75rem',
     fontWeight: 700,
-    color: '#ffffff',
+    color: 'var(--text-bright)',
     margin: 0,
   },
   priceContainer: {
@@ -716,18 +716,18 @@ const styles = {
   currencySymbol: {
     fontSize: '1.5rem',
     fontWeight: 700,
-    color: '#ffffff',
+    color: 'var(--text-bright)',
     marginRight: 2,
   },
   priceAmount: {
     fontSize: '3rem',
     fontWeight: 800,
-    color: '#ffffff',
+    color: 'var(--text-bright)',
     letterSpacing: '-0.02em',
   },
   pricePeriod: {
     fontSize: '0.95rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     marginLeft: 4,
   },
   promoBannerActive: {
@@ -768,8 +768,8 @@ const styles = {
     whiteSpace: 'nowrap',
   },
   promoBannerExpired: {
-    background: 'rgba(255, 255, 255, 0.02)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
+    background: 'var(--border-subtle)',
+    border: '1px solid var(--border-muted)',
     borderRadius: 16,
     padding: '0.85rem 1.25rem',
     marginBottom: '2rem',
@@ -777,7 +777,7 @@ const styles = {
   },
   promoDescExpired: {
     fontSize: '0.82rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     margin: 0,
   },
   featuresSection: {
@@ -786,7 +786,7 @@ const styles = {
   featuresTitle: {
     fontSize: '0.87rem',
     fontWeight: 600,
-    color: '#e5e7eb',
+    color: 'var(--text-bright)',
     marginBottom: '1.25rem',
   },
   featureList: {
@@ -803,26 +803,26 @@ const styles = {
     gap: '0.75rem',
   },
   checkIcon: {
-    color: '#7c3aed',
+    color: 'var(--aurora-1)',
     flexShrink: 0,
     marginTop: 2,
   },
   featureText: {
     fontSize: '0.9rem',
     fontWeight: 600,
-    color: '#ffffff',
+    color: 'var(--text-bright)',
     margin: '0 0 0.15rem 0',
   },
   featureSubtext: {
     fontSize: '0.8rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
     margin: 0,
     lineHeight: 1.4,
   },
   payBtn: {
     width: '100%',
     padding: '1.1rem 2rem',
-    background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+    background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)',
     border: 'none',
     borderRadius: 14,
     cursor: 'pointer',
@@ -832,7 +832,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 4px 16px rgba(124, 58, 237, 0.25)',
+    boxShadow: 'var(--shadow-glow)',
   },
   trustBadges: {
     display: 'flex',
@@ -841,7 +841,7 @@ const styles = {
     gap: '0.75rem',
     marginTop: '1.25rem',
     fontSize: '0.78rem',
-    color: '#9ca3af',
+    color: 'var(--text-dim)',
   },
   trustItem: {
     display: 'flex',
@@ -850,12 +850,12 @@ const styles = {
   separator: {
     width: 1,
     height: 12,
-    background: 'rgba(255, 255, 255, 0.15)',
+    background: 'var(--border-muted)',
   },
   footerNote: {
     marginTop: '2.5rem',
     fontSize: '0.8rem',
-    color: '#4b5563',
+    color: 'var(--text-ghost)',
     textAlign: 'center',
     position: 'relative',
     zIndex: 10,
