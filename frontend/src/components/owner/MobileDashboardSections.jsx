@@ -13,11 +13,7 @@ const TrialCountdownBanner = () => {
   const navigate = useNavigate();
   const [timeInfo, setTimeInfo] = useState(null);
 
-  const isNative = typeof window !== 'undefined' &&
-    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
-
   useEffect(() => {
-    if (isNative) return;
     if (!user?.trial_end_date || user?.subscription_status !== 'trial') return;
 
     const compute = () => {
@@ -35,9 +31,9 @@ const TrialCountdownBanner = () => {
     compute();
     const id = setInterval(compute, 60000);
     return () => clearInterval(id);
-  }, [user, isNative]);
+  }, [user]);
 
-  if (isNative || !timeInfo || user?.subscription_status !== 'trial') return null;
+  if (!timeInfo || user?.subscription_status !== 'trial') return null;
 
   // Color based on urgency
   const urgent = timeInfo.days === 0;          // < 1 day

@@ -18,11 +18,6 @@ const SelectPlanPage = () => {
 
 
 
-  useEffect(() => {
-    if (isNative) {
-      navigate(user?.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard', { replace: true });
-    }
-  }, [isNative, navigate, user]);
 
   // Handle Paytm/Cashfree callback redirects
   useEffect(() => {
@@ -163,7 +158,157 @@ const SelectPlanPage = () => {
   };
 
   if (isNative) {
-    return null;
+    return (
+      <div style={styles.page}>
+        {/* Background Ambient Orbs */}
+        <div style={styles.orb1} />
+        <div style={styles.orb2} />
+
+        {/* Top Actions */}
+        <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', zIndex: 20 }}>
+          <ThemeToggle />
+        </div>
+
+        {/* Clean Logo Header */}
+        <div style={{ marginTop: '2rem', marginBottom: '4rem', textAlign: 'center', zIndex: 10 }}>
+          <img src="/logo.png" alt="easyPG" style={{ height: 50, objectFit: 'contain' }} />
+        </div>
+
+        {/* Premium Native Subscription Card */}
+        <div className="slide-up" style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '420px',
+          textAlign: 'center',
+          padding: '2.5rem 2rem',
+          background: 'linear-gradient(135deg, rgba(30, 37, 54, 0.95) 0%, rgba(22, 27, 39, 0.95) 100%)',
+          border: '1px solid rgba(124, 58, 237, 0.25)',
+          borderRadius: 24,
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+          zIndex: 10,
+        }}>
+          {/* Accent Purple Top Border */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 4,
+            background: 'linear-gradient(90deg, #7c3aed, #4f46e5)',
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+          }} />
+
+          {/* Glowing Warning Icon */}
+          <div className="pulse-warning-glow" style={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            background: 'rgba(245, 158, 11, 0.08)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 2rem',
+            boxShadow: '0 0 20px rgba(245, 158, 11, 0.1)',
+          }}>
+            <Clock size={36} style={{ color: '#f59e0b' }} />
+          </div>
+
+          <h2 style={{
+            fontSize: '1.6rem',
+            fontWeight: 800,
+            color: '#ffffff',
+            marginBottom: '1rem',
+            fontFamily: "'Space Grotesk', sans-serif"
+          }}>
+            Free Trial Ended
+          </h2>
+
+          <p style={{
+            fontSize: '0.95rem',
+            color: '#9ca3af',
+            lineHeight: 1.6,
+            marginBottom: '2.5rem',
+            fontWeight: 500,
+          }}>
+            Your 2-day free trial has expired. To continue using easyPG and managing your properties, please activate a plan.
+          </p>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <button
+              onClick={() => window.open('https://easypg.in/select-plan', '_blank')}
+              className="native-pay-btn"
+              style={{
+                width: '100%',
+                padding: '1rem 1.5rem',
+                background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+                border: 'none',
+                borderRadius: 14,
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)',
+              }}
+            >
+              Pay to Continue
+            </button>
+
+            <button
+              onClick={logoutContext}
+              className="native-logout-btn"
+              style={{
+                width: '100%',
+                padding: '1rem 1.5rem',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: 14,
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <LogOut size={16} /> Log Out
+            </button>
+          </div>
+        </div>
+
+        <style>{`
+          .pulse-warning-glow {
+            animation: pulseGlow 2s infinite ease-in-out;
+          }
+          @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }
+            50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px rgba(245, 158, 11, 0.25); }
+          }
+          .native-pay-btn, .native-logout-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .native-pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+          }
+          .native-logout-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+          }
+          .native-pay-btn:active, .native-logout-btn:active {
+            transform: translateY(0);
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (

@@ -17,8 +17,6 @@ import './OwnerDashboard.css';
 const OwnerDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isNative = typeof window !== 'undefined' &&
-    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
   const { activeHostel, loadingHostels, analytics, setAnalytics } = useHostel();
   const [loading, setLoading] = useState(!analytics);
   const [loadingNotice, setLoadingNotice] = useState(false);
@@ -62,7 +60,7 @@ const OwnerDashboard = () => {
       <MobileOwnerHeader />
       
       {/* Trial Expiry Warning */}
-      {!isNative && user?.subscription_status === 'trial' && (
+      {user?.subscription_status === 'trial' && (
         <TrialExpiryWarning
           trialEndDate={user.trial_end_date}
           user={user}
