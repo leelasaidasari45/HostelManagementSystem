@@ -16,7 +16,14 @@ const SubscriptionGuard = ({ children }) => {
   useEffect(() => {
     if (!user || user.role !== 'owner') return;
 
+    // TEMP: Bypassing subscription block on mobile app. Re-enable later.
+    const isNative = typeof window !== 'undefined' &&
+      (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
 
+    if (isNative) {
+      setHasCheckedExpiry(true);
+      return;
+    }
 
     const checkSubscription = () => {
       const now = new Date();

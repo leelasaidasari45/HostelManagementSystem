@@ -16,8 +16,12 @@ const SelectPlanPage = () => {
   const isNative = typeof window !== 'undefined' &&
     (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
 
-
-
+  // TEMP: Bypassing subscription block on mobile app. Re-enable later.
+  useEffect(() => {
+    if (isNative) {
+      navigate(user?.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard', { replace: true });
+    }
+  }, [isNative, navigate, user]);
 
   // Handle Paytm/Cashfree callback redirects
   useEffect(() => {
@@ -158,13 +162,16 @@ const SelectPlanPage = () => {
   };
 
   if (isNative) {
+    // TEMP: Bypassing subscription block on mobile app. Re-enable later by restoring the blocking warning view.
+    return null;
+    /*
     return (
       <div style={styles.page}>
-        {/* Background Ambient Orbs */}
+        // Background Ambient Orbs
         <div style={styles.orb1} />
         <div style={styles.orb2} />
 
-        {/* Top Actions */}
+        // Top Actions
         <div style={{ 
           position: 'absolute', 
           top: 'calc(1.25rem + env(safe-area-inset-top, 0px))', 
@@ -174,12 +181,12 @@ const SelectPlanPage = () => {
           <ThemeToggle />
         </div>
 
-        {/* Clean Logo Header */}
+        // Clean Logo Header
         <div style={{ marginTop: '2rem', marginBottom: '4rem', textAlign: 'center', zIndex: 10 }}>
           <img src="/logo.png" alt="easyPG" style={{ height: 50, objectFit: 'contain' }} />
         </div>
 
-        {/* Premium Native Subscription Card */}
+        // Premium Native Subscription Card
         <div className="slide-up" style={{
           position: 'relative',
           width: '100%',
@@ -192,7 +199,7 @@ const SelectPlanPage = () => {
           boxShadow: 'var(--shadow-md)',
           zIndex: 10,
         }}>
-          {/* Accent Purple Top Border */}
+          // Accent Purple Top Border
           <div style={{
             position: 'absolute',
             top: 0,
@@ -204,7 +211,7 @@ const SelectPlanPage = () => {
             borderTopRightRadius: 24,
           }} />
 
-          {/* Glowing Warning Icon */}
+          // Glowing Warning Icon
           <div className="pulse-warning-glow" style={{
             width: 80,
             height: 80,
@@ -240,7 +247,7 @@ const SelectPlanPage = () => {
             Your 2-day free trial has expired. To continue using easyPG and managing your properties, please activate a plan.
           </p>
 
-          {/* Action Buttons */}
+          // Action Buttons
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <button
               onClick={() => window.open('https://easypg.in/select-plan', '_blank')}
@@ -314,6 +321,7 @@ const SelectPlanPage = () => {
         `}</style>
       </div>
     );
+    */
   }
 
   return (
