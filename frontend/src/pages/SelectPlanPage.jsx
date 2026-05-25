@@ -16,13 +16,7 @@ const SelectPlanPage = () => {
   const isNative = typeof window !== 'undefined' &&
     (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
 
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     if (isNative) {
@@ -185,13 +179,7 @@ const SelectPlanPage = () => {
             <img src="/logo.png" alt="easyPG" style={{ height: 42, objectFit: 'contain' }} />
           </Link>
 
-          {!isMobile && (
-            <div style={styles.navLinks}>
-              <a href="#features" style={styles.navLink}>Features</a>
-              <a href="#how-it-works" style={styles.navLink}>How it Works</a>
-              <a href="#pricing" style={styles.navLink}>Pricing</a>
-            </div>
-          )}
+
 
           <div style={styles.navActions}>
             <ThemeToggle />
