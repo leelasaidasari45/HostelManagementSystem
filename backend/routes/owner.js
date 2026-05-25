@@ -112,6 +112,26 @@ router.get('/tenants', async (req, res) => {
     if (error) throw error;
     if (!users || !users.length) return res.json([]);
 
+    const tenantIds = users.map(u => u.id);
+    const { data: payments, error: pError } = await supabase
+       .from('payments')
+       .select('tenant_id, amount, status, month, year')
+       .in('tenant_id', tenantIds)
+       .eq('status', 'completed');
+
+    if (pError) throw pError;
+
+    const now = new Date();
+    const currentMonth = now.toLocaleString('default', { month: 'long' });
+    const currentYear = String(now.getFullYear());
+
+    const tenantPaidMap = {};
+    (payments || []).forEach(p => {
+      if (p.month === currentMonth && String(p.year) === currentYear) {
+        tenantPaidMap[p.tenant_id] = (tenantPaidMap[p.tenant_id] || 0) + Number(p.amount);
+      }
+    });
+
     const mapped = users.map(t => {
       // Find the most active allocation out of the array
       const allocs = t.allocations || [];
@@ -121,6 +141,19 @@ router.get('/tenants', async (req, res) => {
       const actAlloc = allocs.find(a => a.status === 'active' || a.status === 'pending' || a.status === 'vacating') || allocs[0];
       const roomNumber = actAlloc?.beds?.rooms?.room_number || 'N/A';
       
+      const rentAmount = actAlloc?.rent_amount || 0;
+      const paidAmount = tenantPaidMap[t.id] || 0;
+      const dueAmount = Math.max(0, rentAmount - paidAmount);
+      
+      let paymentStatus = 'unpaid';
+      if (rentAmount === 0) {
+        paymentStatus = 'paid';
+      } else if (paidAmount >= rentAmount) {
+        paymentStatus = 'paid';
+      } else if (paidAmount > 0) {
+        paymentStatus = 'partial';
+      }
+
       return {
         ...t,
         _id: actAlloc?.id || t.id, // Supabase id
@@ -133,7 +166,11 @@ router.get('/tenants', async (req, res) => {
         aadhaarFile: t.aadhaar_url,
         admissionDate: actAlloc?.start_date || t.join_date,
         status: actAlloc?.status || 'pending',
-        roomNumber: roomNumber
+        roomNumber: roomNumber,
+        rent_amount: rentAmount,
+        paid_amount: paidAmount,
+        due_amount: dueAmount,
+        payment_status: paymentStatus
       };
     });
     
