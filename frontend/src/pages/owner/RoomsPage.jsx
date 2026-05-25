@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, BedDouble, Search, X } from 'lucide-react';
+import { Building2, BedDouble, Search, X, Phone, Calendar, User, CheckCircle, ShieldCheck } from 'lucide-react';
 import api from '../../api';
 import toast from 'react-hot-toast';
 import { useHostel } from '../../context/HostelContext';
@@ -13,6 +13,7 @@ const RoomsPage = () => {
   const { activeHostel, loadingHostels, rooms, setRooms } = useHostel();
   const [loading, setLoading] = useState(rooms.length === 0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   // Reset loading when hostel changes to prevent displaying stale property data
   useEffect(() => {
@@ -231,7 +232,12 @@ const RoomsPage = () => {
                       const statusLabel = isFull ? 'Full' : isOccupied ? 'Sharing' : 'Empty';
 
                       return (
-                        <div key={room._id} className={`room-card-premium ${statusClass}`}>
+                        <div 
+                          key={room._id} 
+                          className={`room-card-premium ${statusClass}`}
+                          onClick={() => setSelectedRoom(room)}
+                          style={{ cursor: 'pointer' }}
+                        >
                           <div className="rc-header">
                             <span className="rc-number">{room.number}</span>
                             <span className={`rc-status-tag ${statusClass}`}>{statusLabel}</span>
@@ -285,6 +291,225 @@ const RoomsPage = () => {
               );
             })}
           </>
+        )}
+
+        {/* Room Details Modal */}
+        {selectedRoom && (
+          <div className="room-modal-backdrop" onClick={() => setSelectedRoom(null)}>
+            <div className="room-modal-card" onClick={e => e.stopPropagation()}>
+              <div className="modal-drag-handle" />
+
+              {/* Modal Header */}
+              <div style={{
+                background: 'linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%)',
+                padding: '1.75rem 1.75rem 2rem',
+                position: 'relative',
+              }}>
+                <button onClick={() => setSelectedRoom(null)}
+                  style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', cursor: 'pointer', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', border: 'none' }}>
+                  <X size={18} />
+                </button>
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '.78rem', fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase' }}>Room Configuration</span>
+                <h2 style={{ color: '#fff', margin: '0.25rem 0 0', fontSize: '1.75rem', fontFamily: "'Space Grotesk', sans-serif" }}>Room {selectedRoom.number}</h2>
+              </div>
+
+              {/* Room Stats Quick Info */}
+              <div style={{ display: 'flex', gap: '0.85rem', padding: '1.25rem', borderBottom: '1px solid var(--border-muted)', background: 'var(--bg-secondary)' }}>
+                <div style={{ flex: 1, padding: '0.75rem', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border-muted)', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700 }}>Floor</span>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-bright)', marginTop: '0.15rem' }}>{selectedRoom.floor}</div>
+                </div>
+                <div style={{ flex: 1, padding: '0.75rem', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border-muted)', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700 }}>Occupancy</span>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-bright)', marginTop: '0.15rem' }}>{selectedRoom.occupants.length} / {selectedRoom.capacity}</div>
+                </div>
+                <div style={{ flex: 1, padding: '0.75rem', background: 'var(--bg-elevated)', borderRadius: 12, border: '1px solid var(--border-muted)', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700 }}>Rent Price</span>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-bright)', marginTop: '0.15rem' }}>₹{selectedRoom.rent_amount.toLocaleString('en-IN')}</div>
+                </div>
+              </div>
+
+              {/* Occupants List Body */}
+              <div style={{ padding: '1.25rem', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-bright)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <BedDouble size={16} style={{ color: 'var(--aurora-1)' }} />
+                  <span>Current Occupants</span>
+                </h4>
+
+                {selectedRoom.occupants.length === 0 ? (
+                  <div style={{ padding: '2rem 1rem', background: 'var(--bg-elevated)', borderRadius: 16, border: '1px solid var(--border-muted)', textAlign: 'center', color: 'var(--text-ghost)' }}>
+                    <BedDouble size={28} style={{ margin: '0 auto 0.5rem', display: 'block', opacity: 0.5 }} />
+                    <span style={{ fontSize: '0.85rem' }}>No residents allocated to this room yet</span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {selectedRoom.occupants.map((occ) => (
+                      <div key={occ._id} style={{ 
+                        padding: '1rem', 
+                        background: 'var(--bg-elevated)', 
+                        border: '1px solid var(--border-muted)', 
+                        borderRadius: 16,
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.75rem'
+                      }}>
+                        {/* Occupant Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                            <div style={{
+                              width: 38, height: 38, borderRadius: '50%',
+                              background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: '0.95rem', fontWeight: 800, color: '#fff',
+                              boxShadow: '0 4px 10px rgba(124, 58, 237, 0.15)'
+                            }}>
+                              {(occ.user?.name || 'T')[0].toUpperCase()}
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-bright)' }}>{occ.user?.name || 'Tenant'}</div>
+                              <span style={{ 
+                                display: 'inline-block',
+                                fontSize: '0.7rem', 
+                                color: occ.status === 'active' ? '#34d399' : occ.status === 'pending' ? '#fbbf24' : '#f87171',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em'
+                              }}>
+                                {occ.status === 'active' ? '✓ Active' : occ.status === 'pending' ? '⏳ Pending' : occ.status}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {occ.phone && occ.phone !== 'N/A' && (
+                            <a href={`tel:${occ.phone}`} style={{
+                              width: 34, height: 34, borderRadius: '50%',
+                              background: 'rgba(79, 70, 229, 0.08)',
+                              border: '1px solid rgba(79, 70, 229, 0.15)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'var(--aurora-1)',
+                              cursor: 'pointer',
+                              textDecoration: 'none'
+                            }}>
+                              <Phone size={14} />
+                            </a>
+                          )}
+                        </div>
+
+                        {/* Occupant Details Info */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem', fontSize: '0.8rem' }}>
+                          <div>
+                            <span style={{ color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, fontSize: '0.68rem', display: 'block', marginBottom: '0.15rem' }}>Phone Number</span>
+                            <span style={{ color: 'var(--text-bright)', fontWeight: 500 }}>{occ.phone || 'N/A'}</span>
+                          </div>
+                          <div>
+                            <span style={{ color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, fontSize: '0.68rem', display: 'block', marginBottom: '0.15rem' }}>Admission Date</span>
+                            <span style={{ color: 'var(--text-bright)', fontWeight: 500 }}>
+                              {occ.admissionDate !== 'N/A' ? new Date(occ.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div style={{
+                padding: '1rem 1.25rem',
+                borderTop: '1px solid var(--border-muted)',
+                background: 'var(--bg-secondary)',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                zIndex: 10
+              }}>
+                <button 
+                  onClick={() => setSelectedRoom(null)}
+                  className="btn"
+                  style={{
+                    padding: '0.5rem 1.5rem',
+                    borderRadius: 10,
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    background: 'var(--border-subtle)',
+                    border: '1px solid var(--border-muted)',
+                    color: 'var(--text-bright)',
+                    cursor: 'pointer',
+                    border: 'none'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* stylesheet */}
+              <style>{`
+                .room-modal-backdrop {
+                  position: fixed;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background: rgba(6, 8, 16, 0.75);
+                  backdrop-filter: blur(8px);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  z-index: 1000;
+                  animation: fadeInRoom 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                .room-modal-card {
+                  background: var(--bg-surface);
+                  border: 1px solid var(--border-muted);
+                  border-radius: 24px;
+                  box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+                  width: 92%;
+                  max-width: 480px;
+                  max-height: 80vh;
+                  overflow: hidden;
+                  display: flex;
+                  flex-direction: column;
+                  position: relative;
+                  animation: scaleUpRoom 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+
+                @media (max-width: 640px) {
+                  .room-modal-backdrop {
+                    align-items: flex-end;
+                  }
+                  .room-modal-card {
+                    width: 100%;
+                    max-width: 100%;
+                    border-radius: 28px 28px 0 0;
+                    border-bottom: none;
+                    max-height: 85vh;
+                    animation: slideUpRoomSheet 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+                    padding-bottom: env(safe-area-inset-top, 0px);
+                  }
+                }
+
+                @keyframes fadeInRoom {
+                  from { opacity: 0; }
+                  to { opacity: 1; }
+                }
+
+                @keyframes scaleUpRoom {
+                  from { transform: scale(0.95); opacity: 0; }
+                  to { transform: scale(1); opacity: 1; }
+                }
+
+                @keyframes slideUpRoomSheet {
+                  from { transform: translateY(100%); }
+                  to { transform: translateY(0); }
+                }
+              `}</style>
+            </div>
+          </div>
         )}
       </main>
     </div>

@@ -322,7 +322,10 @@ router.get('/rooms', async (req, res) => {
              if (activeAlloc && activeAlloc.users) {
                 occupants.push({
                    _id: activeAlloc.users.id, // match frontend _id
-                   user: { name: activeAlloc.users.name || 'Unnamed Tenant' }
+                   user: { name: activeAlloc.users.name || 'Unnamed Tenant' },
+                   phone: activeAlloc.users.phone || 'N/A',
+                   admissionDate: activeAlloc.start_date || activeAlloc.users.join_date || 'N/A',
+                   status: activeAlloc.status || 'pending'
                 });
              }
           });
