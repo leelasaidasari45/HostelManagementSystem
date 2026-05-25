@@ -1703,3 +1703,63 @@
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* Floating FAB Button for Leads */
+.lead-floating-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lead-floating-btn:hover {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 12px 35px rgba(124, 58, 237, 0.5);
+}
+
+.lead-floating-tooltip {
+  position: absolute;
+  right: 70px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-muted);
+  color: var(--text-bright);
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-md);
+}
+
+.lead-floating-btn:hover .lead-floating-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 640px) {
+  .lead-floating-btn {
+    bottom: 5.5rem; /* Raise slightly on mobile to avoid overlapping navigation bar/tabs */
+    right: 1.25rem;
+    width: 48px;
+    height: 48px;
+  }
+  .lead-floating-tooltip {
+    display: none; /* Hide hover tooltips on mobile/touch interfaces */
+  }
+}

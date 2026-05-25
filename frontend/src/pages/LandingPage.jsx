@@ -23,7 +23,7 @@ const LandingPage = () => {
      window.cordova !== undefined ||
      (/android/i.test(navigator.userAgent) && window.location.protocol === 'file:'));
 
-  // Trigger popup after 6 seconds
+  // Trigger popup after 3 seconds
   React.useEffect(() => {
     if (loadingAuth || user || isNative) return;
     const hasSubmitted = localStorage.getItem('easyPG_lead_submitted');
@@ -36,7 +36,7 @@ const LandingPage = () => {
     if (!hasSubmitted && !closedRecently) {
       const timer = setTimeout(() => {
         setShowLeadPopup(true);
-      }, 6000); // 6 seconds
+      }, 3000); // 3 seconds
       return () => clearTimeout(timer);
     }
   }, [user, loadingAuth, isNative]);
@@ -452,6 +452,16 @@ const LandingPage = () => {
         <img src="/logo.png" alt="easyPG" style={{ height: 32, objectFit: 'contain' }} />
         <span style={{ color: 'var(--text-ghost)', fontSize: '.82rem' }}>© 2026 easyPG. All rights reserved.</span>
       </footer>
+
+      {/* Floating Demo Request Button */}
+      <button 
+        className="lead-floating-btn" 
+        onClick={() => setShowLeadPopup(true)}
+        title="Request Free Demo"
+      >
+        <Building2 size={24} />
+        <span className="lead-floating-tooltip">Book a Free Demo</span>
+      </button>
 
       {/* Lead Capture Popup Modal */}
       {showLeadPopup && (
