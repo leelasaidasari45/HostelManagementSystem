@@ -100,7 +100,7 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (leadsErr) throw leadsErr;
+    if (leadsErr) console.error('Leads fetch error:', leadsErr.message);
 
     // B. Fetch Users list
     const { data: users, error: usersErr } = await supabase
@@ -115,7 +115,7 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
       .from('page_visits')
       .select('*', { count: 'exact', head: true });
 
-    if (visitsErr) throw visitsErr;
+    if (visitsErr) console.error('Visits count error:', visitsErr.message);
 
     // D. Fetch subscription transactions (Revenue)
     const { data: platformSubs, error: subsErr } = await supabase
@@ -146,6 +146,8 @@ router.get('/dashboard', requireAdmin, async (req, res) => {
        .select('page, created_at')
        .order('created_at', { ascending: false })
        .limit(100);
+
+    if (rawVisitsErr) console.error('Raw visits error:', rawVisitsErr.message);
 
     res.json({
       leads: leads || [],
