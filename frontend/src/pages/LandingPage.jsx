@@ -23,23 +23,23 @@ const LandingPage = () => {
      window.cordova !== undefined ||
      (/android/i.test(navigator.userAgent) && window.location.protocol === 'file:'));
 
-  // Trigger popup after 3 seconds
+  // Trigger popup after 3 seconds from initial page load
   React.useEffect(() => {
-    if (loadingAuth || user || isNative) return;
-    const hasSubmitted = localStorage.getItem('easyPG_lead_submitted');
-    const hasClosed = localStorage.getItem('easyPG_lead_closed_at');
+    if (isNative) return;
     
-    // Don't show again for 1 day if they manually closed it
-    const oneDay = 24 * 60 * 60 * 1000;
-    const closedRecently = hasClosed && (Date.now() - parseInt(hasClosed)) < oneDay;
-
-    if (!hasSubmitted && !closedRecently) {
-      const timer = setTimeout(() => {
+    const timer = setTimeout(() => {
+      // Don't show if they already submitted, or if they just closed it within the last 12 hours
+      const hasSubmitted = localStorage.getItem('easyPG_lead_submitted');
+      
+      // We don't want to show it if they are logged in, but we can't reliably use `user` from context here 
+      // if it's stale in the closure. So we check if we're still on the landing page.
+      if (!hasSubmitted && !localStorage.getItem('token') && !sessionStorage.getItem('token')) {
         setShowLeadPopup(true);
-      }, 3000); // 3 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [user, loadingAuth, isNative]);
+      }
+    }, 3000); // Exactly 3 seconds
+    
+    return () => clearTimeout(timer);
+  }, [isNative]);
 
   const handleLeadSubmit = async (e) => {
     e.preventDefault();
