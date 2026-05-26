@@ -262,20 +262,18 @@ const TenantsPage = () => {
         <div>
             {/* Summary Metrics Row */}
             <div style={{ 
-              display: 'flex', 
-              gap: '0.85rem', 
-              justifyContent: 'center', 
-              maxWidth: 600, 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1rem', 
               width: '100%', 
-              margin: '0 auto 1.5rem auto' 
+              margin: '0 auto 2rem auto' 
             }}>
               {/* Card 1: Total Tenants Present */}
               <div style={{
-                flex: 1,
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border-muted)',
                 borderRadius: 16,
-                padding: '0.85rem 1rem',
+                padding: '1rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -284,27 +282,26 @@ const TenantsPage = () => {
                 <div style={{
                   background: 'rgba(99, 102, 241, 0.1)',
                   color: 'var(--aurora-1)',
-                  padding: '0.5rem',
+                  padding: '0.6rem',
                   borderRadius: 12,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <Users size={18} />
+                  <Users size={20} />
                 </div>
                 <div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Present Tenants</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-bright)' }}>{activeTenants.length}</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-bright)' }}>{activeTenants.length}</div>
                 </div>
               </div>
 
               {/* Card 2: Tenants with Dues */}
               <div style={{
-                flex: 1,
                 background: 'var(--bg-secondary)',
                 border: '1px solid var(--border-muted)',
                 borderRadius: 16,
-                padding: '0.85rem 1rem',
+                padding: '1rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -313,17 +310,105 @@ const TenantsPage = () => {
                 <div style={{
                   background: 'rgba(239, 68, 68, 0.1)',
                   color: '#ef4444',
-                  padding: '0.5rem',
+                  padding: '0.6rem',
                   borderRadius: 12,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}>
-                  <IndianRupee size={16} />
+                  <User size={20} />
                 </div>
                 <div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Tenants Due</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ef4444' }}>{duesTenants.length}</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ef4444' }}>{duesTenants.length}</div>
+                </div>
+              </div>
+
+              {/* Card 3: Total Dues Amount */}
+              <div style={{
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-muted)',
+                borderRadius: 16,
+                padding: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  color: '#ef4444',
+                  padding: '0.6rem',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <IndianRupee size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Total Dues</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ef4444' }}>
+                    ₹{duesTenants.reduce((acc, t) => acc + (t.due_amount || 0), 0).toLocaleString('en-IN')}
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Pending Approvals */}
+              <div style={{
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-muted)',
+                borderRadius: 16,
+                padding: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  color: '#f59e0b',
+                  padding: '0.6rem',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <AlertCircle size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Pending</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f59e0b' }}>{pendingTenants.length}</div>
+                </div>
+              </div>
+
+              {/* Card 5: Vacating Soon */}
+              <div style={{
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--border-muted)',
+                borderRadius: 16,
+                padding: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div style={{
+                  background: 'rgba(56, 189, 248, 0.1)',
+                  color: '#38bdf8',
+                  padding: '0.6rem',
+                  borderRadius: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Clock size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>Vacating</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8' }}>
+                    {activeTenants.filter(t => t.status === 'vacating').length}
+                  </div>
                 </div>
               </div>
             </div>
