@@ -390,12 +390,12 @@ a:focus-visible, button:focus-visible {
   transition:all var(--transition-slow);
 }
 .sidebar .logo-wrap {
-  width:44px; height:44px; border-radius:var(--r-md); overflow:hidden;
+  width:44px; height:44px; border-radius:50%; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
-  background:linear-gradient(135deg,var(--aurora-1),var(--aurora-2));
+  background:transparent;
   margin-bottom:1rem; flex-shrink:0;
 }
-.sidebar .logo-wrap img { width:100%; height:100%; object-fit:contain; }
+.sidebar .logo-wrap img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 .sidebar-nav { display:flex; flex-direction:column; gap:.35rem; width:100%; padding:0 .6rem; }
 .nav-item {
   display:flex; align-items:center; justify-content:center;
