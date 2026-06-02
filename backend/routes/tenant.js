@@ -10,6 +10,81 @@ router.use(requireTenant);
 
 const upload = multer({ dest: 'uploads/' });
 
+// Search all hostels
+router.get('/hostels/search', async (req, res) => {
+  try {
+    const { query } = req.query; // optional search query
+    
+    // Fetch all hostels
+    let dbQuery = supabase
+      .from('hostels')
+      .select('id, name, location, address, photo_url, pg_code, owner_id')
+      .order('created_at', { ascending: false });
+      
+    if (query) {
+      dbQuery = dbQuery.ilike('name', `%${query}%`);
+    }
+
+    let hostels = [];
+    let { data, error } = await dbQuery;
+
+    if (error && error.message && error.message.includes('Could not find')) {
+      // Fallback if the user hasn't run the SQL migration for location and photo_url
+      console.warn("Falling back to basic hostel query. SQL migration might be missing.");
+      let fallbackQuery = supabase
+        .from('hostels')
+        .select('id, name, address, pg_code, owner_id')
+        .order('created_at', { ascending: false });
+        
+      if (query) fallbackQuery = fallbackQuery.ilike('name', `%${query}%`);
+      
+      const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+      if (fallbackError) throw fallbackError;
+      hostels = fallbackData;
+    } else if (error) {
+      throw error;
+    } else {
+      hostels = data;
+    }
+
+    if (!hostels || hostels.length === 0) {
+      return res.json([]);
+    }
+
+    // Get all unique owner IDs
+    const ownerIds = [...new Set(hostels.map(h => h.owner_id).filter(Boolean))];
+    
+    let owners = [];
+    if (ownerIds.length > 0) {
+      // Fetch owner phone numbers
+      const { data } = await supabase
+        .from('users')
+        .select('id, phone')
+        .in('id', ownerIds);
+      owners = data || [];
+    }
+
+    const phoneMap = {};
+    owners.forEach(o => {
+      phoneMap[o.id] = o.phone;
+    });
+
+    // Map the results
+    const mappedHostels = hostels.map(h => ({
+      id: h.id,
+      name: h.name,
+      location: h.location || h.address || 'Unknown Location',
+      photo_url: h.photo_url || null,
+      pg_code: h.pg_code,
+      owner_phone: phoneMap[h.owner_id] || 'N/A'
+    }));
+
+    res.json(mappedHostels);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/dashboard', async (req, res) => {
   try {
     const tenantId = req.user.id;
@@ -55,6 +130,7 @@ router.get('/dashboard', async (req, res) => {
     let notices = [];
     let menu = null;
     let hostelName = "";
+    let ownerPhone = "";
 
     // 🏆 Fallback: If user profile doesn't have hostel_id, get it from allocation's nested floors
     let hostelId = tenant.hostel_id;
@@ -64,8 +140,13 @@ router.get('/dashboard', async (req, res) => {
     
     // Only fetch hostel data if they are actively connected to one
     if (hostelId && tenant.status !== 'new') {
-        const { data: hostelData } = await supabase.from('hostels').select('name').eq('id', hostelId).maybeSingle();
+        const { data: hostelData } = await supabase.from('hostels').select('name, owner_id').eq('id', hostelId).maybeSingle();
         hostelName = hostelData?.name || "";
+
+        if (hostelData?.owner_id) {
+            const { data: ownerData } = await supabase.from('users').select('phone').eq('id', hostelData.owner_id).maybeSingle();
+            ownerPhone = ownerData?.phone || "";
+        }
 
         const { data: noticesData } = await supabase.from('notices').select('*').eq('hostel_id', hostelId).order('created_at', { ascending: false });
         notices = noticesData || [];
@@ -75,7 +156,7 @@ router.get('/dashboard', async (req, res) => {
         menu = menuData;
     }
 
-    res.json({ tenant, notices, menu, hostelName });
+    res.json({ tenant, notices, menu, hostelName, ownerPhone });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

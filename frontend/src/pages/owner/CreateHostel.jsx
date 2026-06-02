@@ -16,8 +16,10 @@ const CreateHostel = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
-    mobile: ''
+    mobile: '',
+    location: '',
   });
+  const [photoFile, setPhotoFile] = useState(null);
 
   const [floorsConfig, setFloorsConfig] = useState([
     { floor: 1, baseRooms: '', baseCapacity: '', baseRent: '', rooms: [], generated: false }
@@ -120,10 +122,17 @@ const CreateHostel = () => {
     setLoading(true);
 
     try {
-      const res = await api.post('/api/owner/hostels', {
-        name: formData.name,
-        mobile: formData.mobile,
-        floorsConfig
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('mobile', formData.mobile);
+      data.append('location', formData.location);
+      data.append('floorsConfig', JSON.stringify(floorsConfig));
+      if (photoFile) {
+        data.append('photo', photoFile);
+      }
+
+      const res = await api.post('/api/owner/hostels', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       toast.success(res.data.message || 'Hostel successfully created!');
@@ -137,7 +146,7 @@ const CreateHostel = () => {
     }
   };
 
-  const isStep1Done = formData.name.trim() !== '' && formData.mobile.trim() !== '';
+  const isStep1Done = formData.name.trim() !== '' && formData.mobile.trim() !== '' && formData.location.trim() !== '';
   const isStep2Done = floorsConfig.length > 0 && floorsConfig.every(f => f.generated);
 
   return (
@@ -222,6 +231,36 @@ const CreateHostel = () => {
                             value={formData.mobile}
                             onChange={e => setFormData({ ...formData, mobile: e.target.value })}
                             required
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="form-group mb-0">
+                        <label className="form-label">City/Location</label>
+                        <div className="input-icon-group">
+                          <span style={{ marginLeft: 12, opacity: 0.5 }}>📍</span>
+                          <input
+                            type="text"
+                            className="form-control form-control-premium"
+                            placeholder="e.g. Hyderabad, Hitech City"
+                            value={formData.location}
+                            onChange={e => setFormData({ ...formData, location: e.target.value })}
+                            required
+                            style={{ paddingLeft: 40 }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group mb-0">
+                        <label className="form-label">Hostel Photo (Optional)</label>
+                        <div className="input-icon-group">
+                          <span style={{ marginLeft: 12, opacity: 0.5 }}>📷</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="form-control form-control-premium"
+                            onChange={e => setPhotoFile(e.target.files[0])}
+                            style={{ paddingLeft: 40, paddingTop: 10 }}
                           />
                         </div>
                       </div>

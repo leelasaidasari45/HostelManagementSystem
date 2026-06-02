@@ -29,6 +29,7 @@ const SelectRolePage = () => {
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [showTenantModal, setShowTenantModal] = useState(false);
   const { loginContext, user, logoutContext } = useAuth();
   const navigate = useNavigate();
 
@@ -39,6 +40,14 @@ const SelectRolePage = () => {
 
   const handleRoleSelection = async (role) => {
     if (loading) return;
+    if (role === 'tenant') {
+      setShowTenantModal(true);
+      return;
+    }
+    await processRoleSelection(role, '/owner/dashboard');
+  };
+
+  const processRoleSelection = async (role, redirectPath) => {
     setSelected(role);
     setLoading(true);
     try {
@@ -52,17 +61,18 @@ const SelectRolePage = () => {
         trial_end_date: res.data.trial_end_date,
       });
       toast.success(role === 'owner' ? '🏠 Welcome, Owner! Enjoy your free trial.' : '🎉 Welcome aboard!');
-      if (role === 'owner') {
-        navigate('/owner/dashboard', { replace: true });
-      } else {
-        navigate('/tenant/join', { replace: true });
-      }
+      navigate(redirectPath, { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update role');
       setSelected(null);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTenantPath = (path) => {
+    setShowTenantModal(false);
+    processRoleSelection('tenant', path);
   };
 
   const ownerFeatures = [
@@ -251,6 +261,48 @@ const SelectRolePage = () => {
           🔒 Your role is permanent. Choose carefully — you can only select once.
         </p>
       </main>
+
+      {/* Tenant Path Modal */}
+      {showTenantModal && (
+        <div style={s.modalOverlay}>
+          <div style={s.modalContent} className="slide-up">
+            <h3 style={s.modalTitle}>Choose your path</h3>
+            <p style={s.modalDesc}>How would you like to proceed?</p>
+            
+            <div style={s.modalOptions}>
+              <button 
+                onClick={() => handleTenantPath('/tenant/search')}
+                style={{ ...s.modalOptionCard, borderColor: 'rgba(5,150,105,0.4)' }}
+              >
+                <div style={{...s.iconWrap, background: 'rgba(5,150,105,0.1)', width: 50, height: 50}}>
+                  <Building2 size={24} color="#34d399" />
+                </div>
+                <div style={s.modalOptionText}>
+                  <strong style={{ fontSize: '1.1rem', display: 'block', color: 'var(--text-bright)' }}>Search Hostels</strong>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>Browse verified hostels on our platform</span>
+                </div>
+                <ArrowRight size={18} color="#34d399" />
+              </button>
+
+              <button 
+                onClick={() => handleTenantPath('/tenant/join')}
+                style={{ ...s.modalOptionCard, borderColor: 'rgba(8,145,178,0.4)' }}
+              >
+                <div style={{...s.iconWrap, background: 'rgba(8,145,178,0.1)', width: 50, height: 50}}>
+                  <Sparkles size={24} color="#22d3ee" />
+                </div>
+                <div style={s.modalOptionText}>
+                  <strong style={{ fontSize: '1.1rem', display: 'block', color: 'var(--text-bright)' }}>Join with Code</strong>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>I already have an invite code from an owner</span>
+                </div>
+                <ArrowRight size={18} color="#22d3ee" />
+              </button>
+            </div>
+            
+            <button style={s.modalCloseBtn} onClick={() => setShowTenantModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes spin360 { to { transform: rotate(360deg); } }
@@ -511,6 +563,76 @@ const s = {
     width: '100%',
     maxWidth: 900,
   },
+
+  /* ── Modal Styles ── */
+  modalOverlay: {
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    background: 'rgba(0,0,0,0.6)',
+    backdropFilter: 'blur(4px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+    padding: '1rem',
+  },
+  modalContent: {
+    background: 'var(--bg-elevated)',
+    border: '1px solid var(--border-muted)',
+    borderRadius: 20,
+    padding: '2rem',
+    width: '100%',
+    maxWidth: 420,
+    boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: '1.4rem',
+    fontWeight: 800,
+    color: 'var(--text-bright)',
+    textAlign: 'center',
+  },
+  modalDesc: {
+    margin: '0 0 1rem 0',
+    fontSize: '0.9rem',
+    color: 'var(--text-dim)',
+    textAlign: 'center',
+  },
+  modalOptions: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  modalOptionCard: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: 16,
+    padding: '1rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    textAlign: 'left',
+  },
+  modalOptionText: {
+    flex: 1,
+    marginLeft: '1rem',
+  },
+  modalCloseBtn: {
+    marginTop: '1rem',
+    padding: '0.75rem',
+    background: 'transparent',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: 10,
+    color: 'var(--text-dim)',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  }
 };
 
 export default SelectRolePage;

@@ -27,12 +27,23 @@ router.get('/hostels', async (req, res) => {
   }
 });
 
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' });
+
 // Create Hostel
-router.post('/hostels', async (req, res) => {
+router.post('/hostels', upload.single('photo'), async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const { name, address, pg_code, floorsConfig } = req.body;
+    const { name, address, location, pg_code } = req.body;
+    let floorsConfig = [];
+    try {
+      floorsConfig = req.body.floorsConfig ? JSON.parse(req.body.floorsConfig) : [];
+    } catch(e) {
+      console.error("Failed to parse floorsConfig", e);
+    }
     
+    const photo_url = req.file ? req.file.path : null;
+
     // Check if PG code already exists
     const codeToCheck = pg_code || `PG-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
     const { data: existingHostel } = await supabase.from('hostels').select('id').eq('pg_code', codeToCheck).maybeSingle();
@@ -46,6 +57,8 @@ router.post('/hostels', async (req, res) => {
        owner_id: ownerId, 
        name: name, 
        address: address || '', 
+       location: location || '',
+       photo_url: photo_url,
        pg_code: codeToCheck
     }]).select().single();
     if (hError) throw hError;

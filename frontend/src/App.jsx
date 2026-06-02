@@ -22,6 +22,7 @@ const BillingPage = lazy(() => import('./pages/owner/BillingPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const TenantDashboard = lazy(() => import('./pages/tenant/TenantDashboard'));
+const SearchHostels = lazy(() => import('./pages/tenant/SearchHostels'));
 const JoinHostel = lazy(() => import('./pages/tenant/JoinHostel'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
@@ -190,6 +191,7 @@ function AppContent() {
           <Route path="/owner/billing" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><BillingPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/owner/tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><TenantsPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/owner/past-tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><PastTenantsPage /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/tenant/search" element={<ProtectedRoute roleType="tenant"><SearchHostels /></ProtectedRoute>} />
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
           <Route path="/tenant/dashboard" element={<ProtectedRoute roleType="tenant"><TenantDashboard /></ProtectedRoute>} />
           <Route path="/admin" element={<AdminDashboard />} />
