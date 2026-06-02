@@ -33,8 +33,10 @@ const upload = multer({ dest: 'uploads/' });
 // Create Hostel
 router.post('/hostels', upload.single('photo'), async (req, res) => {
   try {
+    console.log("Create Hostel Request Body:", req.body);
+    console.log("Create Hostel Uploaded File:", req.file);
     const ownerId = req.user.id;
-    const { name, address, location, pg_code } = req.body;
+    const { name, address, location, pg_code, bankAccount, bankIfsc, accountHolderName } = req.body;
     let floorsConfig = [];
     try {
       floorsConfig = req.body.floorsConfig ? JSON.parse(req.body.floorsConfig) : [];
@@ -42,6 +44,57 @@ router.post('/hostels', upload.single('photo'), async (req, res) => {
       console.error("Failed to parse floorsConfig", e);
     }
     
+    // --- Create Cashfree Vendor (EasySplit) ---
+    if (bankAccount && bankIfsc && accountHolderName) {
+      const { data: user } = await supabase.from('users').select('email, phone').eq('id', ownerId).single();
+      const vendorId = `vendor_${ownerId.replace(/-/g, '').substring(0, 20)}`;
+      
+      const cfBase = process.env.CASHFREE_ENV === 'production' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg';
+      const cfHeaders = {
+        'Content-Type': 'application/json',
+        'x-api-version': '2023-08-01',
+        'x-client-id': process.env.CASHFREE_APP_ID,
+        'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+      };
+      
+      try {
+        const vendorRes = await fetch(`${cfBase}/vendors`, {
+          method: 'POST',
+          headers: cfHeaders,
+          body: JSON.stringify({
+            vendor_id: vendorId,
+            name: accountHolderName,
+            email: user?.email || 'vendor@easypg.com',
+            phone: (user?.phone || '9999999999').replace(/\D/g, '').slice(0, 10),
+            verify_account: false,
+            bank: [
+              {
+                account_number: bankAccount,
+                account_holder: accountHolderName,
+                ifsc: bankIfsc
+              }
+            ]
+          })
+        });
+        const vendorData = await vendorRes.json();
+        if (!vendorRes.ok && vendorData.code !== 'vendor_already_exists') {
+          console.error("Cashfree Vendor Creation Failed:", vendorData);
+          // Non-fatal, we will just proceed, but you could choose to throw
+        } else {
+          // Update user table with vendor details
+          await supabase.from('users').update({
+            vendor_id: vendorId,
+            bank_account: bankAccount,
+            bank_ifsc: bankIfsc,
+            account_holder_name: accountHolderName
+          }).eq('id', ownerId);
+        }
+      } catch (err) {
+        console.error("Cashfree vendor API exception:", err.message);
+      }
+    }
+    // ------------------------------------------
+
     const photo_url = req.file ? req.file.path : null;
 
     // Check if PG code already exists

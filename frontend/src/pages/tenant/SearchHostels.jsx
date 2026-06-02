@@ -99,7 +99,11 @@ const SearchHostels = () => {
               {/* Photo Area */}
               <div style={{ width: '100%', height: 180, background: 'var(--bg-elevated)', position: 'relative', borderBottom: '1px solid var(--border-subtle)' }}>
                 {hostel.photo_url ? (
-                  <img src={hostel.photo_url.startsWith('http') ? hostel.photo_url : `/${hostel.photo_url}`} alt={hostel.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img 
+                    src={hostel.photo_url.startsWith('http') ? hostel.photo_url : `${api.defaults.baseURL}/${hostel.photo_url.startsWith('/') ? hostel.photo_url.slice(1) : hostel.photo_url}`} 
+                    alt={hostel.name} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-ghost)' }}>
                     <ImageIcon size={32} />

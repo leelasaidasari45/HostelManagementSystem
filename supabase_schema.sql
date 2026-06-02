@@ -18,6 +18,10 @@ CREATE TABLE users (
   subscription_status TEXT DEFAULT 'none',
   payment_setup_complete BOOLEAN DEFAULT false,
   paytm_subscription_id TEXT,
+  vendor_id TEXT,
+  bank_account TEXT,
+  bank_ifsc TEXT,
+  account_holder_name TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

@@ -11,13 +11,17 @@ import './OwnerDashboard.css';
 
 const CreateHostel = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { refreshHostels } = useHostel();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
-    mobile: '',
+    mobile: user?.phone || '',
     location: '',
+    bankAccount: '',
+    bankIfsc: '',
+    accountHolderName: user?.name || '',
   });
   const [photoFile, setPhotoFile] = useState(null);
 
@@ -126,14 +130,15 @@ const CreateHostel = () => {
       data.append('name', formData.name);
       data.append('mobile', formData.mobile);
       data.append('location', formData.location);
+      data.append('bankAccount', formData.bankAccount);
+      data.append('bankIfsc', formData.bankIfsc);
+      data.append('accountHolderName', formData.accountHolderName);
       data.append('floorsConfig', JSON.stringify(floorsConfig));
       if (photoFile) {
         data.append('photo', photoFile);
       }
 
-      const res = await api.post('/api/owner/hostels', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.post('/api/owner/hostels', data);
 
       toast.success(res.data.message || 'Hostel successfully created!');
       await refreshHostels();
@@ -146,7 +151,13 @@ const CreateHostel = () => {
     }
   };
 
-  const isStep1Done = formData.name.trim() !== '' && formData.mobile.trim() !== '' && formData.location.trim() !== '';
+  const isStep1Done = 
+    formData.name.trim() !== '' && 
+    formData.mobile.trim() !== '' && 
+    formData.location.trim() !== '' &&
+    formData.bankAccount.trim() !== '' &&
+    formData.bankIfsc.trim() !== '' &&
+    formData.accountHolderName.trim() !== '';
   const isStep2Done = floorsConfig.length > 0 && floorsConfig.every(f => f.generated);
 
   return (
@@ -266,7 +277,62 @@ const CreateHostel = () => {
                       </div>
                     </div>
                   </div>
-                  
+
+                  <div className="mb-8 fade-in" style={{ animationDelay: '0.1s' }}>
+                    <div className="builder-step-header">
+                      <div className="builder-step-number" style={{ background: 'var(--success)' }}>₹</div>
+                      <h3 style={{ margin: 0 }}>Payment Routing (Receive Rent)</h3>
+                    </div>
+                    <div className="grid gap-4 form-grid-2">
+                      <div className="form-group mb-0" style={{ gridColumn: '1 / -1' }}>
+                        <label className="form-label">Account Holder Name</label>
+                        <div className="input-icon-group">
+                          <span style={{ marginLeft: 12, opacity: 0.5 }}>👤</span>
+                          <input
+                            type="text"
+                            className="form-control form-control-premium"
+                            placeholder="Name exactly as per bank account"
+                            value={formData.accountHolderName}
+                            onChange={e => setFormData({ ...formData, accountHolderName: e.target.value })}
+                            required
+                            style={{ paddingLeft: 40 }}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="form-group mb-0">
+                        <label className="form-label">Bank Account Number</label>
+                        <div className="input-icon-group">
+                          <span style={{ marginLeft: 12, opacity: 0.5 }}>🏦</span>
+                          <input
+                            type="text"
+                            className="form-control form-control-premium"
+                            placeholder="e.g. 0123456789"
+                            value={formData.bankAccount}
+                            onChange={e => setFormData({ ...formData, bankAccount: e.target.value })}
+                            required
+                            style={{ paddingLeft: 40 }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group mb-0">
+                        <label className="form-label">IFSC Code</label>
+                        <div className="input-icon-group">
+                          <span style={{ marginLeft: 12, opacity: 0.5 }}>🏛️</span>
+                          <input
+                            type="text"
+                            className="form-control form-control-premium"
+                            placeholder="e.g. SBIN0001234"
+                            value={formData.bankIfsc}
+                            onChange={e => setFormData({ ...formData, bankIfsc: e.target.value })}
+                            required
+                            style={{ paddingLeft: 40 }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   <button
                     type="button"
                     className="btn btn-gradient-submit w-full mt-6 flex items-center justify-center gap-2"

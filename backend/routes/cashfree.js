@@ -59,6 +59,25 @@ router.post('/create-order', requireAuth, async (req, res) => {
       },
     };
 
+    // EasySplit Vendor Routing for Rent Payments
+    if (type === 'rent') {
+      const { data: tenantData } = await supabase.from('users').select('hostel_id').eq('id', userId).single();
+      if (tenantData?.hostel_id) {
+        const { data: hostelData } = await supabase.from('hostels').select('owner_id').eq('id', tenantData.hostel_id).single();
+        if (hostelData?.owner_id) {
+          const { data: ownerData } = await supabase.from('users').select('vendor_id').eq('id', hostelData.owner_id).single();
+          if (ownerData?.vendor_id) {
+            body.order_splits = [
+              {
+                vendor_id: ownerData.vendor_id,
+                percentage: 100
+              }
+            ];
+          }
+        }
+      }
+    }
+
     const response = await fetch(`${getCFBase()}/orders`, {
       method:  'POST',
       headers: cfHeaders(),
