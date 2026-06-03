@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { Lock, KeyRound, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Lock, KeyRound, CheckCircle, ArrowLeft, EyeOff, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
-import './AuthPages.css';
+import { useTheme } from '../context/ThemeContext';
+import './AuthPage.css'; // Use the main auth CSS for consistent layout
 
 const ResetPasswordPage = () => {
+    const { isDarkMode } = useTheme();
     const [searchParams] = useSearchParams();
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
@@ -46,68 +50,89 @@ const ResetPasswordPage = () => {
 
     if (success) {
         return (
-            <div className="auth-container modern-auth-bg">
-                <div className="auth-card glass-panel slide-up text-center" style={{ maxWidth: '420px', padding: '2.5rem 2rem' }}>
-                    <div className="icon-wrapper mb-4" style={{ margin: '0 auto', background: 'var(--success)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-                        <CheckCircle size={32} style={{ color: 'white' }} />
+            <div className={`mobile-auth-wrapper ${!isDarkMode ? 'light' : ''}`}>
+                <div className="mobile-auth-container password-entry-screen">
+                    <div className="mobile-auth-hero">
+                        <div className="app-circle-logo" style={{ background: 'var(--success)' }}>
+                            <CheckCircle size={24} style={{ color: 'white' }} />
+                        </div>
+                        <h1 className="app-super-title">All Set!</h1>
+                        <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
+                            Your password has been reset successfully.
+                        </p>
                     </div>
-                    <h2 className="mb-2" style={{ fontWeight: 800 }}>All Set!</h2>
-                    <p className="text-muted mb-6" style={{ lineHeight: 1.6 }}>
-                        Your password has been reset successfully. You can now use your new password to log in.
-                    </p>
-                    <Link to="/login" className="btn btn-primary w-full" style={{ padding: '0.9rem', borderRadius: '12px', fontWeight: 700, fontSize: '1rem', background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))', border: 'none', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.25)' }}>
-                        Login Now
-                    </Link>
+
+                    <div className="mobile-auth-form-card" style={{ marginTop: '2rem' }}>
+                        <Link to="/login" style={{ textDecoration: 'none', width: '100%' }}>
+                            <button className="mobile-continue-btn">
+                                Login Now
+                            </button>
+                        </Link>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="auth-container modern-auth-bg">
-            <div className="auth-card glass-panel slide-up" style={{ maxWidth: '420px', padding: '2.5rem 2rem' }}>
-                <div className="auth-header flex-col items-center gap-2 mb-6">
-                    <Link to="/" className="flex items-center gap-2 mb-3" style={{ textDecoration: 'none' }}>
-                        <div style={{ background: 'var(--bg-elevated)', padding: '0.5rem', borderRadius: '12px', border: '1px solid var(--border-muted)', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-                            <img src="/logo.png" alt="easyPG" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
-                        </div>
-                    </Link>
-                    <h2 style={{ fontWeight: 800, fontSize: '1.75rem' }}>Reset Password</h2>
-                    <p className="text-muted" style={{ textAlign: 'center', lineHeight: 1.5 }}>
-                        Create a strong, new secure password for your account.
+        <div className={`mobile-auth-wrapper ${!isDarkMode ? 'light' : ''}`}>
+            <div className="mobile-auth-container password-entry-screen">
+                <div className="mobile-auth-hero">
+                    <div className="app-circle-logo">
+                        <span>easyPG</span>
+                    </div>
+                    <h1 className="app-super-title">Reset Password</h1>
+                    <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
+                        Create a strong, new secure password
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="auth-form mt-4">
-                    <div className="form-group mb-4">
-                        <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-bright)' }}>New Password</label>
+                <div className="mobile-auth-form-card">
+                    <label className="mobile-input-label">New Password</label>
+                    <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
+                        <Lock size={18} className="mobile-input-icon" />
                         <input
-                            type="password"
-                            className="form-control"
+                            type={showPassword ? 'text' : 'password'}
                             placeholder="Min. 6 characters"
                             value={formData.newPassword}
                             onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                            style={{ height: '48px', padding: '0 1.25rem', borderRadius: '12px' }}
-                            required
+                            className="mobile-email-input"
                         />
+                        <button 
+                          type="button" 
+                          className="mobile-eye-toggle"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
                     </div>
 
-                    <div className="form-group mb-6">
-                        <label className="form-label" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-bright)' }}>Confirm Password</label>
+                    <label className="mobile-input-label">Confirm Password</label>
+                    <div className="mobile-input-field">
+                        <Lock size={18} className="mobile-input-icon" />
                         <input
-                            type="password"
-                            className="form-control"
+                            type={showConfirmPassword ? 'text' : 'password'}
                             placeholder="Re-enter password"
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                            style={{ height: '48px', padding: '0 1.25rem', borderRadius: '12px' }}
-                            required
+                            className="mobile-email-input"
                         />
+                        <button 
+                          type="button" 
+                          className="mobile-eye-toggle"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        >
+                          {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
                     </div>
 
-                    <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ height: '48px', borderRadius: '12px', fontWeight: 700, fontSize: '1rem', background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))', border: 'none', boxShadow: '0 4px 15px rgba(124, 58, 237, 0.25)' }}>
+                    <button 
+                        className="mobile-continue-btn"
+                        disabled={loading}
+                        onClick={handleSubmit}
+                    >
                         {loading ? (
-                          <span className="pulse-opacity" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span className="pulse-opacity">
                             Updating Password
                             <span className="pulsing-dot-container">
                               <span className="pulsing-dot"></span>
@@ -115,13 +140,15 @@ const ResetPasswordPage = () => {
                               <span className="pulsing-dot"></span>
                             </span>
                           </span>
-                        ) : (<><KeyRound size={18} /> Update Password</>)}
+                        ) : "Update Password"}
                     </button>
 
-                    <Link to="/login" className="btn btn-secondary w-full mt-4" style={{ height: '48px', borderRadius: '12px', fontWeight: 600 }}>
-                        <ArrowLeft size={18} /> Cancel
-                    </Link>
-                </form>
+                    <div className="password-links" style={{ justifyContent: 'center', marginTop: '1rem' }}>
+                        <Link to="/login" className="back-link" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <ArrowLeft size={16} /> Cancel
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     );
