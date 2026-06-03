@@ -369,71 +369,86 @@ const TenantsPage = () => {
               </div>
             )}
 
-            {/* Tab Selector */}
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-muted)', paddingBottom: '0.5rem' }}>
-              <button
-                onClick={() => setActiveTab('active')}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: activeTab === 'active' ? 'var(--aurora-1)' : 'var(--text-ghost)',
-                  fontSize: '1.05rem',
-                  fontWeight: activeTab === 'active' ? '700' : '500',
-                  cursor: 'pointer',
-                  paddingBottom: '0.5rem',
-                  borderBottom: activeTab === 'active' ? '2px solid var(--aurora-1)' : 'none',
-                  marginBottom: '-0.5rem',
-                  transition: 'all 0.2s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem'
-                }}
-              >
-                <CheckCircle size={18} color={activeTab === 'active' ? 'var(--success)' : 'var(--text-ghost)'} />
-                <span>Active Residents</span>
-                <span style={{
-                  fontSize: '0.75rem',
-                  background: activeTab === 'active' ? 'rgba(16, 185, 129, 0.12)' : 'var(--border-subtle)',
-                  color: activeTab === 'active' ? '#10b981' : 'var(--text-ghost)',
-                  padding: '0.1rem 0.45rem',
-                  borderRadius: 99,
-                  fontWeight: 700
-                }}>
-                  {activeTenants.length}
-                </span>
-              </button>
+            {/* Redesigned Premium Segmented Tab Selector */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <div style={{
+                display: 'flex',
+                background: 'var(--bg-elevated)',
+                padding: '0.35rem',
+                borderRadius: '16px',
+                border: '1px solid var(--border-subtle)',
+                gap: '0.25rem',
+                width: '100%',
+                maxWidth: '400px'
+              }}>
+                <button
+                  onClick={() => setActiveTab('active')}
+                  style={{
+                    flex: 1,
+                    background: activeTab === 'active' ? 'var(--bg-surface)' : 'transparent',
+                    border: activeTab === 'active' ? '1px solid var(--border-muted)' : '1px solid transparent',
+                    color: activeTab === 'active' ? 'var(--text-bright)' : 'var(--text-ghost)',
+                    boxShadow: activeTab === 'active' ? '0 2px 10px rgba(0,0,0,0.05)' : 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: activeTab === 'active' ? '700' : '600',
+                    cursor: 'pointer',
+                    padding: '0.65rem 0.5rem',
+                    borderRadius: '12px',
+                    transition: 'all 0.25s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem'
+                  }}
+                >
+                  <CheckCircle size={16} style={{ color: activeTab === 'active' ? '#10b981' : 'currentColor' }} />
+                  <span>Active Residents</span>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    background: activeTab === 'active' ? 'rgba(16, 185, 129, 0.15)' : 'var(--border-subtle)',
+                    color: activeTab === 'active' ? '#10b981' : 'var(--text-ghost)',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '99px',
+                    fontWeight: '800'
+                  }}>
+                    {activeTenants.length}
+                  </span>
+                </button>
 
-              <button
-                onClick={() => setActiveTab('dues')}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: activeTab === 'dues' ? 'var(--aurora-1)' : 'var(--text-ghost)',
-                  fontSize: '1.05rem',
-                  fontWeight: activeTab === 'dues' ? '700' : '500',
-                  cursor: 'pointer',
-                  paddingBottom: '0.5rem',
-                  borderBottom: activeTab === 'dues' ? '2px solid var(--aurora-1)' : 'none',
-                  marginBottom: '-0.5rem',
-                  transition: 'all 0.2s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem'
-                }}
-              >
-                <IndianRupee size={16} color={activeTab === 'dues' ? 'var(--aurora-1)' : 'var(--text-ghost)'} />
-                <span>Dues This Month</span>
-                <span style={{
-                  fontSize: '0.75rem',
-                  background: activeTab === 'dues' ? 'rgba(239, 68, 68, 0.12)' : 'var(--border-subtle)',
-                  color: activeTab === 'dues' ? '#ef4444' : 'var(--text-ghost)',
-                  padding: '0.1rem 0.45rem',
-                  borderRadius: 99,
-                  fontWeight: 700
-                }}>
-                  {duesTenants.length}
-                </span>
-              </button>
+                <button
+                  onClick={() => setActiveTab('dues')}
+                  style={{
+                    flex: 1,
+                    background: activeTab === 'dues' ? 'var(--bg-surface)' : 'transparent',
+                    border: activeTab === 'dues' ? '1px solid var(--border-muted)' : '1px solid transparent',
+                    color: activeTab === 'dues' ? 'var(--text-bright)' : 'var(--text-ghost)',
+                    boxShadow: activeTab === 'dues' ? '0 2px 10px rgba(0,0,0,0.05)' : 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: activeTab === 'dues' ? '700' : '600',
+                    cursor: 'pointer',
+                    padding: '0.65rem 0.5rem',
+                    borderRadius: '12px',
+                    transition: 'all 0.25s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem'
+                  }}
+                >
+                  <IndianRupee size={15} style={{ color: activeTab === 'dues' ? '#ef4444' : 'currentColor' }} />
+                  <span>Dues This Month</span>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    background: activeTab === 'dues' ? 'rgba(239, 68, 68, 0.15)' : 'var(--border-subtle)',
+                    color: activeTab === 'dues' ? '#ef4444' : 'var(--text-ghost)',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '99px',
+                    fontWeight: '800'
+                  }}>
+                    {duesTenants.length}
+                  </span>
+                </button>
+              </div>
             </div>
 
             {activeTab === 'active' ? (
