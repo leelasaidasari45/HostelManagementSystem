@@ -29,6 +29,7 @@ const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const BankAccountsPage = lazy(() => import('./pages/owner/BankAccountsPage'));
 
 import { Navigate } from 'react-router-dom';
 import { HostelProvider } from './context/HostelContext';
@@ -191,6 +192,7 @@ function AppContent() {
           <Route path="/owner/billing" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><BillingPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/owner/tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><TenantsPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/owner/past-tenants" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><PastTenantsPage /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/bank-accounts" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><BankAccountsPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/tenant/search" element={<ProtectedRoute roleType="tenant"><SearchHostels /></ProtectedRoute>} />
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
           <Route path="/tenant/dashboard" element={<ProtectedRoute roleType="tenant"><TenantDashboard /></ProtectedRoute>} />

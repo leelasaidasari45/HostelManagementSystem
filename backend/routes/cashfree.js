@@ -65,14 +65,15 @@ router.post('/create-order', requireAuth, async (req, res) => {
       if (tenantData?.hostel_id) {
         const { data: hostelData } = await supabase.from('hostels').select('owner_id').eq('id', tenantData.hostel_id).single();
         if (hostelData?.owner_id) {
-          const { data: ownerData } = await supabase.from('users').select('vendor_id').eq('id', hostelData.owner_id).single();
-          if (ownerData?.vendor_id) {
-            body.order_splits = [
-              {
-                vendor_id: ownerData.vendor_id,
-                percentage: 100
-              }
-            ];
+          // Use the primary bank account's vendor_id
+          const { data: primaryAccount } = await supabase
+            .from('bank_accounts')
+            .select('vendor_id')
+            .eq('owner_id', hostelData.owner_id)
+            .eq('is_primary', true)
+            .maybeSingle();
+          if (primaryAccount?.vendor_id) {
+            body.order_splits = [{ vendor_id: primaryAccount.vendor_id, percentage: 100 }];
           }
         }
       }

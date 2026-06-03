@@ -639,4 +639,129 @@ router.put('/menu', async (req, res) => {
   }
 });
 
+// ─── BANK ACCOUNTS ────────────────────────────────────────────────────────────
+
+const CF_BASE = () => process.env.CASHFREE_ENV === 'production'
+  ? 'https://api.cashfree.com/pg'
+  : 'https://sandbox.cashfree.com/pg';
+
+const CF_HEADERS = () => ({
+  'Content-Type': 'application/json',
+  'x-api-version': '2023-08-01',
+  'x-client-id': process.env.CASHFREE_APP_ID,
+  'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+});
+
+// GET all bank accounts for this owner
+router.get('/bank-accounts', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('bank_accounts')
+      .select('*')
+      .eq('owner_id', req.user.id)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    res.json(data || []);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST add a new bank account
+router.post('/bank-accounts', async (req, res) => {
+  try {
+    const ownerId = req.user.id;
+    const { account_holder_name, bank_name, account_number, ifsc } = req.body;
+
+    if (!account_holder_name || !account_number || !ifsc) {
+      return res.status(400).json({ error: 'Account holder name, account number, and IFSC are required.' });
+    }
+
+    // Check if this is the first account — if so, make it primary automatically
+    const { data: existing } = await supabase
+      .from('bank_accounts')
+      .select('id')
+      .eq('owner_id', ownerId);
+    const isPrimary = !existing || existing.length === 0;
+
+    // Register as Cashfree Vendor
+    const { data: ownerUser } = await supabase.from('users').select('email, phone').eq('id', ownerId).single();
+    const vendorId = `vendor_${ownerId.replace(/-/g, '').substring(0, 20)}_${Date.now()}`;
+
+    let cfVendorId = null;
+    try {
+      const vendorRes = await fetch(`${CF_BASE()}/vendors`, {
+        method: 'POST',
+        headers: CF_HEADERS(),
+        body: JSON.stringify({
+          vendor_id: vendorId,
+          name: account_holder_name,
+          email: ownerUser?.email || 'vendor@easypg.com',
+          phone: (ownerUser?.phone || '9999999999').replace(/\D/g, '').slice(0, 10),
+          verify_account: false,
+          bank: [{ account_number, account_holder: account_holder_name, ifsc }]
+        })
+      });
+      const vendorData = await vendorRes.json();
+      if (vendorRes.ok || vendorData.code === 'vendor_already_exists') {
+        cfVendorId = vendorId;
+      } else {
+        console.error('Cashfree vendor error:', vendorData);
+      }
+    } catch (err) {
+      console.error('Cashfree vendor API exception:', err.message);
+    }
+
+    // Insert into bank_accounts table
+    const { data: newAccount, error } = await supabase
+      .from('bank_accounts')
+      .insert([{
+        owner_id: ownerId,
+        account_holder_name,
+        bank_name: bank_name || '',
+        account_number,
+        ifsc: ifsc.toUpperCase(),
+        vendor_id: cfVendorId,
+        is_primary: isPrimary,
+      }])
+      .select()
+      .single();
+    if (error) throw error;
+
+    res.json(newAccount);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT set an account as primary (receive payments)
+router.put('/bank-accounts/:id/set-primary', async (req, res) => {
+  try {
+    const ownerId = req.user.id;
+    const { id } = req.params;
+
+    // Unset all primary first
+    await supabase.from('bank_accounts').update({ is_primary: false }).eq('owner_id', ownerId);
+    // Set this one as primary
+    const { error } = await supabase.from('bank_accounts').update({ is_primary: true }).eq('id', id).eq('owner_id', ownerId);
+    if (error) throw error;
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE a bank account
+router.delete('/bank-accounts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { error } = await supabase.from('bank_accounts').delete().eq('id', id).eq('owner_id', req.user.id);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

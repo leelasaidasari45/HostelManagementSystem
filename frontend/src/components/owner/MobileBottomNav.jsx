@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Plus, DoorOpen, Menu, CreditCard, MessageSquare, LogOut, X } from 'lucide-react';
+import { Home, Users, DoorOpen, Menu, CreditCard, MessageSquare, LogOut, X, Landmark } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import './MobileBottomNav.css';
 
@@ -23,13 +23,10 @@ const MobileBottomNav = () => {
           <span>Tenants</span>
         </Link>
         
-        {/* Center Add Button */}
-        <div className="nav-item-center">
-          <Link to="/owner/create-hostel" className="center-btn pulse-glow">
-            <Plus size={28} />
-          </Link>
-          <span style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-ghost)', marginTop: '4px' }}>Add New</span>
-        </div>
+        <Link to="/owner/bank-accounts" className={`nav-item ${isActive('/owner/bank-accounts') ? 'active' : ''}`}>
+          <Landmark size={22} />
+          <span>Bank</span>
+        </Link>
 
         <Link to="/owner/rooms" className={`nav-item ${isActive('/owner/rooms') ? 'active' : ''}`}>
           <DoorOpen size={22} />
