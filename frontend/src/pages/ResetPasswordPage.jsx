@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { Lock, KeyRound, CheckCircle, ArrowLeft, EyeOff, Eye } from 'lucide-react';
+import { Lock, KeyRound, CheckCircle, ArrowLeft, EyeOff, Eye, Hash } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useTheme } from '../context/ThemeContext';
@@ -9,7 +9,7 @@ import './AuthPage.css'; // Use the main auth CSS for consistent layout
 const ResetPasswordPage = () => {
     const { isDarkMode } = useTheme();
     const [searchParams] = useSearchParams();
-    const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
+    const [formData, setFormData] = useState({ otp: '', newPassword: '', confirmPassword: '' });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -26,6 +26,9 @@ const ResetPasswordPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData.otp || formData.otp.length < 6) {
+            return toast.error('Please enter the 6-digit OTP from your email');
+        }
         if (formData.newPassword !== formData.confirmPassword) {
             return toast.error('Passwords do not match');
         }
@@ -37,6 +40,7 @@ const ResetPasswordPage = () => {
         try {
             await api.post('/api/auth/reset-password', {
                 token,
+                otp: formData.otp,
                 newPassword: formData.newPassword
             });
             toast.success('Password updated successfully!');
@@ -83,11 +87,24 @@ const ResetPasswordPage = () => {
                     </div>
                     <h1 className="app-super-title">Reset Password</h1>
                     <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
-                        Create a strong, new secure password
+                        Enter the 6-digit code and your new password
                     </p>
                 </div>
 
                 <div className="mobile-auth-form-card">
+                    <label className="mobile-input-label">6-Digit Code</label>
+                    <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
+                        <Hash size={18} className="mobile-input-icon" />
+                        <input
+                            type="text"
+                            placeholder="Enter OTP from email"
+                            value={formData.otp}
+                            onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
+                            className="mobile-email-input"
+                            maxLength={6}
+                        />
+                    </div>
+
                     <label className="mobile-input-label">New Password</label>
                     <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
                         <Lock size={18} className="mobile-input-icon" />

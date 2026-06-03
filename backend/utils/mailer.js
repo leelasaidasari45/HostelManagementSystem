@@ -47,6 +47,38 @@ export const sendResetEmail = async (to, name, resetUrl) => {
   }
 };
 
+export const sendResetOtpEmail = async (to, name, otp) => {
+  const mailOptions = {
+    from: `"easyPG Support" <${process.env.SMTP_USER}>`,
+    to,
+    subject: "Your Password Reset Code",
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h2 style="color: #6366f1;">Reset Your Password</h2>
+        <p>Hello ${name || 'there'},</p>
+        <p>We received a request to reset your password for your <strong>easyPG</strong> account. Enter the following 6-digit code to proceed:</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <div style="background-color: #f8fafc; color: #1e293b; padding: 16px 32px; border-radius: 8px; font-weight: 800; font-size: 32px; letter-spacing: 8px; border: 2px dashed #cbd5e1; display: inline-block;">
+            ${otp}
+          </div>
+        </div>
+        <p style="color: #64748b; font-size: 14px;">This code will expire in 15 minutes. If you didn't request this, you can safely ignore this email.</p>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+        <p style="color: #94a3b8; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} easyPG. All rights reserved.</p>
+      </div>
+    `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("OTP Email sent successfully:", info.messageId);
+    return info;
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+    throw error;
+  }
+};
+
 export const sendLeadNotificationEmail = async (leadName, leadPhone, leadCapacity) => {
   const mailOptions = {
     from: `"easyPG Lead Capture" <${process.env.SMTP_USER}>`,

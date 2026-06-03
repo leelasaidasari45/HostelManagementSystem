@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../supabaseClient.js';
 import { requireAuth } from '../middleware/auth.js';
-import { sendResetEmail } from '../utils/mailer.js';
+import { sendResetOtpEmail } from '../utils/mailer.js';
 
 const router = express.Router();
 
@@ -257,7 +257,7 @@ router.get('/me', requireAuth, async (req, res) => {
   }
 });
 
-// Forgot Password - Generates a reset token and returns a link (MOCK email)
+// Forgot Password - Generates a 6-digit OTP and returns a signed token
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -268,42 +268,51 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ error: 'No account found with this email address.' });
     }
 
-    // Create a reset token valid for 1 hour
-    const resetToken = jwt.sign({ id: user.id, reset: true }, process.env.JWT_SECRET, {
-      expiresIn: '1h'
-    });
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = await bcrypt.hash(otp, 10);
 
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
+    // Create a reset token valid for 15 minutes containing the OTP hash
+    const resetToken = jwt.sign({ id: user.id, reset: true, otpHash }, process.env.JWT_SECRET, {
+      expiresIn: '15m'
+    });
 
     // SEND REAL EMAIL (wrap in try catch so it doesn't crash the server if SMTP fails)
     try {
-      await sendResetEmail(user.email, user.name, resetUrl);
+      await sendResetOtpEmail(user.email, user.name, otp);
     } catch (mailErr) {
-      console.warn("Failed to send reset email. SMTP might not be configured.", mailErr);
+      console.warn("Failed to send OTP email. SMTP might not be configured.", mailErr);
     }
 
     res.json({ 
-      message: 'If an account exists for this email, a password reset link has been sent.',
-      // For development/debugging we can still provide the link if requested, but for security in prod we remove it
-      resetUrl: process.env.NODE_ENV === 'production' ? undefined : resetUrl
+      message: 'If an account exists for this email, an OTP has been sent.',
+      resetToken,
+      // For development/debugging we can still provide the OTP if requested, but for security in prod we remove it
+      devOtp: process.env.NODE_ENV === 'production' ? undefined : otp
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error during forgot-password' });
   }
 });
 
-// Reset Password - Verifies token and updates password
+// Reset Password - Verifies OTP and updates password
 router.post('/reset-password', async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { token, otp, newPassword } = req.body;
     
-    if (!token || !newPassword) {
-      return res.status(400).json({ error: 'Missing token or new password' });
+    if (!token || !otp || !newPassword) {
+      return res.status(400).json({ error: 'Missing token, OTP, or new password' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded.reset) {
+    if (!decoded.reset || !decoded.otpHash) {
       return res.status(401).json({ error: 'Invalid reset token' });
+    }
+
+    // Verify OTP
+    const isValidOtp = await bcrypt.compare(otp.toString(), decoded.otpHash);
+    if (!isValidOtp) {
+      return res.status(401).json({ error: 'Incorrect OTP' });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -314,7 +323,7 @@ router.post('/reset-password', async (req, res) => {
     res.json({ message: 'Password updated successfully. You can now login with your new password.' });
   } catch (err) {
     console.error("Reset Password Error:", err);
-    res.status(401).json({ error: 'Invalid or expired reset token' });
+    res.status(401).json({ error: 'Invalid or expired OTP token' });
   }
 });
 
