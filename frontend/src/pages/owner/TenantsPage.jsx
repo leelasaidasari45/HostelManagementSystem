@@ -260,158 +260,61 @@ const TenantsPage = () => {
         <h2 className="mobile-page-title">Tenants Management</h2>
 
         <div>
-            {/* Summary Metrics — 2 col grid on mobile, 5 col on desktop */}
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '0.6rem', 
-              width: '100%', 
-              margin: '0 auto 1.5rem auto' 
-            }}>
-              {/* Card 1: Total Tenants Present */}
-              <div style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-muted)',
-                borderRadius: 14,
-                padding: '0.85rem 0.75rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                boxShadow: 'var(--shadow-sm)'
-              }}>
-                <div style={{
-                  background: 'rgba(99, 102, 241, 0.12)',
-                  color: 'var(--aurora-1)',
-                  width: 32, height: 32,
-                  borderRadius: 9,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Users size={16} />
+            {/* Summary Metrics — horizontal scroll like home page */}
+            <div className="summary-cards-scroll" style={{ marginBottom: '1.25rem' }}>
+
+              <div className="summary-card">
+                <div className="sc-top">
+                  <span className="sc-value" style={{ color: 'var(--aurora-1)' }}>{activeTenants.length}</span>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 2 }}>Present</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-bright)', lineHeight: 1 }}>{activeTenants.length}</div>
+                <div className="sc-bottom">
+                  <span className="sc-label">Present<br/>Tenants</span>
+                  <Users size={14} style={{ color: 'var(--aurora-1)', flexShrink: 0 }} />
                 </div>
               </div>
 
-              {/* Card 2: Tenants with Dues */}
-              <div style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-muted)',
-                borderRadius: 14,
-                padding: '0.85rem 0.75rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                boxShadow: 'var(--shadow-sm)'
-              }}>
-                <div style={{
-                  background: 'rgba(239, 68, 68, 0.12)',
-                  color: '#ef4444',
-                  width: 32, height: 32,
-                  borderRadius: 9,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <User size={16} />
+              <div className="summary-card">
+                <div className="sc-top">
+                  <span className="sc-value red">{duesTenants.length}</span>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 2 }}>Due</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ef4444', lineHeight: 1 }}>{duesTenants.length}</div>
+                <div className="sc-bottom">
+                  <span className="sc-label">Tenants<br/>Due</span>
+                  <User size={14} className="sc-icon red" />
                 </div>
               </div>
 
-              {/* Card 3: Total Dues Amount — full width */}
-              <div style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid rgba(239,68,68,0.2)',
-                borderRadius: 14,
-                padding: '0.85rem 0.75rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                boxShadow: 'var(--shadow-sm)',
-                gridColumn: '1 / -1'
-              }}>
-                <div style={{
-                  background: 'rgba(239, 68, 68, 0.12)',
-                  color: '#ef4444',
-                  width: 32, height: 32,
-                  borderRadius: 9,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <IndianRupee size={16} />
+              <div className="summary-card">
+                <div className="sc-top">
+                  <span className="sc-value red">₹{duesTenants.reduce((acc, t) => acc + (t.due_amount || 0), 0).toLocaleString('en-IN')}</span>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 2 }}>Total Dues</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ef4444', lineHeight: 1 }}>
-                    ₹{duesTenants.reduce((acc, t) => acc + (t.due_amount || 0), 0).toLocaleString('en-IN')}
-                  </div>
+                <div className="sc-bottom">
+                  <span className="sc-label">Total<br/>Dues</span>
+                  <IndianRupee size={14} className="sc-icon red" />
                 </div>
               </div>
 
-              {/* Card 4: Pending Approvals */}
-              <div style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-muted)',
-                borderRadius: 14,
-                padding: '0.85rem 0.75rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                boxShadow: 'var(--shadow-sm)'
-              }}>
-                <div style={{
-                  background: 'rgba(245, 158, 11, 0.12)',
-                  color: '#f59e0b',
-                  width: 32, height: 32,
-                  borderRadius: 9,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <AlertCircle size={16} />
+              <div className="summary-card">
+                <div className="sc-top">
+                  <span className="sc-value" style={{ color: '#f59e0b' }}>{pendingTenants.length}</span>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 2 }}>Pending</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f59e0b', lineHeight: 1 }}>{pendingTenants.length}</div>
+                <div className="sc-bottom">
+                  <span className="sc-label">Pending<br/>Approvals</span>
+                  <AlertCircle size={14} style={{ color: '#f59e0b', flexShrink: 0 }} />
                 </div>
               </div>
 
-              {/* Card 5: Vacating Soon */}
-              <div style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-muted)',
-                borderRadius: 14,
-                padding: '0.85rem 0.75rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-                boxShadow: 'var(--shadow-sm)'
-              }}>
-                <div style={{
-                  background: 'rgba(56, 189, 248, 0.12)',
-                  color: '#38bdf8',
-                  width: 32, height: 32,
-                  borderRadius: 9,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Clock size={16} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.62rem', color: 'var(--text-ghost)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 2 }}>Vacating</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+              <div className="summary-card">
+                <div className="sc-top">
+                  <span className="sc-value" style={{ color: '#38bdf8' }}>
                     {activeTenants.filter(t => t.status === 'vacating').length}
-                  </div>
+                  </span>
+                </div>
+                <div className="sc-bottom">
+                  <span className="sc-label">Vacating<br/>Soon</span>
+                  <Clock size={14} style={{ color: '#38bdf8', flexShrink: 0 }} />
                 </div>
               </div>
+
             </div>
 
             {/* Redesigned Search Bar */}
