@@ -361,75 +361,88 @@ const JoinHostel = () => {
 
         {/* ───── STEP 1.5: Payment Page ───── */}
         {step === 1.5 && (
-          <div className="join-body slide-up">
-            {/* Hostel found banner */}
-            <div className="hostel-found-banner">
-              <CheckCircle2 size={18} style={{ color: 'var(--success)', flexShrink: 0 }} />
-              <span>Paying for <strong>{hostelName}</strong></span>
+          <div className="join-body slide-up" style={{ padding: 0 }}>
+
+            {/* Header banner */}
+            <div className="pay-hostel-banner">
+              <div className="pay-hostel-avatar">
+                {hostelName?.[0] || 'H'}
+              </div>
+              <div className="pay-hostel-info">
+                <span className="pay-hostel-label">Paying to</span>
+                <span className="pay-hostel-name">{hostelName}</span>
+              </div>
+              <div className="pay-hostel-check">✓</div>
             </div>
 
-            <div className="join-icon-wrap" style={{ background: 'rgba(124,58,237,0.1)' }}>
-              <IndianRupee size={28} style={{ color: 'var(--aurora-1)' }} />
-            </div>
-            <h2>Admission Payment</h2>
-            <p className="join-subtitle">
-              Your owner has specified the amount to be paid. Please enter the amount below and complete the payment to proceed.
-            </p>
+            <div className="pay-body">
+              {/* Amount Card */}
+              <div className="pay-amount-card">
+                <div className="pay-amount-label">Admission Amount (₹)</div>
+                <div className="pay-amount-input-wrap">
+                  <span className="pay-rupee-sym">₹</span>
+                  <input
+                    type="number"
+                    className="pay-amount-input"
+                    placeholder="0"
+                    value={admissionAmount}
+                    onChange={e => setAdmissionAmount(e.target.value)}
+                    min="1"
+                    inputMode="numeric"
+                  />
+                </div>
+                <p className="pay-amount-hint">Ask your hostel owner for the exact amount</p>
+              </div>
 
-            {/* Amount input */}
-            <div className="form-group">
-              <label className="form-label"><IndianRupee size={15} />&nbsp;Amount to Pay (₹)</label>
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Enter amount e.g. 5000"
-                value={admissionAmount}
-                onChange={e => setAdmissionAmount(e.target.value)}
-                min="1"
-                style={{ fontSize: '1.25rem', fontWeight: 700, textAlign: 'center', letterSpacing: '0.05em' }}
-              />
-              <p style={{ fontSize: '.78rem', color: 'var(--text-ghost)', marginTop: '.4rem', textAlign: 'center' }}>
-                Ask your hostel owner for the exact amount to pay.
-              </p>
-            </div>
-
-            {/* Payment features */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '.6rem', marginBottom: '1.25rem' }}>
-              {[
-                ['Secured by Paytm', 'UPI, Cards, Net Banking accepted'],
-                ['Instant confirmation', 'Receipt sent to your registered number'],
-              ].map(([title, desc]) => (
-                <div key={title} style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem', background: 'var(--bg-elevated)', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
-                  <ShieldCheck size={16} style={{ color: '#34d399', flexShrink: 0 }} />
+              {/* What you get */}
+              <div className="pay-features">
+                <div className="pay-feature-row">
+                  <div className="pay-feature-icon pay-feature-green">✓</div>
                   <div>
-                    <div style={{ fontSize: '.85rem', fontWeight: 600, color: 'var(--text-bright)' }}>{title}</div>
-                    <div style={{ fontSize: '.75rem', color: 'var(--text-ghost)' }}>{desc}</div>
+                    <div className="pay-feature-title">Instant Confirmation</div>
+                    <div className="pay-feature-sub">Receipt sent immediately after payment</div>
                   </div>
                 </div>
-              ))}
-            </div>
+                <div className="pay-feature-row">
+                  <div className="pay-feature-icon pay-feature-amber">🔒</div>
+                  <div>
+                    <div className="pay-feature-title">Secured by Cashfree</div>
+                    <div className="pay-feature-sub">UPI · Cards · Net Banking accepted</div>
+                  </div>
+                </div>
+                <div className="pay-feature-row">
+                  <div className="pay-feature-icon pay-feature-purple">→</div>
+                  <div>
+                    <div className="pay-feature-title">Fill Details Next</div>
+                    <div className="pay-feature-sub">Complete your profile after payment</div>
+                  </div>
+                </div>
+              </div>
 
-            <button
-              className="btn btn-primary w-full btn-lg"
-              onClick={handlePayment}
-              disabled={loadingPayment || !admissionAmount}
-              id="pay-now-btn"
-            >
-              {loadingPayment ? (
-                <span className="pulse-opacity">
-                  Opening Paytm
-                  <span className="pulsing-dot-container">
-                    <span className="pulsing-dot"></span>
-                    <span className="pulsing-dot"></span>
-                    <span className="pulsing-dot"></span>
+              {/* Pay Button */}
+              <button
+                className="pay-now-btn"
+                onClick={handlePayment}
+                disabled={loadingPayment || !admissionAmount || parseFloat(admissionAmount) <= 0}
+                id="pay-now-btn"
+              >
+                {loadingPayment ? (
+                  <span className="pay-btn-loading">
+                    <span className="pay-spinner" />
+                    Processing Payment...
                   </span>
-                </span>
-              ) : (<><CreditCard size={18} /> Pay ₹{admissionAmount || '---'} via Paytm</>)}
-            </button>
+                ) : (
+                  <>
+                    <span className="pay-btn-icon">💳</span>
+                    Pay ₹{admissionAmount || '0'} Now
+                  </>
+                )}
+              </button>
 
-            <p style={{ fontSize: '.75rem', color: 'var(--text-ghost)', textAlign: 'center', marginTop: '.75rem' }}>
-              After payment, you'll fill your details and submit the application.
-            </p>
+              <p className="pay-footer-note">
+                After payment, you'll fill your details and submit the application.
+              </p>
+            </div>
           </div>
         )}
 
