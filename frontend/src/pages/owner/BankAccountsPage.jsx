@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Plus, Eye, EyeOff, Trash2, Check, Star, AlertCircle, Building, X, ChevronRight, Lock } from 'lucide-react';
+import { Shield, Plus, Eye, EyeOff, Trash2, Check, Star, AlertCircle, Building2, X, Lock, ChevronRight, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import MobileBottomNav from '../../components/owner/MobileBottomNav';
 import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import './BankAccountsPage.css';
 
-const bankColors = [
-  'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-  'linear-gradient(135deg, #0f3460 0%, #16213e 100%)',
-  'linear-gradient(135deg, #2d1b69 0%, #11998e 100%)',
-  'linear-gradient(135deg, #134e5e 0%, #71b280 100%)',
-  'linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%)',
-];
-
 const maskAccount = (num) => {
   if (!num || num.length < 5) return num;
-  return '•••• •••• ' + num.slice(-4);
+  return '•••• •••• •••• ' + num.slice(-4);
 };
 
 const BankCard = ({ account, index, onSetPrimary, onDelete }) => {
@@ -38,52 +30,61 @@ const BankCard = ({ account, index, onSetPrimary, onDelete }) => {
   };
 
   return (
-    <div className={`bank-card ${account.is_primary ? 'bank-card-primary' : ''}`} style={{ background: bankColors[index % bankColors.length] }}>
-      {account.is_primary && (
-        <div className="bank-card-badge">
-          <Star size={10} fill="currentColor" /> Primary
+    <div className={`ba-card ${account.is_primary ? 'ba-card--primary' : ''}`}>
+      <div className="ba-card-top">
+        <div className="ba-card-bank-info">
+          <div className="ba-card-icon">
+            <Building2 size={18} />
+          </div>
+          <div>
+            <div className="ba-card-bank-name">{account.bank_name || 'Bank Account'}</div>
+            {account.is_primary && (
+              <div className="ba-card-primary-label">
+                <span className="ba-primary-dot" /> Primary · Receiving rent
+              </div>
+            )}
+          </div>
+        </div>
+        <button className="ba-card-eye-btn" onClick={() => setShowNumber(v => !v)}>
+          {showNumber ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
+      </div>
+
+      <div className="ba-card-number">
+        {showNumber ? account.account_number : maskAccount(account.account_number)}
+      </div>
+
+      <div className="ba-card-details">
+        <div className="ba-card-detail-row">
+          <span className="ba-detail-label">Account Holder</span>
+          <span className="ba-detail-value">{account.account_holder_name}</span>
+        </div>
+        <div className="ba-card-detail-row">
+          <span className="ba-detail-label">IFSC</span>
+          <span className="ba-detail-value">{account.ifsc}</span>
+        </div>
+      </div>
+
+      {!account.is_primary && (
+        <div className="ba-card-actions">
+          <button className="ba-action-set-primary" onClick={() => onSetPrimary(account.id)}>
+            <Check size={14} /> Set as Primary
+          </button>
+          <button className="ba-action-delete" onClick={handleDelete} disabled={deleting}>
+            <Trash2 size={14} />
+          </button>
         </div>
       )}
-      
-      <div className="bank-card-chip">
-        <div className="chip-line" /><div className="chip-line" />
-        <div className="chip-line" /><div className="chip-line" />
-      </div>
-
-      <div className="bank-card-number">
-        <span>{showNumber ? account.account_number : maskAccount(account.account_number)}</span>
-        <button className="bank-card-eye" onClick={() => setShowNumber(v => !v)}>
-          {showNumber ? <EyeOff size={14} /> : <Eye size={14} />}
-        </button>
-      </div>
-
-      <div className="bank-card-footer">
-        <div>
-          <div className="bank-card-label">Account Holder</div>
-          <div className="bank-card-value">{account.account_holder_name}</div>
-        </div>
-        <div>
-          <div className="bank-card-label">IFSC</div>
-          <div className="bank-card-value">{account.ifsc}</div>
-        </div>
-        {account.bank_name && (
-          <div>
-            <div className="bank-card-label">Bank</div>
-            <div className="bank-card-value">{account.bank_name}</div>
+      {account.is_primary && (
+        <div className="ba-card-actions">
+          <div className="ba-primary-active">
+            <Check size={14} /> Active for receiving payments
           </div>
-        )}
-      </div>
-
-      <div className="bank-card-actions">
-        {!account.is_primary && (
-          <button className="bank-action-btn bank-action-primary" onClick={() => onSetPrimary(account.id)}>
-            <Check size={13} /> Set as Primary
+          <button className="ba-action-delete" onClick={handleDelete} disabled={deleting}>
+            <Trash2 size={14} />
           </button>
-        )}
-        <button className="bank-action-btn bank-action-delete" onClick={handleDelete} disabled={deleting}>
-          <Trash2 size={13} /> {deleting ? 'Removing...' : 'Remove'}
-        </button>
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -97,18 +98,13 @@ const AddAccountModal = ({ onClose, onAdded }) => {
     ifsc: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showAcc, setShowAcc] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.account_number !== form.confirm_account_number) {
-      return toast.error('Account numbers do not match!');
-    }
-    if (form.account_number.length < 8) {
-      return toast.error('Please enter a valid account number');
-    }
-    if (form.ifsc.length !== 11) {
-      return toast.error('IFSC code must be 11 characters');
-    }
+    if (form.account_number !== form.confirm_account_number) return toast.error('Account numbers do not match!');
+    if (form.account_number.length < 8) return toast.error('Please enter a valid account number');
+    if (form.ifsc.length !== 11) return toast.error('IFSC code must be 11 characters');
     setLoading(true);
     try {
       const { data } = await api.post('/api/owner/bank-accounts', {
@@ -128,80 +124,72 @@ const AddAccountModal = ({ onClose, onAdded }) => {
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="add-account-modal" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <div>
-            <h3>Add Bank Account</h3>
-            <p>Your details are encrypted & secure</p>
-          </div>
-          <button className="modal-close" onClick={onClose}><X size={20} /></button>
+    <div className="ba-backdrop" onClick={onClose}>
+      <div className="ba-modal" onClick={e => e.stopPropagation()}>
+        <div className="ba-modal-handle" />
+
+        <div className="ba-modal-header">
+          <h3>Add Bank Account</h3>
+          <button className="ba-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
 
-        <div className="modal-security-badge">
-          <Lock size={14} />
-          <span>256-bit encrypted · PCI-DSS compliant</span>
+        <div className="ba-modal-secure">
+          <Lock size={12} />
+          <span>256-bit encrypted · Secured by Cashfree</span>
         </div>
 
-        <form onSubmit={handleSubmit} className="add-account-form">
-          <div className="form-field">
+        <form onSubmit={handleSubmit}>
+          <div className="ba-field">
             <label>Account Holder Name</label>
-            <input
-              type="text"
-              placeholder="As printed on passbook"
+            <input type="text" placeholder="As per bank records"
               value={form.account_holder_name}
               onChange={e => setForm({ ...form, account_holder_name: e.target.value })}
-              required
-            />
-          </div>
-          <div className="form-field">
-            <label>Bank Name <span className="optional">(optional)</span></label>
-            <input
-              type="text"
-              placeholder="e.g. State Bank of India"
-              value={form.bank_name}
-              onChange={e => setForm({ ...form, bank_name: e.target.value })}
-            />
-          </div>
-          <div className="form-field">
-            <label>Account Number</label>
-            <input
-              type="password"
-              placeholder="Enter account number"
-              value={form.account_number}
-              onChange={e => setForm({ ...form, account_number: e.target.value.replace(/\D/g, '') })}
-              required
-              autoComplete="off"
-            />
-          </div>
-          <div className="form-field">
-            <label>Confirm Account Number</label>
-            <input
-              type="text"
-              placeholder="Re-enter account number"
-              value={form.confirm_account_number}
-              onChange={e => setForm({ ...form, confirm_account_number: e.target.value.replace(/\D/g, '') })}
-              required
-              autoComplete="off"
-            />
-            {form.confirm_account_number && form.account_number !== form.confirm_account_number && (
-              <span className="field-error"><AlertCircle size={12} /> Account numbers don't match</span>
-            )}
-          </div>
-          <div className="form-field">
-            <label>IFSC Code</label>
-            <input
-              type="text"
-              placeholder="e.g. SBIN0001234"
-              value={form.ifsc}
-              onChange={e => setForm({ ...form, ifsc: e.target.value.toUpperCase() })}
-              maxLength={11}
-              required
-            />
+              required />
           </div>
 
-          <button type="submit" className="btn-add-account" disabled={loading}>
-            {loading ? 'Adding Account...' : 'Add Account'}
+          <div className="ba-field">
+            <label>Bank Name <span className="ba-optional">(optional)</span></label>
+            <input type="text" placeholder="e.g. State Bank of India"
+              value={form.bank_name}
+              onChange={e => setForm({ ...form, bank_name: e.target.value })} />
+          </div>
+
+          <div className="ba-field">
+            <label>Account Number</label>
+            <div className="ba-input-wrap">
+              <input
+                type={showAcc ? 'text' : 'password'}
+                placeholder="Enter account number"
+                value={form.account_number}
+                onChange={e => setForm({ ...form, account_number: e.target.value.replace(/\D/g, '') })}
+                required autoComplete="off" />
+              <button type="button" className="ba-eye-inner" onClick={() => setShowAcc(v => !v)}>
+                {showAcc ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            </div>
+          </div>
+
+          <div className="ba-field">
+            <label>Confirm Account Number</label>
+            <input type="text" placeholder="Re-enter account number"
+              value={form.confirm_account_number}
+              onChange={e => setForm({ ...form, confirm_account_number: e.target.value.replace(/\D/g, '') })}
+              required autoComplete="off" />
+            {form.confirm_account_number && form.account_number !== form.confirm_account_number && (
+              <p className="ba-field-error"><AlertCircle size={12} /> Numbers don't match</p>
+            )}
+          </div>
+
+          <div className="ba-field">
+            <label>IFSC Code</label>
+            <input type="text" placeholder="e.g. SBIN0001234"
+              value={form.ifsc}
+              onChange={e => setForm({ ...form, ifsc: e.target.value.toUpperCase() })}
+              maxLength={11} required />
+          </div>
+
+          <button type="submit" className="ba-submit-btn" disabled={loading}>
+            {loading ? 'Saving...' : 'Add Account'}
           </button>
         </form>
       </div>
@@ -214,104 +202,79 @@ const BankAccountsPage = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const fetchAccounts = async () => {
-    try {
-      const { data } = await api.get('/api/owner/bank-accounts');
-      setAccounts(data || []);
-    } catch {
-      toast.error('Failed to load bank accounts');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchAccounts(); }, []);
+  useEffect(() => {
+    api.get('/api/owner/bank-accounts')
+      .then(r => setAccounts(r.data || []))
+      .catch(() => toast.error('Failed to load accounts'))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleSetPrimary = async (id) => {
     try {
       await api.put(`/api/owner/bank-accounts/${id}/set-primary`);
       setAccounts(prev => prev.map(a => ({ ...a, is_primary: a.id === id })));
-      toast.success('Primary account updated!');
-    } catch {
-      toast.error('Failed to update');
-    }
+      toast.success('Primary account updated');
+    } catch { toast.error('Failed to update'); }
   };
 
-  const handleDelete = (id) => {
-    setAccounts(prev => prev.filter(a => a.id !== id));
-  };
+  const handleDelete = (id) => setAccounts(prev => prev.filter(a => a.id !== id));
+  const handleAdded = (acc) => setAccounts(prev => [...prev, acc]);
 
-  const handleAdded = (newAccount) => {
-    setAccounts(prev => {
-      // If this is the first, mark it primary in local state
-      const updated = [...prev, newAccount];
-      return updated;
-    });
-  };
-
-  const primaryAccount = accounts.find(a => a.is_primary);
+  const primary = accounts.find(a => a.is_primary);
 
   return (
-    <div className="bank-page">
+    <div className="ba-page">
       <MobileOwnerHeader title="Bank Accounts" />
 
-      <div className="bank-page-content">
-        {/* Security header */}
-        <div className="bank-security-header">
-          <div className="bank-security-icon">
-            <Shield size={24} />
-          </div>
+      <div className="ba-content">
+
+        {/* Header */}
+        <div className="ba-header-section">
+          <div className="ba-wallet-icon"><Wallet size={22} /></div>
           <div>
-            <h2>Payment Accounts</h2>
-            <p>Rent from tenants goes directly to your primary account</p>
+            <h1 className="ba-title">Payment Accounts</h1>
+            <p className="ba-subtitle">Rent goes directly to your primary account</p>
           </div>
         </div>
 
-        {/* Primary account info strip */}
-        {primaryAccount && (
-          <div className="primary-info-strip">
-            <Building size={16} />
-            <span>Receiving rent to: <strong>••••{primaryAccount.account_number?.slice(-4)}</strong> ({primaryAccount.account_holder_name})</span>
-            <ChevronRight size={14} />
+        {/* Primary account strip */}
+        {primary && (
+          <div className="ba-primary-strip">
+            <div className="ba-primary-strip-dot" />
+            <span>Receiving to <strong>••••{primary.account_number?.slice(-4)}</strong> — {primary.account_holder_name}</span>
+            <ChevronRight size={14} className="ba-strip-arrow" />
           </div>
         )}
 
-        {/* Accounts list */}
+        {/* List */}
         {loading ? (
-          <div className="bank-loading">
-            <div className="bank-loading-card" />
-            <div className="bank-loading-card" />
-          </div>
+          <>
+            <div className="ba-skeleton" />
+            <div className="ba-skeleton" style={{ opacity: 0.5 }} />
+          </>
         ) : accounts.length === 0 ? (
-          <div className="bank-empty">
-            <div className="bank-empty-icon"><Building size={40} /></div>
-            <h3>No accounts added yet</h3>
-            <p>Add your bank account to start receiving rent payments from tenants directly.</p>
+          <div className="ba-empty">
+            <Building2 size={36} />
+            <h3>No accounts yet</h3>
+            <p>Add your bank account to receive rent from tenants</p>
           </div>
         ) : (
-          <div className="bank-cards-list">
-            {accounts.map((account, i) => (
-              <BankCard
-                key={account.id}
-                account={account}
-                index={i}
-                onSetPrimary={handleSetPrimary}
-                onDelete={handleDelete}
-              />
+          <div className="ba-list">
+            {accounts.map((acc, i) => (
+              <BankCard key={acc.id} account={acc} index={i}
+                onSetPrimary={handleSetPrimary} onDelete={handleDelete} />
             ))}
           </div>
         )}
 
-        {/* Add account button */}
-        <button className="btn-add-new-account" onClick={() => setShowModal(true)}>
-          <Plus size={18} />
-          Add Bank Account
+        {/* Add button */}
+        <button className="ba-add-btn" onClick={() => setShowModal(true)}>
+          <Plus size={17} /> Add Bank Account
         </button>
 
-        <div className="bank-disclaimer">
-          <Lock size={12} />
-          Your banking details are encrypted and never shared with third parties.
-        </div>
+        <p className="ba-footer-note">
+          <Lock size={11} /> Your details are encrypted and never shared
+        </p>
       </div>
 
       <MobileBottomNav />
