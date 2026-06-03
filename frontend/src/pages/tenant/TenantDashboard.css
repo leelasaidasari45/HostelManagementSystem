@@ -82,7 +82,7 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 1.7rem; font-weight: 700; color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+  box-shadow: 0 4px 15px rgba(234, 179, 8,0.3);
 }
 .td-hero-info { min-width: 0; }
 .td-hero-date {
@@ -310,9 +310,9 @@
   font-size: .72rem; font-weight: 700;
   padding: .2rem .65rem;
   border-radius: 20px;
-  background: rgba(124,58,237,0.12);
+  background: rgba(234, 179, 8,0.12);
   color: var(--aurora-1);
-  border: 1px solid rgba(124,58,237,0.2);
+  border: 1px solid rgba(234, 179, 8,0.2);
   letter-spacing: .03em;
 }
 .td-tag-red {
@@ -381,7 +381,7 @@
   width: 12px; height: 12px;
   border-radius: 50%;
   background: var(--aurora-1);
-  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 8px rgba(124,58,237,0.4);
+  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 8px rgba(234, 179, 8,0.4);
   flex-shrink: 0;
 }
 .td-notice-body {}
@@ -448,8 +448,8 @@
 .td-rules-intro {
   display: flex; align-items: flex-start; gap: .65rem;
   padding: .9rem 1.1rem;
-  background: rgba(124,58,237,0.06);
-  border: 1px solid rgba(124,58,237,0.15);
+  background: rgba(234, 179, 8,0.06);
+  border: 1px solid rgba(234, 179, 8,0.15);
   border-radius: var(--r-lg);
   margin-bottom: 1.5rem;
   color: var(--text-dim);
@@ -490,8 +490,8 @@
   display: flex; align-items: center; gap: .6rem;
   margin-top: 1.5rem;
   padding: .85rem 1rem;
-  background: rgba(124,58,237,0.06);
-  border: 1px solid rgba(124,58,237,0.12);
+  background: rgba(234, 179, 8,0.06);
+  border: 1px solid rgba(234, 179, 8,0.12);
   border-radius: var(--r-md);
   font-size: .82rem; color: var(--text-dim);
 }
@@ -529,7 +529,7 @@
 }
 .td-payment-hero-icon {
   width: 60px; height: 60px; flex-shrink: 0;
-  background: rgba(124,58,237,0.12);
+  background: rgba(234, 179, 8,0.12);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   color: var(--aurora-1);
@@ -801,7 +801,7 @@
    LIGHT MODE OVERRIDES
    ══════════════════════════════════════════════ */
 .light-mode .td-hero {
-  box-shadow: 0 8px 30px rgba(109,40,217,0.2);
+  box-shadow: 0 8px 30px rgba(202, 138, 4,0.2);
 }
 .light-mode .td-stat-card:hover { box-shadow: var(--shadow-glow); }
 .light-mode .td-rule-card { background: #f7f9fc; }

@@ -28,13 +28,13 @@ const LandingPage = () => {
     if (isNative) return;
     
     const timer = setTimeout(() => {
-      // Don't show if they already submitted, or if they just closed it within the last 12 hours
+      // Don't show if they already submitted, or if they already saw it once
       const hasSubmitted = localStorage.getItem('easyPG_lead_submitted');
+      const hasSeen = sessionStorage.getItem('easyPG_lead_seen');
       
-      // We don't want to show it if they are logged in, but we can't reliably use `user` from context here 
-      // if it's stale in the closure. So we check if we're still on the landing page.
-      if (!hasSubmitted && !localStorage.getItem('token') && !sessionStorage.getItem('token')) {
+      if (!hasSubmitted && !hasSeen && !localStorage.getItem('token') && !sessionStorage.getItem('token')) {
         setShowLeadPopup(true);
+        sessionStorage.setItem('easyPG_lead_seen', 'true'); // Mark as seen for this session
       }
     }, 7000); // Exactly 7 seconds
     
@@ -229,7 +229,7 @@ const LandingPage = () => {
       {/* Hero */}
       <main className="hero-section">
         <div className="hero-badge scroll-reveal reveal-fade-in delay-1">
-          <Rocket size={14} style={{ color: '#7c3aed' }} />
+          <Rocket size={14} style={{ color: '#eab308' }} />
           <span>Hostel Management System</span>
         </div>
 

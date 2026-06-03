@@ -206,7 +206,7 @@ const SelectPlanPage = () => {
             left: 0,
             right: 0,
             height: 4,
-            background: 'linear-gradient(90deg, var(--aurora-1), #4f46e5)',
+            background: 'linear-gradient(90deg, var(--aurora-1), #a16207)',
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
           }} />
@@ -255,7 +255,7 @@ const SelectPlanPage = () => {
               style={{
                 width: '100%',
                 padding: '1rem 1.5rem',
-                background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)',
+                background: 'linear-gradient(135deg, var(--aurora-1) 0%, #a16207 100%)',
                 border: 'none',
                 borderRadius: 14,
                 cursor: 'pointer',
@@ -309,7 +309,7 @@ const SelectPlanPage = () => {
           }
           .native-pay-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 6px 16px rgba(234, 179, 8, 0.4);
           }
           .native-logout-btn:hover {
             transform: translateY(-2px);
@@ -351,7 +351,7 @@ const SelectPlanPage = () => {
       {/* Header section */}
       <div className="slide-up" style={styles.headerBlock}>
         <div style={styles.badgeContainer}>
-          <Sparkles size={14} style={{ marginRight: 6, color: '#7c3aed' }} />
+          <Sparkles size={14} style={{ marginRight: 6, color: '#eab308' }} />
           <span>Premium Portal</span>
         </div>
         <h1 style={styles.title}>
@@ -367,8 +367,8 @@ const SelectPlanPage = () => {
         <div className="slide-up" style={styles.cardContainer}>
           <div style={{
             ...styles.proCard,
-            background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%)',
-            border: '1px solid rgba(124, 58, 237, 0.3)',
+            background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(79, 70, 229, 0.1) 100%)',
+            border: '1px solid rgba(234, 179, 8, 0.3)',
             padding: '2rem',
             marginBottom: '2rem',
             textAlign: 'center'
@@ -385,7 +385,7 @@ const SelectPlanPage = () => {
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1.5rem' }}>
               <div style={{ 
-                background: 'rgba(124, 58, 237, 0.2)', 
+                background: 'rgba(234, 179, 8, 0.2)', 
                 padding: '1rem', 
                 borderRadius: 12,
                 flex: '0 1 auto',
@@ -397,7 +397,7 @@ const SelectPlanPage = () => {
                 </div>
               </div>
               <div style={{ 
-                background: 'rgba(124, 58, 237, 0.2)', 
+                background: 'rgba(234, 179, 8, 0.2)', 
                 padding: '1rem', 
                 borderRadius: 12,
                 flex: '0 1 auto',
@@ -527,7 +527,7 @@ const SelectPlanPage = () => {
         }
         #pay-annual-pro-btn:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+          box-shadow: 0 8px 24px rgba(234, 179, 8, 0.35);
           filter: brightness(1.1);
         }
         #pay-annual-pro-btn:active:not(:disabled) {
@@ -562,7 +562,7 @@ const styles = {
     width: 600,
     height: 600,
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(234, 179, 8,0.1) 0%, transparent 70%)',
     filter: 'blur(100px)',
     top: -200,
     left: -200,
@@ -650,8 +650,8 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     padding: '0.35rem 0.85rem',
-    background: 'rgba(124, 58, 237, 0.1)',
-    border: '1px solid rgba(124, 58, 237, 0.2)',
+    background: 'rgba(234, 179, 8, 0.1)',
+    border: '1px solid rgba(234, 179, 8, 0.2)',
     borderRadius: 99,
     fontSize: '0.78rem',
     fontWeight: 600,
@@ -699,7 +699,7 @@ const styles = {
     left: 0,
     right: 0,
     height: 4,
-    background: 'linear-gradient(90deg, var(--aurora-1), #4f46e5)',
+    background: 'linear-gradient(90deg, var(--aurora-1), #a16207)',
   },
   cardHeader: {
     display: 'flex',
@@ -835,7 +835,7 @@ const styles = {
   payBtn: {
     width: '100%',
     padding: '1.1rem 2rem',
-    background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)',
+    background: 'linear-gradient(135deg, var(--aurora-1) 0%, #a16207 100%)',
     border: 'none',
     borderRadius: 14,
     cursor: 'pointer',

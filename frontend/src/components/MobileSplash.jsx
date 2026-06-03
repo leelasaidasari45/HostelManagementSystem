@@ -30,7 +30,7 @@ const MobileSplash = () => {
       {/* Ambient orb */}
       <div style={{
         position:'absolute', width:400, height:400, borderRadius:'50%',
-        background:'radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)',
+        background:'radial-gradient(circle, rgba(234, 179, 8,0.12) 0%, transparent 70%)',
         filter:'blur(80px)', top:-100, left:-80, pointerEvents:'none'
       }} />
 
@@ -44,14 +44,14 @@ const MobileSplash = () => {
             height: 'auto',
             objectFit: 'contain',
             animation: 'splashFloat 3s ease-in-out infinite',
-            filter: 'drop-shadow(0 8px 30px rgba(124,58,237,0.15))'
+            filter: 'drop-shadow(0 8px 30px rgba(234, 179, 8,0.15))'
           }}
         />
       </div>
 
       <div style={{ position:'absolute', bottom:'3.5rem', display:'flex', flexDirection:'column', alignItems:'center', gap:'.75rem', animation:'splashSlideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both' }}>
         <div style={{ width:130, height:3, background:'rgba(15, 23, 42, 0.06)', borderRadius:99, overflow:'hidden', position:'relative' }}>
-          <div style={{ position:'absolute', width:'45%', height:'100%', background:'linear-gradient(90deg, #7c3aed, #3b82f6)', borderRadius:99, animation:'splashSweep 1.4s ease-in-out infinite' }} />
+          <div style={{ position:'absolute', width:'45%', height:'100%', background:'linear-gradient(90deg, #eab308, #fde047)', borderRadius:99, animation:'splashSweep 1.4s ease-in-out infinite' }} />
         </div>
         <p style={{ fontSize:'.75rem', color:'#64748b', fontWeight:500, letterSpacing:'.04em' }}>{status}</p>
       </div>

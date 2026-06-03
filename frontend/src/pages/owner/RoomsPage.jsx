@@ -362,7 +362,7 @@ const RoomsPage = () => {
                               background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))',
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
                               fontSize: '0.95rem', fontWeight: 800, color: '#fff',
-                              boxShadow: '0 4px 10px rgba(124, 58, 237, 0.15)'
+                              boxShadow: '0 4px 10px rgba(234, 179, 8, 0.15)'
                             }}>
                               {(occ.user?.name || 'T')[0].toUpperCase()}
                             </div>

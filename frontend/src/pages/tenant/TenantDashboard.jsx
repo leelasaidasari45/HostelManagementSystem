@@ -514,7 +514,7 @@ const TenantDashboard = () => {
             {/* ── Hostel Rules ── */}
             <div className="glass-panel p-6 td-card-anim slide-up td-rules-section">
               <div className="td-card-header" style={{ marginBottom:'1.5rem' }}>
-                <div className="td-card-header-icon" style={{ background:'rgba(124,58,237,0.15)', color:'var(--aurora-1)' }}><BookOpen size={18} /></div>
+                <div className="td-card-header-icon" style={{ background:'rgba(234, 179, 8,0.15)', color:'var(--aurora-1)' }}><BookOpen size={18} /></div>
                 <h3>Hostel Rules & Regulations</h3>
                 <span className="td-card-tag">Important</span>
               </div>

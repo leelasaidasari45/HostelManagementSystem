@@ -44,20 +44,20 @@ const TrialBadge = ({ trialEndDate, onUpgrade, subscription_status }) => {
       padding: '0.5rem 1rem',
       background: isExpiring
         ? 'linear-gradient(135deg, rgba(239,68,68,0.1), rgba(249,115,22,0.1))'
-        : 'linear-gradient(135deg, rgba(124,58,237,0.1), rgba(59,130,246,0.1))',
-      border: isExpiring ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(124,58,237,0.3)',
+        : 'linear-gradient(135deg, rgba(234, 179, 8,0.1), rgba(253, 224, 71,0.1))',
+      border: isExpiring ? '1px solid rgba(239,68,68,0.3)' : '1px solid rgba(234, 179, 8,0.3)',
       borderRadius: '0.75rem',
       animation: isExpiring ? 'pulse-warning 1.5s ease-in-out infinite' : 'none',
     }}>
       <Sparkles
         size={16}
-        color={isExpiring ? '#ef4444' : '#7c3aed'}
-        fill={isExpiring ? '#ef4444' : '#7c3aed'}
+        color={isExpiring ? '#ef4444' : '#eab308'}
+        fill={isExpiring ? '#ef4444' : '#eab308'}
       />
       <span style={{
         fontSize: '0.85rem',
         fontWeight: 600,
-        color: isExpiring ? '#ef4444' : '#7c3aed',
+        color: isExpiring ? '#ef4444' : '#eab308',
       }}>
         {isExpiring ? '⚠️ ' : ''}Trial: {timeLeft}
       </span>
@@ -68,20 +68,20 @@ const TrialBadge = ({ trialEndDate, onUpgrade, subscription_status }) => {
           alignItems: 'center',
           gap: '0.3rem',
           padding: '0.3rem 0.6rem',
-          background: isExpiring ? 'rgba(239,68,68,0.2)' : 'rgba(124,58,237,0.2)',
+          background: isExpiring ? 'rgba(239,68,68,0.2)' : 'rgba(234, 179, 8,0.2)',
           border: 'none',
           borderRadius: '0.5rem',
           cursor: 'pointer',
           fontSize: '0.75rem',
           fontWeight: 600,
-          color: isExpiring ? '#dc2626' : '#6d28d9',
+          color: isExpiring ? '#dc2626' : '#ca8a04',
           transition: 'all 200ms',
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.background = isExpiring ? 'rgba(239,68,68,0.3)' : 'rgba(124,58,237,0.3)';
+          e.currentTarget.style.background = isExpiring ? 'rgba(239,68,68,0.3)' : 'rgba(234, 179, 8,0.3)';
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background = isExpiring ? 'rgba(239,68,68,0.2)' : 'rgba(124,58,237,0.2)';
+          e.currentTarget.style.background = isExpiring ? 'rgba(239,68,68,0.2)' : 'rgba(234, 179, 8,0.2)';
         }}
       >
         Upgrade <ArrowRight size={12} />

@@ -34,9 +34,9 @@
   z-index: 0;
   pointer-events: none;
   background-image: 
-    radial-gradient(circle at center, rgba(124, 58, 237, 0.1) 0%, transparent 65%),
-    linear-gradient(45deg, transparent calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
-    linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% - 0.5px), rgba(124,58,237,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+    radial-gradient(circle at center, rgba(234, 179, 8, 0.1) 0%, transparent 65%),
+    linear-gradient(45deg, transparent calc(50% - 0.5px), rgba(234, 179, 8,0.5) calc(50% - 0.5px), rgba(234, 179, 8,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(234, 179, 8,0.5) calc(50% - 0.5px), rgba(234, 179, 8,0.5) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   background-size: 100% 100%, 60px 60px, 60px 60px;
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
   -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 90%);
@@ -50,9 +50,9 @@
 
 .light-mode .auth-container::before {
   background-image: 
-    radial-gradient(circle at center, rgba(109, 40, 217, 0.05) 0%, transparent 65%),
-    linear-gradient(45deg, transparent calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
-    linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% - 0.5px), rgba(109,40,217,0.12) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+    radial-gradient(circle at center, rgba(202, 138, 4, 0.05) 0%, transparent 65%),
+    linear-gradient(45deg, transparent calc(50% - 0.5px), rgba(202, 138, 4,0.12) calc(50% - 0.5px), rgba(202, 138, 4,0.12) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(-45deg, transparent calc(50% - 0.5px), rgba(202, 138, 4,0.12) calc(50% - 0.5px), rgba(202, 138, 4,0.12) calc(50% + 0.5px), transparent calc(50% + 0.5px));
   mask-image: none;
   -webkit-mask-image: none;
 }

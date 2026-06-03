@@ -490,7 +490,7 @@ const JoinHostel = () => {
                   />
                   {/* Rent auto-display */}
                   {roomRent && (
-                    <div style={{ marginTop: '.4rem', padding: '.4rem .7rem', background: 'rgba(124,58,237,0.1)', borderRadius: '8px', border: '1px solid rgba(124,58,237,0.2)', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+                    <div style={{ marginTop: '.4rem', padding: '.4rem .7rem', background: 'rgba(234, 179, 8,0.1)', borderRadius: '8px', border: '1px solid rgba(234, 179, 8,0.2)', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
                       <IndianRupee size={13} style={{ color: 'var(--aurora-1)' }} />
                       <span style={{ fontSize: '.82rem', color: 'var(--aurora-1)', fontWeight: 700 }}>
                         Monthly Rent: ₹{roomRent.rent_amount.toLocaleString('en-IN')}

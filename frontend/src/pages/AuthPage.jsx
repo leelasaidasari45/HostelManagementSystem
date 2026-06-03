@@ -438,7 +438,7 @@ const AuthPage = () => {
                     </div>
                     {isSelected && (
                       <div className="lang-tick">
-                        <CheckCircle2 size={18} fill="#2563eb" color="#ffffff" />
+                        <CheckCircle2 size={18} fill="#fef08a" color="#ffffff" />
                       </div>
                     )}
                   </div>
@@ -560,7 +560,7 @@ const AuthPage = () => {
               <p style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
                 {t.newToEasyPg}{' '}
                 <span 
-                  style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
+                  style={{ color: '#fef08a', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
                   onClick={() => {
                     setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
                     setMobileStep('register');
@@ -663,14 +663,14 @@ const AuthPage = () => {
               </button>
               
               <div className="password-links">
-                <Link to="/forgot-password" style={{ color: '#2563eb', fontSize: '.85rem', textDecoration: 'none' }}>{t.forgotPassword}</Link>
+                <Link to="/forgot-password" style={{ color: '#fef08a', fontSize: '.85rem', textDecoration: 'none' }}>{t.forgotPassword}</Link>
                 <span className="back-link" onClick={() => setMobileStep('email')}>{t.changeEmail}</span>
               </div>
 
               <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
                 {t.newToEasyPg}{' '}
                 <span 
-                  style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
+                  style={{ color: '#fef08a', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
                   onClick={() => setMobileStep('register')}
                 >
                   {t.signUp}

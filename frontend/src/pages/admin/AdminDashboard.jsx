@@ -271,7 +271,7 @@ const AdminDashboard = () => {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                               <div style={{
                                 width: 34, height: 34, borderRadius: '50%',
-                                background: user.role === 'owner' ? 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))' : 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                                background: user.role === 'owner' ? 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))' : 'linear-gradient(135deg, #fde047, #06b6d4)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: '0.85rem', fontWeight: 800, color: '#fff'
                               }}>
@@ -290,8 +290,8 @@ const AdminDashboard = () => {
                             <span style={{
                               padding: '0.15rem 0.5rem', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700,
                               textTransform: 'uppercase', border: '1px solid',
-                              background: user.role === 'owner' ? 'rgba(139, 92, 246, 0.08)' : 'rgba(59, 130, 246, 0.08)',
-                              borderColor: user.role === 'owner' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+                              background: user.role === 'owner' ? 'rgba(139, 92, 246, 0.08)' : 'rgba(253, 224, 71, 0.08)',
+                              borderColor: user.role === 'owner' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(253, 224, 71, 0.2)',
                               color: user.role === 'owner' ? '#a78bfa' : '#60a5fa'
                             }}>
                               {user.role}

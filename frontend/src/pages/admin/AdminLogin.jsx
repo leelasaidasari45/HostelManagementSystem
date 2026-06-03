@@ -120,7 +120,7 @@ const AdminLogin = () => {
               width: '100%', background: 'linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%)',
               color: '#fff', border: 'none', borderRadius: 12, padding: '0.85rem',
               fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(124, 58, 237, 0.2)', display: 'flex',
+              boxShadow: '0 4px 15px rgba(234, 179, 8, 0.2)', display: 'flex',
               alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
               transition: 'all 0.2s'
             }}

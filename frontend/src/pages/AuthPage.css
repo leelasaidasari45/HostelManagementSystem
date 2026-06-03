@@ -189,7 +189,7 @@
   justify-content: center;
   color: white;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
 }
 
 .feature-item h4 {
@@ -274,7 +274,7 @@
 .tab-btn.active {
   background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
   color: white;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.15);
 }
 
 /* ========== Form ========== */
@@ -371,7 +371,7 @@
   font-size: 1.05rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 6px 20px rgba(234, 179, 8, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -380,7 +380,7 @@
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 10px 25px rgba(234, 179, 8, 0.3);
 }
 
 .submit-btn:disabled {
@@ -580,7 +580,7 @@
 }
 
 .lang-card.selected {
-  border-color: #2563eb;
+  border-color: #fef08a;
   background: rgba(37, 99, 235, 0.05);
 }
 
@@ -608,7 +608,7 @@
 .lang-tick {
   display: flex;
   align-items: center;
-  color: #2563eb;
+  color: #fef08a;
 }
 
 .bottom-btn-container {
@@ -629,7 +629,7 @@
 
 .mobile-continue-btn {
   width: 100%;
-  background: #2563eb;
+  background: #fef08a;
   color: white;
   border: none;
   border-radius: 14px;
@@ -693,7 +693,7 @@
 .app-circle-logo {
   width: 72px;
   height: 72px;
-  background: #2563eb;
+  background: #fef08a;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -715,7 +715,7 @@
 .app-super-subtitle {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2563eb;
+  color: #fef08a;
 }
 
 .mobile-auth-form-card {
@@ -767,7 +767,7 @@
 
 .mobile-email-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #fef08a;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -793,7 +793,7 @@
 }
 
 .mobile-disclaimer a {
-  color: #2563eb;
+  color: #fef08a;
   text-decoration: none;
   font-weight: 600;
 }
@@ -808,7 +808,7 @@
 }
 
 .toggle-role-link {
-  color: #2563eb;
+  color: #fef08a;
   font-weight: 700;
   cursor: pointer;
 }
