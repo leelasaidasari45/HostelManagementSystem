@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Plus, Eye, EyeOff, Trash2, Check, Star, AlertCircle, Building2, X, Lock, ChevronRight, Wallet } from 'lucide-react';
+import { Plus, Eye, EyeOff, Trash2, Check, AlertCircle, X, Lock, IndianRupee, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import MobileBottomNav from '../../components/owner/MobileBottomNav';
 import MobileOwnerHeader from '../../components/owner/MobileOwnerHeader';
 import './BankAccountsPage.css';
 
+// Color themes for each card — warm, earthy, vibrant (no blue)
+const CARD_THEMES = [
+  { bg: 'linear-gradient(135deg, #1a1a1a 0%, #2d1f0a 100%)', accent: '#f59e0b', light: 'rgba(245,158,11,0.15)' },
+  { bg: 'linear-gradient(135deg, #0d1f0d 0%, #1a2e1a 100%)', accent: '#34d399', light: 'rgba(52,211,153,0.15)' },
+  { bg: 'linear-gradient(135deg, #1f0d1a 0%, #2e1a28 100%)', accent: '#e879f9', light: 'rgba(232,121,249,0.15)' },
+  { bg: 'linear-gradient(135deg, #1f0f0a 0%, #2e1f12 100%)', accent: '#fb923c', light: 'rgba(251,146,60,0.15)' },
+  { bg: 'linear-gradient(135deg, #0f1a1f 0%, #122e2e 100%)', accent: '#2dd4bf', light: 'rgba(45,212,191,0.15)' },
+];
+
+// Bank initials avatar
+const BankAvatar = ({ name, accent }) => {
+  const initials = (name || 'BA').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  return (
+    <div className="ba-avatar" style={{ background: accent + '22', border: `1.5px solid ${accent}44`, color: accent }}>
+      {initials}
+    </div>
+  );
+};
+
 const maskAccount = (num) => {
   if (!num || num.length < 5) return num;
-  return '•••• •••• •••• ' + num.slice(-4);
+  return '•••• •••• ' + num.slice(-4);
 };
 
 const BankCard = ({ account, index, onSetPrimary, onDelete }) => {
   const [showNumber, setShowNumber] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const theme = CARD_THEMES[index % CARD_THEMES.length];
 
   const handleDelete = async () => {
     if (!window.confirm('Remove this bank account?')) return;
@@ -30,61 +50,63 @@ const BankCard = ({ account, index, onSetPrimary, onDelete }) => {
   };
 
   return (
-    <div className={`ba-card ${account.is_primary ? 'ba-card--primary' : ''}`}>
-      <div className="ba-card-top">
-        <div className="ba-card-bank-info">
-          <div className="ba-card-icon">
-            <Building2 size={18} />
-          </div>
-          <div>
-            <div className="ba-card-bank-name">{account.bank_name || 'Bank Account'}</div>
-            {account.is_primary && (
-              <div className="ba-card-primary-label">
-                <span className="ba-primary-dot" /> Primary · Receiving rent
-              </div>
-            )}
-          </div>
+    <div className="ba-card" style={{ background: theme.bg }}>
+      {/* Card Top Row */}
+      <div className="ba-card-row">
+        <BankAvatar name={account.bank_name || account.account_holder_name} accent={theme.accent} />
+        <div className="ba-card-meta">
+          <span className="ba-card-bank" style={{ color: '#fff' }}>
+            {account.bank_name || 'Bank Account'}
+          </span>
+          {account.is_primary && (
+            <span className="ba-primary-tag" style={{ color: theme.accent, background: theme.light }}>
+              ✦ Primary
+            </span>
+          )}
         </div>
-        <button className="ba-card-eye-btn" onClick={() => setShowNumber(v => !v)}>
-          {showNumber ? <EyeOff size={16} /> : <Eye size={16} />}
+        <button className="ba-eye-btn" onClick={() => setShowNumber(v => !v)}
+          style={{ color: theme.accent, background: theme.light }}>
+          {showNumber ? <EyeOff size={14} /> : <Eye size={14} />}
         </button>
       </div>
 
-      <div className="ba-card-number">
-        {showNumber ? account.account_number : maskAccount(account.account_number)}
+      {/* Account Number */}
+      <div className="ba-num-row" style={{ borderColor: theme.accent + '30' }}>
+        <IndianRupee size={13} style={{ color: theme.accent, flexShrink: 0 }} />
+        <span className="ba-num-text">
+          {showNumber ? account.account_number : maskAccount(account.account_number)}
+        </span>
       </div>
 
-      <div className="ba-card-details">
-        <div className="ba-card-detail-row">
-          <span className="ba-detail-label">Account Holder</span>
-          <span className="ba-detail-value">{account.account_holder_name}</span>
+      {/* Details */}
+      <div className="ba-info-row">
+        <div className="ba-info-cell">
+          <span className="ba-info-label">Holder</span>
+          <span className="ba-info-value">{account.account_holder_name}</span>
         </div>
-        <div className="ba-card-detail-row">
-          <span className="ba-detail-label">IFSC</span>
-          <span className="ba-detail-value">{account.ifsc}</span>
+        <div className="ba-info-divider" style={{ background: theme.accent + '25' }} />
+        <div className="ba-info-cell">
+          <span className="ba-info-label">IFSC</span>
+          <span className="ba-info-value">{account.ifsc}</span>
         </div>
       </div>
 
-      {!account.is_primary && (
-        <div className="ba-card-actions">
-          <button className="ba-action-set-primary" onClick={() => onSetPrimary(account.id)}>
-            <Check size={14} /> Set as Primary
-          </button>
-          <button className="ba-action-delete" onClick={handleDelete} disabled={deleting}>
-            <Trash2 size={14} />
-          </button>
-        </div>
-      )}
-      {account.is_primary && (
-        <div className="ba-card-actions">
-          <div className="ba-primary-active">
-            <Check size={14} /> Active for receiving payments
+      {/* Actions */}
+      <div className="ba-card-footer" style={{ borderColor: theme.accent + '20' }}>
+        {account.is_primary ? (
+          <div className="ba-active-badge" style={{ color: theme.accent }}>
+            <Check size={13} /> Active · Receiving rent
           </div>
-          <button className="ba-action-delete" onClick={handleDelete} disabled={deleting}>
-            <Trash2 size={14} />
+        ) : (
+          <button className="ba-set-primary-btn" onClick={() => onSetPrimary(account.id)}
+            style={{ color: theme.accent, background: theme.light }}>
+            <Check size={13} /> Set Primary
           </button>
-        </div>
-      )}
+        )}
+        <button className="ba-delete-btn" onClick={handleDelete} disabled={deleting}>
+          <Trash2 size={14} />
+        </button>
+      </div>
     </div>
   );
 };
@@ -128,13 +150,19 @@ const AddAccountModal = ({ onClose, onAdded }) => {
       <div className="ba-modal" onClick={e => e.stopPropagation()}>
         <div className="ba-modal-handle" />
 
-        <div className="ba-modal-header">
-          <h3>Add Bank Account</h3>
-          <button className="ba-modal-close" onClick={onClose}><X size={18} /></button>
+        <div className="ba-modal-top">
+          <div className="ba-modal-title-wrap">
+            <div className="ba-modal-icon"><IndianRupee size={18} /></div>
+            <div>
+              <h3>Add Bank Account</h3>
+              <p>Rent payments will be routed here</p>
+            </div>
+          </div>
+          <button className="ba-modal-close" onClick={onClose}><X size={17} /></button>
         </div>
 
         <div className="ba-modal-secure">
-          <Lock size={12} />
+          <ShieldCheck size={13} />
           <span>256-bit encrypted · Secured by Cashfree</span>
         </div>
 
@@ -157,8 +185,7 @@ const AddAccountModal = ({ onClose, onAdded }) => {
           <div className="ba-field">
             <label>Account Number</label>
             <div className="ba-input-wrap">
-              <input
-                type={showAcc ? 'text' : 'password'}
+              <input type={showAcc ? 'text' : 'password'}
                 placeholder="Enter account number"
                 value={form.account_number}
                 onChange={e => setForm({ ...form, account_number: e.target.value.replace(/\D/g, '') })}
@@ -171,7 +198,7 @@ const AddAccountModal = ({ onClose, onAdded }) => {
 
           <div className="ba-field">
             <label>Confirm Account Number</label>
-            <input type="text" placeholder="Re-enter account number"
+            <input type="text" placeholder="Re-enter to confirm"
               value={form.confirm_account_number}
               onChange={e => setForm({ ...form, confirm_account_number: e.target.value.replace(/\D/g, '') })}
               required autoComplete="off" />
@@ -189,7 +216,7 @@ const AddAccountModal = ({ onClose, onAdded }) => {
           </div>
 
           <button type="submit" className="ba-submit-btn" disabled={loading}>
-            {loading ? 'Saving...' : 'Add Account'}
+            {loading ? 'Saving...' : 'Save Account'}
           </button>
         </form>
       </div>
@@ -228,35 +255,35 @@ const BankAccountsPage = () => {
 
       <div className="ba-content">
 
-        {/* Header */}
-        <div className="ba-header-section">
-          <div className="ba-wallet-icon"><Wallet size={22} /></div>
-          <div>
-            <h1 className="ba-title">Payment Accounts</h1>
-            <p className="ba-subtitle">Rent goes directly to your primary account</p>
+        {/* Hero strip */}
+        <div className="ba-hero">
+          <div className="ba-hero-left">
+            <div className="ba-hero-icon">
+              <IndianRupee size={20} />
+            </div>
+            <div>
+              <h1 className="ba-page-title">Payment Accounts</h1>
+              <p className="ba-page-sub">
+                {primary
+                  ? `Receiving to ••••${primary.account_number?.slice(-4)}`
+                  : 'Add an account to receive rent'}
+              </p>
+            </div>
           </div>
+          {primary && <span className="ba-hero-live"><span className="ba-live-dot" />Live</span>}
         </div>
 
-        {/* Primary account strip */}
-        {primary && (
-          <div className="ba-primary-strip">
-            <div className="ba-primary-strip-dot" />
-            <span>Receiving to <strong>••••{primary.account_number?.slice(-4)}</strong> — {primary.account_holder_name}</span>
-            <ChevronRight size={14} className="ba-strip-arrow" />
-          </div>
-        )}
-
-        {/* List */}
+        {/* Accounts */}
         {loading ? (
           <>
             <div className="ba-skeleton" />
-            <div className="ba-skeleton" style={{ opacity: 0.5 }} />
+            <div className="ba-skeleton" style={{ opacity: 0.4 }} />
           </>
         ) : accounts.length === 0 ? (
           <div className="ba-empty">
-            <Building2 size={36} />
-            <h3>No accounts yet</h3>
-            <p>Add your bank account to receive rent from tenants</p>
+            <div className="ba-empty-icon">🏦</div>
+            <h3>No accounts added</h3>
+            <p>Add a bank account below to start receiving rent directly from tenants</p>
           </div>
         ) : (
           <div className="ba-list">
@@ -267,14 +294,13 @@ const BankAccountsPage = () => {
           </div>
         )}
 
-        {/* Add button */}
         <button className="ba-add-btn" onClick={() => setShowModal(true)}>
-          <Plus size={17} /> Add Bank Account
+          <Plus size={16} /> Add New Account
         </button>
 
-        <p className="ba-footer-note">
-          <Lock size={11} /> Your details are encrypted and never shared
-        </p>
+        <div className="ba-secure-note">
+          <Lock size={11} /> Bank-grade encryption · Data never shared
+        </div>
       </div>
 
       <MobileBottomNav />
