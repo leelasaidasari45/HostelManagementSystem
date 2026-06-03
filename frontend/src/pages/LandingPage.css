@@ -1724,6 +1724,16 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.pulse-glow-btn {
+  animation: fab-pulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes fab-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(124, 58, 237, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+}
+
 .lead-floating-btn:hover {
   transform: translateY(-4px) scale(1.08);
   box-shadow: 0 12px 35px rgba(124, 58, 237, 0.5);

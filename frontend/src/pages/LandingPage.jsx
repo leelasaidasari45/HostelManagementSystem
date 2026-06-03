@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play } from 'lucide-react';
+import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play, CalendarCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import toast from 'react-hot-toast';
@@ -23,7 +23,7 @@ const LandingPage = () => {
      window.cordova !== undefined ||
      (/android/i.test(navigator.userAgent) && window.location.protocol === 'file:'));
 
-  // Trigger popup after 3 seconds from initial page load
+  // Trigger popup after 7 seconds from initial page load
   React.useEffect(() => {
     if (isNative) return;
     
@@ -36,7 +36,7 @@ const LandingPage = () => {
       if (!hasSubmitted && !localStorage.getItem('token') && !sessionStorage.getItem('token')) {
         setShowLeadPopup(true);
       }
-    }, 3000); // Exactly 3 seconds
+    }, 7000); // Exactly 7 seconds
     
     return () => clearTimeout(timer);
   }, [isNative]);
@@ -455,11 +455,11 @@ const LandingPage = () => {
 
       {/* Floating Demo Request Button */}
       <button 
-        className="lead-floating-btn" 
+        className="lead-floating-btn pulse-glow-btn" 
         onClick={() => setShowLeadPopup(true)}
         title="Request Free Demo"
       >
-        <Building2 size={24} />
+        <CalendarCheck size={26} />
         <span className="lead-floating-tooltip">Book a Free Demo</span>
       </button>
 
