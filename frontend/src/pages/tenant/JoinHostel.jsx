@@ -573,7 +573,24 @@ const JoinHostel = () => {
             </div>
 
             <div style={{ display: 'flex', gap: '.75rem' }}>
-              <button className="btn btn-primary flex-1" onClick={() => window.location.reload()}>
+              <button className="btn btn-primary flex-1" onClick={async () => {
+                const loadingToast = toast.loading("Checking status...");
+                try {
+                  const res = await api.get('/api/tenant/dashboard');
+                  const st = res.data?.tenant?.status;
+                  if (st === 'active' || st === 'vacating') {
+                    toast.success("Application approved!", { id: loadingToast });
+                    navigate('/tenant/dashboard', { replace: true });
+                  } else if (st === 'pending') {
+                    toast.success("Still waiting for owner's approval.", { id: loadingToast });
+                  } else {
+                    toast.error("Application not found or rejected.", { id: loadingToast });
+                    setStep(1);
+                  }
+                } catch {
+                  toast.error("Failed to check status.", { id: loadingToast });
+                }
+              }}>
                 <RefreshCw size={15} /> Check Status
               </button>
               <button className="btn btn-ghost flex-1" onClick={logoutContext} style={{ color: 'var(--danger)', borderColor: 'rgba(220,38,38,0.25)', border: '1px solid' }}>
