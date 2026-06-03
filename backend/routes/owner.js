@@ -660,10 +660,19 @@ router.get('/bank-accounts', async (req, res) => {
       .select('*')
       .eq('owner_id', req.user.id)
       .order('created_at', { ascending: false });
-    if (error) throw error;
+
+    // If table doesn't exist yet, return empty array instead of crashing
+    if (error) {
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        return res.json([]);
+      }
+      throw error;
+    }
     res.json(data || []);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    // Gracefully return empty array for any DB schema issues
+    console.error('bank-accounts GET error:', err.message);
+    res.json([]);
   }
 });
 

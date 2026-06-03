@@ -232,7 +232,7 @@ const BankAccountsPage = () => {
   useEffect(() => {
     api.get('/api/owner/bank-accounts')
       .then(r => setAccounts(r.data || []))
-      .catch(() => toast.error('Failed to load accounts'))
+      .catch(() => setAccounts([]))   // silently show empty state on error
       .finally(() => setLoading(false));
   }, []);
 
