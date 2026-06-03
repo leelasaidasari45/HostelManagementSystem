@@ -295,6 +295,33 @@ router.post('/forgot-password', async (req, res) => {
   }
 });
 
+// Verify OTP - Checks if OTP matches without resetting password
+router.post('/verify-otp', async (req, res) => {
+  try {
+    const { token, otp } = req.body;
+    
+    if (!token || !otp) {
+      return res.status(400).json({ error: 'Missing token or OTP' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded.reset || !decoded.otpHash) {
+      return res.status(401).json({ error: 'Invalid reset token' });
+    }
+
+    // Verify OTP
+    const isValidOtp = await bcrypt.compare(otp.toString(), decoded.otpHash);
+    if (!isValidOtp) {
+      return res.status(401).json({ error: 'Incorrect OTP' });
+    }
+
+    res.json({ message: 'OTP Verified successfully.' });
+  } catch (err) {
+    console.error("Verify OTP Error:", err);
+    res.status(401).json({ error: 'Invalid or expired OTP token' });
+  }
+});
+
 // Reset Password - Verifies OTP and updates password
 router.post('/reset-password', async (req, res) => {
   try {

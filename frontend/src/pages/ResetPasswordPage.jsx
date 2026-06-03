@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { Lock, KeyRound, CheckCircle, ArrowLeft, EyeOff, Eye, Hash } from 'lucide-react';
+import { Lock, KeyRound, CheckCircle, ArrowLeft, EyeOff, Eye, Hash, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useTheme } from '../context/ThemeContext';
@@ -13,7 +13,11 @@ const ResetPasswordPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    
+    // UI Flow States
+    const [otpVerified, setOtpVerified] = useState(false);
     const [success, setSuccess] = useState(false);
+    
     const navigate = useNavigate();
     const token = searchParams.get('token');
 
@@ -24,11 +28,29 @@ const ResetPasswordPage = () => {
         }
     }, [token, navigate]);
 
-    const handleSubmit = async (e) => {
+    const handleVerifyOtp = async (e) => {
         e.preventDefault();
         if (!formData.otp || formData.otp.length < 6) {
-            return toast.error('Please enter the 6-digit OTP from your email');
+            return toast.error('Please enter the 6-digit OTP');
         }
+
+        setLoading(true);
+        try {
+            await api.post('/api/auth/verify-otp', {
+                token,
+                otp: formData.otp
+            });
+            toast.success('Code verified successfully!');
+            setOtpVerified(true);
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'Invalid or expired code');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
         if (formData.newPassword !== formData.confirmPassword) {
             return toast.error('Passwords do not match');
         }
@@ -85,80 +107,104 @@ const ResetPasswordPage = () => {
                     <div className="app-circle-logo">
                         <span>easyPG</span>
                     </div>
-                    <h1 className="app-super-title">Reset Password</h1>
+                    <h1 className="app-super-title">{!otpVerified ? 'Verify Code' : 'Reset Password'}</h1>
                     <p className="app-super-subtitle" style={{ fontSize: '.9rem', color: 'var(--text-dim)' }}>
-                        Enter the 6-digit code and your new password
+                        {!otpVerified ? 'Enter the 6-digit code sent to your email' : 'Create a strong, new secure password'}
                     </p>
                 </div>
 
                 <div className="mobile-auth-form-card">
-                    <label className="mobile-input-label">6-Digit Code</label>
-                    <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
-                        <Hash size={18} className="mobile-input-icon" />
-                        <input
-                            type="text"
-                            placeholder="Enter OTP from email"
-                            value={formData.otp}
-                            onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
-                            className="mobile-email-input"
-                            maxLength={6}
-                        />
-                    </div>
+                    
+                    {!otpVerified ? (
+                        <>
+                            <label className="mobile-input-label">6-Digit Code</label>
+                            <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
+                                <Hash size={18} className="mobile-input-icon" />
+                                <input
+                                    type="text"
+                                    placeholder="Enter OTP from email"
+                                    value={formData.otp}
+                                    onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
+                                    className="mobile-email-input"
+                                    maxLength={6}
+                                />
+                            </div>
 
-                    <label className="mobile-input-label">New Password</label>
-                    <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
-                        <Lock size={18} className="mobile-input-icon" />
-                        <input
-                            type={showPassword ? 'text' : 'password'}
-                            placeholder="Min. 6 characters"
-                            value={formData.newPassword}
-                            onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                            className="mobile-email-input"
-                        />
-                        <button 
-                          type="button" 
-                          className="mobile-eye-toggle"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                    </div>
+                            <button 
+                                className="mobile-continue-btn"
+                                disabled={loading}
+                                onClick={handleVerifyOtp}
+                            >
+                                {loading ? (
+                                <span className="pulse-opacity">
+                                    Verifying
+                                    <span className="pulsing-dot-container">
+                                    <span className="pulsing-dot"></span>
+                                    <span className="pulsing-dot"></span>
+                                    <span className="pulsing-dot"></span>
+                                    </span>
+                                </span>
+                                ) : (<><ShieldCheck size={18} style={{ marginRight: '8px', verticalAlign: 'middle', display: 'inline-block' }}/> Verify Code</>)}
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <label className="mobile-input-label">New Password</label>
+                            <div className="mobile-input-field" style={{ marginBottom: '1.25rem' }}>
+                                <Lock size={18} className="mobile-input-icon" />
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder="Min. 6 characters"
+                                    value={formData.newPassword}
+                                    onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                                    className="mobile-email-input"
+                                />
+                                <button 
+                                type="button" 
+                                className="mobile-eye-toggle"
+                                onClick={() => setShowPassword(!showPassword)}
+                                >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
 
-                    <label className="mobile-input-label">Confirm Password</label>
-                    <div className="mobile-input-field">
-                        <Lock size={18} className="mobile-input-icon" />
-                        <input
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            placeholder="Re-enter password"
-                            value={formData.confirmPassword}
-                            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                            className="mobile-email-input"
-                        />
-                        <button 
-                          type="button" 
-                          className="mobile-eye-toggle"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        >
-                          {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                    </div>
+                            <label className="mobile-input-label">Confirm Password</label>
+                            <div className="mobile-input-field">
+                                <Lock size={18} className="mobile-input-icon" />
+                                <input
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    placeholder="Re-enter password"
+                                    value={formData.confirmPassword}
+                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                    className="mobile-email-input"
+                                />
+                                <button 
+                                type="button" 
+                                className="mobile-eye-toggle"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
 
-                    <button 
-                        className="mobile-continue-btn"
-                        disabled={loading}
-                        onClick={handleSubmit}
-                    >
-                        {loading ? (
-                          <span className="pulse-opacity">
-                            Updating Password
-                            <span className="pulsing-dot-container">
-                              <span className="pulsing-dot"></span>
-                              <span className="pulsing-dot"></span>
-                              <span className="pulsing-dot"></span>
-                            </span>
-                          </span>
-                        ) : "Update Password"}
-                    </button>
+                            <button 
+                                className="mobile-continue-btn"
+                                disabled={loading}
+                                onClick={handleResetPassword}
+                            >
+                                {loading ? (
+                                <span className="pulse-opacity">
+                                    Updating Password
+                                    <span className="pulsing-dot-container">
+                                    <span className="pulsing-dot"></span>
+                                    <span className="pulsing-dot"></span>
+                                    <span className="pulsing-dot"></span>
+                                    </span>
+                                </span>
+                                ) : "Update Password"}
+                            </button>
+                        </>
+                    )}
 
                     <div className="password-links" style={{ justifyContent: 'center', marginTop: '1rem' }}>
                         <Link to="/login" className="back-link" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
