@@ -370,14 +370,15 @@ const TenantDashboard = () => {
             <QuickActions setActiveTab={setActiveTab} dueInfo={dueInfo} paymentSuccess={paymentSuccess} />
 
             {/* ── Stats Row ── */}
+            <div className="td-section-label" style={{ marginTop: '1.5rem' }}>Stay Overview</div>
             <div className="td-stats-row slide-up">
               <div className="td-stat-card">
                 <div className="td-stat-icon" style={{ background:'rgba(96,165,250,0.15)', color:'#60a5fa' }}><Calendar size={20} /></div>
                 <div className="td-stat-body">
                   <div className="td-stat-label">Check-in Date</div>
                   <div className="td-stat-value">
-                    {dashData?.tenant?.joinDate
-                      ? new Date(dashData.tenant.joinDate).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
+                    {dashData?.tenant?.join_date
+                      ? new Date(dashData.tenant.join_date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
                       : '—'}
                   </div>
                 </div>
@@ -387,8 +388,8 @@ const TenantDashboard = () => {
                 <div className="td-stat-body">
                   <div className="td-stat-label">Days Staying</div>
                   <div className="td-stat-value">
-                    {dashData?.tenant?.joinDate
-                      ? Math.floor((Date.now() - new Date(dashData.tenant.joinDate)) / 86400000) + ' days'
+                    {dashData?.tenant?.join_date
+                      ? Math.max(0, Math.floor((Date.now() - new Date(dashData.tenant.join_date)) / 86400000)) + ' days'
                       : '—'}
                   </div>
                 </div>
