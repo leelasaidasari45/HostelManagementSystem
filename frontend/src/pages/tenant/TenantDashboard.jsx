@@ -405,7 +405,7 @@ const TenantDashboard = () => {
                 <div className="td-stat-body">
                   <div className="td-stat-label">Monthly Rent</div>
                   <div className="td-stat-value">
-                    {dueInfo?.amount ? `₹${dueInfo.amount.toLocaleString('en-IN')}` : '—'}
+                    {dueInfo?.total_rent ? `₹${dueInfo.total_rent.toLocaleString('en-IN')}` : dueInfo?.amount ? `₹${dueInfo.amount.toLocaleString('en-IN')}` : '—'}
                   </div>
                 </div>
               </div>

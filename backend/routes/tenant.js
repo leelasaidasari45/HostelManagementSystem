@@ -282,21 +282,23 @@ router.get('/payments', async (req, res) => {
     const rentAmount = activeAlloc?.rent_amount || 0;
     const billingDay = activeAlloc?.billing_day || 1;
 
-    // Check if already paid this month
-    const paidThisMonth = (payments || []).some(p =>
-      p.month === currentMonth &&
-      String(p.year) === String(currentYear) &&
-      p.status === 'completed'
-    );
+    // Calculate total amount paid this month
+    const totalPaidThisMonth = (payments || [])
+      .filter(p => p.month === currentMonth && String(p.year) === String(currentYear) && p.status === 'completed')
+      .reduce((sum, p) => sum + (p.amount || 0), 0);
+
+    const remainingDue = Math.max(0, rentAmount - totalPaidThisMonth);
+    const isPaid = remainingDue === 0;
 
     res.json({
       payments: payments || [],
       due: {
-        amount: rentAmount,
+        amount: remainingDue,
         month: currentMonth,
         year: currentYear,
         billing_day: billingDay,
-        is_paid: paidThisMonth,
+        is_paid: isPaid,
+        total_rent: rentAmount
       }
     });
   } catch (err) {
