@@ -5,6 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
+import NotificationBell from '../NotificationBell';
 import './MobileOwnerHeader.css';
 
 const MobileOwnerHeader = () => {
@@ -69,6 +70,7 @@ const MobileOwnerHeader = () => {
         </div>
         
         <div className="header-right">
+          <NotificationBell />
           <button className="icon-circle-btn" onClick={toggleTheme} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>

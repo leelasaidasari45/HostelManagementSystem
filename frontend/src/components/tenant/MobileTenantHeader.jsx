@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LogOut, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import NotificationBell from '../NotificationBell';
 import '../owner/MobileOwnerHeader.css';
 
 const MobileTenantHeader = ({ dashData }) => {
@@ -25,6 +26,7 @@ const MobileTenantHeader = ({ dashData }) => {
         </div>
         
         <div className="header-right">
+          <NotificationBell />
           <button className="icon-circle-btn" onClick={toggleTheme} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>

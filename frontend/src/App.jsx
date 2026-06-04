@@ -101,6 +101,7 @@ const LoadingScreen = () => (
 
 import MobileSplash from './components/MobileSplash';
 import { ThemeProvider } from './context/ThemeContext';
+import { usePushNotifications } from './hooks/usePushNotifications';
 
 // Detect Capacitor native platform
 const isNative = typeof window !== 'undefined' &&
@@ -110,6 +111,10 @@ const isNative = typeof window !== 'undefined' &&
 
 function AppContent() {
   const location = useLocation();
+  const { user } = useAuth();
+
+  // Initialize push notifications (for native mobile app)
+  usePushNotifications(user);
 
   // Log page visits on path change
   React.useEffect(() => {

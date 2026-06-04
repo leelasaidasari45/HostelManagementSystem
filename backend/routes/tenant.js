@@ -2,6 +2,7 @@ import express from 'express';
 import { requireAuth, requireTenant } from '../middleware/auth.js';
 import multer from 'multer';
 import { supabase } from '../supabaseClient.js';
+import { sendPushToUser, getHostelOwnerId } from '../utils/notificationService.js';
 
 const router = express.Router();
 
@@ -320,6 +321,20 @@ router.post('/pay', async (req, res) => {
       status: 'completed',
       paid_at: new Date().toISOString()
     }]);
+
+    // Notify owner that rent was received
+    const hostelId = req.user.hostel_id;
+    if (hostelId) {
+      const ownerId = await getHostelOwnerId(hostelId);
+      if (ownerId) {
+        sendPushToUser(
+          ownerId,
+          `✅ Rent Received`,
+          `${req.user.name || 'A tenant'} has paid ₹${amount} for ${month} ${year || ''}.`,
+          { type: 'payment' }
+        ).catch(console.error);
+      }
+    }
     
     res.json({ message: 'Payment recorded' });
   } catch (err) {
@@ -364,6 +379,17 @@ router.post('/complaints', async (req, res) => {
       console.error("Complaint Insert Error:", insertError);
       throw new Error(insertError.message || 'Failed to insert complaint');
     }
+
+    // Notify owner about the new complaint
+    const ownerId = await getHostelOwnerId(hostelId);
+    if (ownerId) {
+      sendPushToUser(
+        ownerId,
+        `⚠️ New Complaint Filed`,
+        `${tenantName || req.user.name || 'A tenant'} raised an issue: "${issue?.substring(0, 80)}"`,
+        { type: 'complaint' }
+      ).catch(console.error);
+    }
     
     res.json({ message: 'Complaint submitted' });
   } catch (err) {
@@ -389,6 +415,19 @@ router.post('/vacate', async (req, res) => {
     await supabase.from('allocations').update({ status: 'vacating', end_date: vacateDate })
       .eq('tenant_id', tenantId)
       .eq('status', 'active');
+
+    // Notify owner about the vacate request
+    if (hostelId) {
+      const ownerId = await getHostelOwnerId(hostelId);
+      if (ownerId) {
+        sendPushToUser(
+          ownerId,
+          `🚶 Vacate Request Submitted`,
+          `${req.user.name || 'A tenant'} has requested to vacate on ${vacateDate}.`,
+          { type: 'vacate' }
+        ).catch(console.error);
+      }
+    }
 
     res.json({ message: 'Vacate request submitted' });
   } catch (err) {

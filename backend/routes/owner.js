@@ -1,6 +1,7 @@
 import express from 'express';
 import { requireAuth, requireOwner } from '../middleware/auth.js';
 import { supabase } from '../supabaseClient.js';
+import { sendPushToHostelTenants, sendPushToUser } from '../utils/notificationService.js';
 
 const router = express.Router();
 
@@ -616,6 +617,14 @@ router.post('/notices', async (req, res) => {
     const { data: notice, error: nError } = await supabase.from('notices').insert([{ hostel_id: hostelId, title, message }]).select().single();
     if (nError) throw nError;
 
+    // 2. Send push notification to all tenants
+    sendPushToHostelTenants(
+      hostelId,
+      `📢 New Notice: ${title}`,
+      message,
+      { type: 'notice' }
+    ).catch(console.error);
+
     res.json({ message: 'Notice posted!' });
   } catch (err) {
     console.error('Notice error:', err);
@@ -632,6 +641,14 @@ router.put('/menu', async (req, res) => {
     await supabase.from('menus').upsert([{
        hostel_id: hostelId, day, breakfast, lunch, snacks, dinner
     }], { onConflict: 'hostel_id,day' });
+
+    // Send push notification to all tenants
+    sendPushToHostelTenants(
+      hostelId,
+      `🍽️ Menu Updated for ${day}`,
+      `Check today's menu — ${[breakfast, lunch, snacks, dinner].filter(Boolean).join(', ')}`,
+      { type: 'menu' }
+    ).catch(console.error);
     
     res.json({ message: 'Menu updated successfully' });
   } catch (err) {
