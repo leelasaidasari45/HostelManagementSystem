@@ -40,16 +40,17 @@ export const AuthProvider = ({ children }) => {
 
     if (!userData || userData.role !== 'owner') return true; // Tenants don't have subscriptions
     
+    // If they have an active paid subscription, they are fully valid!
+    if (userData.subscription_status === 'active') return true;
+    
+    // Otherwise, check if they are on a valid trial
     const now = new Date();
     const trialEnd = userData.trial_end_date ? new Date(userData.trial_end_date) : null;
     
-    if (!trialEnd) return false; // No trial end date = subscription not set up
-    if (now > trialEnd) return false; // Trial/subscription has expired
+    if (!trialEnd) return false; // No trial end date
+    if (now > trialEnd) return false; // Trial has expired
     
-    const isTrialValid = userData.subscription_status === 'trial';
-    const isSubscriptionActive = userData.subscription_status === 'active';
-    
-    return isTrialValid || isSubscriptionActive;
+    return userData.subscription_status === 'trial';
   }, []);
 
   const verifySession = useCallback(async (silent = false) => {
