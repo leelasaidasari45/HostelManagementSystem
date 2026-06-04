@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play, CalendarCheck } from 'lucide-react';
+import { ArrowRight, Building2, Layers, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play, CalendarCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import toast from 'react-hot-toast';
@@ -267,12 +267,9 @@ const LandingPage = () => {
             <span className="reveal-inner">Core <span className="text-gradient">Features</span></span>
           </span>
         </h2>
-        <p className="section-subtitle scroll-reveal reveal-fade-in delay-200">
-          A fully integrated hostel management suite engineered to automate operations, simplify onboarding, and streamline billing.
-        </p>
         <div className="features-grid">
           {[
-            { icon: <Building2 size={24} />, title: 'Multi-Property', desc: 'Manage all hostels from a single unified dashboard.' },
+            { icon: <Layers size={24} />, title: 'Multi-Property', desc: 'Manage all hostels from a single unified dashboard.' },
             { icon: <QrCode size={24} />, title: 'QR Onboarding', desc: 'Tenants scan and join instantly — zero friction.' },
             { icon: <Zap size={24} />, title: 'Smart Payments', desc: 'Integrated ledgers and automated rent reminders.' },
             { icon: <BarChart3 size={24} />, title: 'Live Analytics', desc: 'Real-time occupancy, revenue and trend insights.' },

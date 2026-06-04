@@ -280,12 +280,12 @@
   align-items: center;
   gap: .5rem;
   padding: .4rem 1rem;
-  background: rgba(124, 58, 237,0.1);
-  border: 1px solid rgba(124, 58, 237,0.25);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: var(--r-full);
   font-size: .82rem;
   font-weight: 500;
-  color: #a78bfa;
+  color: #10b981;
   margin-bottom: 1.75rem;
   position: relative;
   overflow: hidden;
@@ -500,6 +500,15 @@
   border: 1px solid rgba(124, 58, 237, 0.15);
   text-transform: uppercase;
 }
+
+/* Mobile Theme Overrides */
+@media (max-width: 768px) {
+  .landing-page {
+    --aurora-1: #f43f5e; /* Rose Red */
+    --aurora-2: #fb7185; /* Light Red */
+  }
+}
+
 .light-mode .section-badge span {
   background: rgba(109, 40, 217, 0.06);
   border: 1px solid rgba(109, 40, 217, 0.12);
@@ -1820,7 +1829,7 @@
 
 @media (max-width: 640px) {
   .lead-floating-btn {
-    bottom: 5.5rem; /* Raise slightly on mobile to avoid overlapping navigation bar/tabs */
+    bottom: 1.5rem;
     right: 1.25rem;
     width: 48px;
     height: 48px;

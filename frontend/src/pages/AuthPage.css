@@ -1081,3 +1081,11 @@
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Mobile Theme Overrides */
+@media (max-width: 768px) {
+  .auth-page-v2 {
+    --aurora-1: #f43f5e; /* Rose Red */
+    --aurora-2: #fb7185; /* Light Red */
+  }
+}
