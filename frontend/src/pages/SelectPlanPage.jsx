@@ -13,15 +13,11 @@ const SelectPlanPage = () => {
   const [promoTimeLeft, setPromoTimeLeft] = useState('');
   const [isPromoActive, setIsPromoActive] = useState(false);
 
-  const isNative = typeof window !== 'undefined' &&
-    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+import { Capacitor } from '@capacitor/core';
 
-  // TEMP: Bypassing subscription block on mobile app. Re-enable later.
-  useEffect(() => {
-    if (isNative) {
-      navigate(user?.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard', { replace: true });
-    }
-  }, [isNative, navigate, user]);
+  const isNative = Capacitor.isNativePlatform();
+
+  // Route to dashboard if they already have an active subscription/trial
 
   // Handle Paytm/Cashfree callback redirects
   useEffect(() => {
@@ -162,16 +158,13 @@ const SelectPlanPage = () => {
   };
 
   if (isNative) {
-    // TEMP: Bypassing subscription block on mobile app. Re-enable later by restoring the blocking warning view.
-    return null;
-    /*
     return (
       <div style={styles.page}>
-        // Background Ambient Orbs
+        {/* Background Ambient Orbs */}
         <div style={styles.orb1} />
         <div style={styles.orb2} />
 
-        // Top Actions
+        {/* Top Actions */}
         <div style={{ 
           position: 'absolute', 
           top: 'calc(1.25rem + env(safe-area-inset-top, 0px))', 
@@ -181,12 +174,12 @@ const SelectPlanPage = () => {
           <ThemeToggle />
         </div>
 
-        // Clean Logo Header
+        {/* Clean Logo Header */}
         <div style={{ marginTop: '2rem', marginBottom: '4rem', textAlign: 'center', zIndex: 10 }}>
           <img src="/logo.png" alt="easyPG" style={{ height: 50, objectFit: 'contain' }} />
         </div>
 
-        // Premium Native Subscription Card
+        {/* Premium Native Subscription Card */}
         <div className="slide-up" style={{
           position: 'relative',
           width: '100%',
@@ -199,7 +192,7 @@ const SelectPlanPage = () => {
           boxShadow: 'var(--shadow-md)',
           zIndex: 10,
         }}>
-          // Accent Purple Top Border
+          {/* Accent Purple Top Border */}
           <div style={{
             position: 'absolute',
             top: 0,
@@ -211,7 +204,7 @@ const SelectPlanPage = () => {
             borderTopRightRadius: 24,
           }} />
 
-          // Glowing Warning Icon
+          {/* Glowing Warning Icon */}
           <div className="pulse-warning-glow" style={{
             width: 80,
             height: 80,
@@ -244,34 +237,11 @@ const SelectPlanPage = () => {
             marginBottom: '2.5rem',
             fontWeight: 500,
           }}>
-            Your 2-day free trial has expired. To continue using easyPG and managing your properties, please activate a plan.
+            Your free trial has expired. To continue using easyPG and managing your properties, please log in on the web portal to activate your subscription.
           </p>
 
-          // Action Buttons
+          {/* Action Buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <button
-              onClick={() => window.open('https://easypg.in/select-plan', '_blank')}
-              className="native-pay-btn"
-              style={{
-                width: '100%',
-                padding: '1rem 1.5rem',
-                background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)',
-                border: 'none',
-                borderRadius: 14,
-                cursor: 'pointer',
-                fontSize: '0.95rem',
-                fontWeight: 700,
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                boxShadow: 'var(--shadow-glow)',
-              }}
-            >
-              Pay to Continue
-            </button>
-
             <button
               onClick={logoutContext}
               className="native-logout-btn"
@@ -304,24 +274,19 @@ const SelectPlanPage = () => {
             0%, 100% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 20px rgba(245, 158, 11, 0.1); }
             50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px rgba(245, 158, 11, 0.25); }
           }
-          .native-pay-btn, .native-logout-btn {
+          .native-logout-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-          .native-pay-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
           }
           .native-logout-btn:hover {
             transform: translateY(-2px);
             background: rgba(255, 255, 255, 0.08);
           }
-          .native-pay-btn:active, .native-logout-btn:active {
+          .native-logout-btn:active {
             transform: translateY(0);
           }
         `}</style>
       </div>
     );
-    */
   }
 
   return (

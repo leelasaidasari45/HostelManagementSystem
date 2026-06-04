@@ -103,11 +103,8 @@ import MobileSplash from './components/MobileSplash';
 import { ThemeProvider } from './context/ThemeContext';
 import { usePushNotifications } from './hooks/usePushNotifications';
 
-// Detect Capacitor native platform
-const isNative = typeof window !== 'undefined' &&
-  (window.Capacitor?.isNativePlatform?.() ||
-   window.cordova !== undefined ||
-   /android/i.test(navigator.userAgent) && window.location.protocol === 'file:');
+import { Capacitor } from '@capacitor/core';
+const isNative = Capacitor.isNativePlatform();
 
 function AppContent() {
   const location = useLocation();

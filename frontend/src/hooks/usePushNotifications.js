@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import { PushNotifications } from '@capacitor/push-notifications';
 import api from '../api';
 
-const isNative = typeof window !== 'undefined' &&
-  (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+import { Capacitor } from '@capacitor/core';
+const isNative = Capacitor.isNativePlatform();
 
 export function usePushNotifications(user) {
   const registered = useRef(false);

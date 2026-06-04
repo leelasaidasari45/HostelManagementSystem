@@ -17,11 +17,9 @@ const LandingPage = () => {
   const [leadForm, setLeadForm] = React.useState({ name: '', phone: '', hostelCapacity: '' });
   const [leadSubmitting, setLeadSubmitting] = React.useState(false);
 
-  // Detect Capacitor native platform
-  const isNative = typeof window !== 'undefined' &&
-    (window.Capacitor?.isNativePlatform?.() ||
-     window.cordova !== undefined ||
-     (/android/i.test(navigator.userAgent) && window.location.protocol === 'file:'));
+import { Capacitor } from '@capacitor/core';
+
+  const isNative = Capacitor.isNativePlatform();
 
   // Trigger popup after 7 seconds from initial page load
   React.useEffect(() => {
