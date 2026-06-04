@@ -20,8 +20,13 @@ const api = axios.create({
   timeout: 60000, // 60s timeout for Render free-tier cold starts
 });
 
-// Setting default credentials so cookies are always passed with requests (fallback)
-api.defaults.withCredentials = true;
+const isNativeApp = typeof window !== 'undefined' &&
+  (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+
+// Setting default credentials so cookies are always passed with requests on the Web.
+// On Mobile Native apps, we disable this to avoid stubborn ghost sessions across logouts,
+// and rely entirely on the Bearer token instead.
+api.defaults.withCredentials = !isNativeApp;
 
 // Append Bearer token for Mobile / Safari persistence
 api.interceptors.request.use((config) => {

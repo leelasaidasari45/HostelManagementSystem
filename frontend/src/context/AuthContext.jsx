@@ -24,7 +24,12 @@ export const AuthProvider = ({ children }) => {
   });
   const hasTimedOut = useRef(false);
 
-  api.defaults.withCredentials = true;
+  const isNativeApp = typeof window !== 'undefined' &&
+    (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+  
+  // On mobile apps, we rely purely on the Bearer token in localStorage
+  // because native WebView cookies are persistent across logouts and cause stubborn session ghosts.
+  api.defaults.withCredentials = !isNativeApp;
 
   // Check if subscription is valid (owner-specific check)
   const isSubscriptionValid = useCallback((userData) => {
