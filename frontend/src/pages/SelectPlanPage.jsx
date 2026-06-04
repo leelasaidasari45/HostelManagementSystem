@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, ArrowRight, CheckCircle2, ShieldCheck, Sparkles, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -12,9 +13,6 @@ const SelectPlanPage = () => {
   const { logoutContext, user, loginContext } = useAuth();
   const [promoTimeLeft, setPromoTimeLeft] = useState('');
   const [isPromoActive, setIsPromoActive] = useState(false);
-
-import { Capacitor } from '@capacitor/core';
-
   const isNative = Capacitor.isNativePlatform();
 
   // Route to dashboard if they already have an active subscription/trial

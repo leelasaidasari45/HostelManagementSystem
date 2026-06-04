@@ -1,4 +1,5 @@
 import React from 'react';
+import { Capacitor } from '@capacitor/core';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, Layers, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play, CalendarCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -16,8 +17,6 @@ const LandingPage = () => {
   const [showLeadPopup, setShowLeadPopup] = React.useState(false);
   const [leadForm, setLeadForm] = React.useState({ name: '', phone: '', hostelCapacity: '' });
   const [leadSubmitting, setLeadSubmitting] = React.useState(false);
-
-import { Capacitor } from '@capacitor/core';
 
   const isNative = Capacitor.isNativePlatform();
 
