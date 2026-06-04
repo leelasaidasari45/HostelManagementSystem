@@ -715,8 +715,8 @@ const TenantsPage = () => {
                     {selectedTenant.aadhaarFile && (
                       <div style={{ 
                         padding: '1rem', 
-                        background: 'rgba(234, 179, 8, 0.04)', 
-                        border: '1px solid rgba(234, 179, 8, 0.15)', 
+                        background: 'rgba(124, 58, 237, 0.04)', 
+                        border: '1px solid rgba(124, 58, 237, 0.15)', 
                         borderRadius: 16, 
                         display: 'flex', 
                         alignItems: 'center', 
@@ -725,7 +725,7 @@ const TenantsPage = () => {
                         marginTop: '0.25rem'
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <div style={{ background: 'rgba(234, 179, 8, 0.1)', padding: '0.5rem', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ background: 'rgba(124, 58, 237, 0.1)', padding: '0.5rem', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <ShieldCheck size={20} style={{ color: 'var(--aurora-1)' }} />
                           </div>
                           <div>
@@ -737,7 +737,7 @@ const TenantsPage = () => {
                           onClick={() => handleAadhaarDownload(selectedTenant.aadhaarFile, selectedTenant.user?.name || 'Tenant')}
                           style={{ 
                             padding: '0.5rem 1rem', 
-                            background: 'linear-gradient(135deg, var(--aurora-1) 0%, #a16207 100%)', 
+                            background: 'linear-gradient(135deg, var(--aurora-1) 0%, #4f46e5 100%)', 
                             color: '#fff', 
                             border: 'none', 
                             borderRadius: 10, 
@@ -748,7 +748,7 @@ const TenantsPage = () => {
                             alignItems: 'center', 
                             gap: '0.4rem', 
                             flexShrink: 0,
-                            boxShadow: '0 4px 12px rgba(234, 179, 8, 0.2)'
+                            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.2)'
                           }}
                         >
                           <FileText size={14} /> Download
@@ -854,8 +854,8 @@ const TenantsPage = () => {
                           style={{
                             textDecoration: 'none',
                             padding: '0.85rem',
-                            background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%)',
-                            border: '1px solid rgba(234, 179, 8, 0.2)',
+                            background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%)',
+                            border: '1px solid rgba(124, 58, 237, 0.2)',
                             borderRadius: 14,
                             color: 'var(--aurora-1)',
                             fontWeight: 700,

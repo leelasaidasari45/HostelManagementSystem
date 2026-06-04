@@ -75,7 +75,7 @@ const OwnerDashboard = () => {
 
         {!activeHostel ? (
           <div className="glass-panel p-8 text-center" style={{ maxWidth: 480, margin: '4rem auto' }}>
-            <div style={{ width:72, height:72, background:'rgba(234, 179, 8,0.12)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 1.5rem' }}>
+            <div style={{ width:72, height:72, background:'rgba(124, 58, 237,0.12)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 1.5rem' }}>
               <Building2 size={36} style={{ color: 'var(--aurora-1)' }} />
             </div>
             <h3 style={{ marginBottom:'.75rem' }}>No Property Found</h3>

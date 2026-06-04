@@ -40,13 +40,13 @@ const TrialCountdownBanner = () => {
   const warning = timeInfo.days <= 1;          // 1 day
   const color   = urgent  ? '#ef4444'
                 : warning ? '#f97316'
-                :           '#eab308';
+                :           '#7c3aed';
   const bg      = urgent  ? 'rgba(239,68,68,0.10)'
                 : warning ? 'rgba(249,115,22,0.10)'
-                :           'rgba(234, 179, 8,0.10)';
+                :           'rgba(124, 58, 237,0.10)';
   const border  = urgent  ? 'rgba(239,68,68,0.25)'
                 : warning ? 'rgba(249,115,22,0.25)'
-                :           'rgba(234, 179, 8,0.25)';
+                :           'rgba(124, 58, 237,0.25)';
 
   const label = timeInfo.expired
     ? 'Trial Expired'
@@ -70,7 +70,7 @@ const TrialCountdownBanner = () => {
       {/* Icon */}
       <div style={{
         width: 38, height: 38, borderRadius: 10,
-        background: `rgba(${urgent ? '239,68,68' : warning ? '249,115,22' : '234, 179, 8'},0.15)`,
+        background: `rgba(${urgent ? '239,68,68' : warning ? '249,115,22' : '124, 58, 237'},0.15)`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 0,
       }}>
@@ -348,15 +348,15 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
             <div className="feature-badge" style={{ color: '#6366f1', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
             </div>
-            <h3>Never Miss Tenants With<br/><span style={{ background: '#a16207', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
+            <h3>Never Miss Tenants With<br/><span style={{ background: '#4f46e5', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
             <p style={{ marginBottom: '1rem' }}>Tenants scan and join instantly without manual entry.</p>
             <div className="feature-btn">Generate QR</div>
           </div>
           <div className="feature-banner banner-blue">
-            <div className="feature-badge" style={{ color: '#fef08a', background: 'var(--bg-base)' }}>
+            <div className="feature-badge" style={{ color: '#2563eb', background: 'var(--bg-base)' }}>
               <span className="dot" style={{ background: '#10b981' }}></span> New Feature
             </div>
-            <h3>Never Miss Rent With<br/><span style={{ background: '#fef08a', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>Autopay</span></h3>
+            <h3>Never Miss Rent With<br/><span style={{ background: '#2563eb', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>Autopay</span></h3>
             <p style={{ marginBottom: '1rem' }}>Set up automatic monthly rent payments easily.</p>
             <div className="feature-btn">Activate Now</div>
           </div>

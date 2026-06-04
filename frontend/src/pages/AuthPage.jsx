@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, User, Eye, EyeOff, Moon, Sun, Building, CheckCircle2, Phone } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Moon, Sun, CheckCircle2, Phone, Zap, Shield, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -438,7 +438,7 @@ const AuthPage = () => {
                     </div>
                     {isSelected && (
                       <div className="lang-tick">
-                        <CheckCircle2 size={18} fill="#fef08a" color="#ffffff" />
+                        <CheckCircle2 size={18} fill="#2563eb" color="#ffffff" />
                       </div>
                     )}
                   </div>
@@ -560,7 +560,7 @@ const AuthPage = () => {
               <p style={{ textAlign: 'center', marginTop: '0.5rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
                 {t.newToEasyPg}{' '}
                 <span 
-                  style={{ color: '#fef08a', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
+                  style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
                   onClick={() => {
                     setFormData(prev => ({ ...prev, email: emailInput.trim().toLowerCase() }));
                     setMobileStep('register');
@@ -663,14 +663,14 @@ const AuthPage = () => {
               </button>
               
               <div className="password-links">
-                <Link to="/forgot-password" style={{ color: '#fef08a', fontSize: '.85rem', textDecoration: 'none' }}>{t.forgotPassword}</Link>
+                <Link to="/forgot-password" style={{ color: '#2563eb', fontSize: '.85rem', textDecoration: 'none' }}>{t.forgotPassword}</Link>
                 <span className="back-link" onClick={() => setMobileStep('email')}>{t.changeEmail}</span>
               </div>
 
               <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--text-dim)' }}>
                 {t.newToEasyPg}{' '}
                 <span 
-                  style={{ color: '#fef08a', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
+                  style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }} 
                   onClick={() => setMobileStep('register')}
                 >
                   {t.signUp}
@@ -841,58 +841,67 @@ const AuthPage = () => {
   // ==================== DESKTOP AUTH LAYOUT ====================
   return (
     <div className={`auth-page-v2 ${!isDarkMode ? 'light' : ''}`}>
+      {/* Theme Toggle Floating Button */}
+      <button 
+        className="theme-btn"
+        onClick={toggleTheme}
+        type="button"
+        title="Toggle theme"
+        style={{ position: 'absolute', top: '2rem', right: '2.5rem', zIndex: 100 }}
+      >
+        {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+      </button>
+
       <div className="auth-wrapper">
-        {/* Navigation */}
-        <div className="auth-nav">
-          <Link to="/" className="auth-logo-link">
-            <img src="/logo.png" alt="easyPG" style={{ height: '32px', objectFit: 'contain' }} />
-          </Link>
-          <button 
-            className="theme-btn"
-            onClick={toggleTheme}
-            type="button"
-            title="Toggle theme"
-          >
-            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
-        </div>
 
         {/* Main Content */}
         <div className="auth-container-v2">
           {/* Left Decorative Section */}
           <div className="auth-decoration">
             <div className="decoration-card">
+              <div className="decoration-badge">
+                <span className="decoration-badge-dot"></span>
+                Trusted by 500+ Hostel Owners
+              </div>
               <div className="decoration-header">
-                <h2>Modern Living, <br/>Simplified.</h2>
-                <p>The all-in-one management suite for modern property owners and happy tenants.</p>
+                <h2>Modern Living,<br/>Simplified.</h2>
+                <p>The all-in-one management suite for property owners and happy tenants across India.</p>
               </div>
               <div className="decoration-features">
                 <div className="feature-item">
-                  <div className="feature-check">
-                    <CheckCircle2 size={24} />
-                  </div>
+                  <div className="feature-check"><Zap size={20} /></div>
                   <div>
-                    <h4>Smart Operations</h4>
-                    <p>Automate your workflow and save hours every week.</p>
+                    <h4>Smart Automation</h4>
+                    <p>Automate billing, reminders & reports effortlessly.</p>
                   </div>
                 </div>
                 <div className="feature-item">
-                  <div className="feature-check">
-                    <CheckCircle2 size={24} />
-                  </div>
+                  <div className="feature-check"><Shield size={20} /></div>
                   <div>
-                    <h4>Secure Infrastructure</h4>
-                    <p>Bank-grade encryption for all your sensitive data.</p>
+                    <h4>Bank-Grade Security</h4>
+                    <p>End-to-end encryption for all your sensitive data.</p>
                   </div>
                 </div>
                 <div className="feature-item">
-                  <div className="feature-check">
-                    <CheckCircle2 size={24} />
-                  </div>
+                  <div className="feature-check"><BarChart3 size={20} /></div>
                   <div>
-                    <h4>Unified Experience</h4>
-                    <p>One platform for billing, maintenance, and communication.</p>
+                    <h4>Real-Time Analytics</h4>
+                    <p>Powerful dashboards to track occupancy and revenue.</p>
                   </div>
+                </div>
+              </div>
+              <div className="deco-stats">
+                <div className="deco-stat">
+                  <span className="deco-stat-value">500+</span>
+                  <span className="deco-stat-label">Hostels</span>
+                </div>
+                <div className="deco-stat">
+                  <span className="deco-stat-value">10K+</span>
+                  <span className="deco-stat-label">Tenants</span>
+                </div>
+                <div className="deco-stat">
+                  <span className="deco-stat-value">99.9%</span>
+                  <span className="deco-stat-label">Uptime</span>
                 </div>
               </div>
             </div>
@@ -903,8 +912,8 @@ const AuthPage = () => {
             <div className="form-container">
               {/* Form Header */}
               <div className="form-header">
-                <h1>{isLogin ? 'Welcome Back' : 'Get Started'}</h1>
-                <p>{isLogin ? 'Enter your credentials to access your dashboard' : 'Create an account to start managing your property'}</p>
+                <h1>{isLogin ? 'Welcome back 👋' : 'Get started free'}</h1>
+                <p>{isLogin ? 'Sign in to access your dashboard' : 'Create your account and start managing today'}</p>
               </div>
 
               {/* Toggle Buttons */}
@@ -1001,6 +1010,12 @@ const AuthPage = () => {
                   </div>
                 )}
 
+                {isLogin && (
+                  <div className="forgot-row">
+                    <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
+                  </div>
+                )}
+
                 <button 
                   type="submit" 
                   className="submit-btn"
@@ -1008,7 +1023,7 @@ const AuthPage = () => {
                 >
                   {loading ? (
                     <span className="pulse-opacity">
-                      {isLogin ? 'Authenticating' : 'Preparing Workspace'}
+                      {isLogin ? 'Signing in' : 'Creating account'}
                       <span className="pulsing-dot-container">
                         <span className="pulsing-dot"></span>
                         <span className="pulsing-dot"></span>
@@ -1016,7 +1031,7 @@ const AuthPage = () => {
                       </span>
                     </span>
                   ) : (
-                    <>{isLogin ? 'Continue to Dashboard' : 'Create My Account'}</>
+                    <>{isLogin ? '→ Continue to Dashboard' : '→ Create My Account'}</>
                   )}
                 </button>
               </form>
@@ -1043,7 +1058,7 @@ const AuthPage = () => {
 
               {/* Footer */}
               <p className="form-footer">
-                {isLogin ? "New to AntiGravity?" : 'Already a member?'}{' '}
+                {isLogin ? "New to easyPG?" : 'Already a member?'}{' '}
                 <button 
                   type="button" 
                   onClick={() => handleToggle(isLogin ? 'register' : 'login')} 

@@ -29,7 +29,7 @@ const MobileTenantBottomNav = ({ activeTab, setActiveTab }) => {
             onClick={() => setActiveTab('dashboard')} 
             style={{ 
               background: '#ffffff', 
-              boxShadow: '0 8px 24px rgba(234, 179, 8, 0.35)',
+              boxShadow: '0 8px 24px rgba(124, 58, 237, 0.35)',
               border: '3px solid var(--aurora-1)',
               width: '60px',
               height: '60px',

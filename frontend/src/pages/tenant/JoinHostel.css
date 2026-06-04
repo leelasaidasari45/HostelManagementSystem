@@ -22,7 +22,7 @@
 }
 .join-orb-1 {
   width: 360px; height: 360px;
-  background: radial-gradient(circle, rgba(234, 179, 8,0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(124, 58, 237,0.2) 0%, transparent 70%);
   top: -100px; left: -80px;
   animation: float 9s ease-in-out infinite;
 }
@@ -55,7 +55,7 @@
   background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
   border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 14px rgba(234, 179, 8,0.4);
+  box-shadow: 0 0 14px rgba(124, 58, 237,0.4);
 }
 .join-logo-text {
   font-family: 'Space Grotesk', sans-serif;
@@ -118,7 +118,7 @@
   background: var(--aurora-1);
   border-color: var(--aurora-1);
   color: #fff;
-  box-shadow: 0 0 12px rgba(234, 179, 8,0.45);
+  box-shadow: 0 0 12px rgba(124, 58, 237,0.45);
 }
 .join-step span {
   font-size: .7rem;
@@ -134,14 +134,14 @@
   border: 1px solid var(--border-muted);
   border-radius: var(--r-xl);
   padding: 2rem 1.75rem;
-  box-shadow: var(--shadow-md), 0 0 40px rgba(234, 179, 8,0.06);
+  box-shadow: var(--shadow-md), 0 0 40px rgba(124, 58, 237,0.06);
 }
 
 /* Step 1 */
 .join-icon-wrap {
   width: 56px; height: 56px;
-  background: rgba(234, 179, 8,0.12);
-  border: 1px solid rgba(234, 179, 8,0.2);
+  background: rgba(124, 58, 237,0.12);
+  border: 1px solid rgba(124, 58, 237,0.2);
   border-radius: var(--r-xl);
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 1.25rem;
@@ -225,7 +225,7 @@ h2.join-body { margin-bottom: .4rem; }
 }
 .file-upload-zone:hover {
   border-color: var(--aurora-1);
-  background: rgba(234, 179, 8,0.06);
+  background: rgba(124, 58, 237,0.06);
 }
 
 /* Pending icon */

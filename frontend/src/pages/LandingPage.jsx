@@ -229,7 +229,7 @@ const LandingPage = () => {
       {/* Hero */}
       <main className="hero-section">
         <div className="hero-badge scroll-reveal reveal-fade-in delay-1">
-          <Rocket size={14} style={{ color: '#eab308' }} />
+          <Rocket size={14} style={{ color: '#7c3aed' }} />
           <span>Hostel Management System</span>
         </div>
 

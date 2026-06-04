@@ -76,12 +76,12 @@ const SelectRolePage = () => {
   };
 
   const ownerFeatures = [
-    { icon: BarChart3, text: 'Live Analytics', color: '234, 179, 8' },
-    { icon: Users, text: 'Tenant Management', color: '234, 179, 8' },
-    { icon: CreditCard, text: 'Rent Collection', color: '234, 179, 8' },
-    { icon: Bell, text: 'Smart Notices', color: '234, 179, 8' },
-    { icon: Shield, text: 'Verified Tenants', color: '234, 179, 8' },
-    { icon: Building2, text: 'Multi-Property', color: '234, 179, 8' },
+    { icon: BarChart3, text: 'Live Analytics', color: '124, 58, 237' },
+    { icon: Users, text: 'Tenant Management', color: '124, 58, 237' },
+    { icon: CreditCard, text: 'Rent Collection', color: '124, 58, 237' },
+    { icon: Bell, text: 'Smart Notices', color: '124, 58, 237' },
+    { icon: Shield, text: 'Verified Tenants', color: '124, 58, 237' },
+    { icon: Building2, text: 'Multi-Property', color: '124, 58, 237' },
   ];
 
   const tenantFeatures = [
@@ -145,7 +145,7 @@ const SelectRolePage = () => {
 
 
             {/* Icon */}
-            <div style={{ ...s.iconWrap, background: 'rgba(234, 179, 8,0.1)', border: '1px solid rgba(234, 179, 8,0.25)' }}>
+            <div style={{ ...s.iconWrap, background: 'rgba(124, 58, 237,0.1)', border: '1px solid rgba(124, 58, 237,0.25)' }}>
               <Building2 size={36} style={{ color: '#a78bfa' }} />
             </div>
 
@@ -167,8 +167,8 @@ const SelectRolePage = () => {
             {/* CTA */}
             <div style={{
               ...s.cta,
-              background: 'linear-gradient(135deg, #eab308, #a16207)',
-              boxShadow: hoveredCard === 'owner' ? '0 6px 24px rgba(234, 179, 8,0.45)' : '0 2px 10px rgba(234, 179, 8,0.25)',
+              background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+              boxShadow: hoveredCard === 'owner' ? '0 6px 24px rgba(124, 58, 237,0.45)' : '0 2px 10px rgba(124, 58, 237,0.25)',
             }}>
               {loading && selected === 'owner' ? (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -430,11 +430,11 @@ const s = {
   },
 
   cardHoverOwner: {
-    borderColor: 'rgba(234, 179, 8,0.4)',
-    boxShadow: '0 8px 30px rgba(234, 179, 8,0.12)',
+    borderColor: 'rgba(124, 58, 237,0.4)',
+    boxShadow: '0 8px 30px rgba(124, 58, 237,0.12)',
   },
   cardActiveOwner: {
-    borderColor: 'rgba(234, 179, 8,0.6)',
+    borderColor: 'rgba(124, 58, 237,0.6)',
   },
   cardHoverTenant: {
     borderColor: 'rgba(5,150,105,0.4)',
