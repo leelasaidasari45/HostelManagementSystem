@@ -182,7 +182,7 @@ function AppContent() {
       />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={isNative ? <Navigate to="/login" replace /> : <LandingPage />} />
           <Route path="/login" element={<AuthPage />} />
           <Route path="/register" element={<AuthPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
