@@ -390,15 +390,40 @@ const AuthPage = () => {
   // ==================== MOBILE (NATIVE & WEB) LAYOUT ====================
   if (isNative || isMobile) {
     return (
-      <div style={{
+      <div className={`auth-page-v2 ${!isDarkMode ? 'light' : ''}`} style={{
         minHeight: '100vh',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--bg-base, #ffffff)',
         padding: '2.5rem 1.5rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        fontFamily: "'Inter', sans-serif"
+        fontFamily: "'Inter', sans-serif",
+        position: 'relative'
       }}>
+        {/* Theme Toggle */}
+        <button 
+          onClick={toggleTheme}
+          style={{
+            position: 'absolute',
+            top: '1.5rem',
+            right: '1.5rem',
+            background: 'var(--bg-surface, #ffffff)',
+            border: '1px solid var(--border-muted, #e5e7eb)',
+            color: 'var(--text-bright, #111827)',
+            cursor: 'pointer',
+            padding: '0.5rem',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'var(--shadow-sm)',
+            width: 36,
+            height: 36,
+          }}
+        >
+          {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
+
         {/* Logo */}
         <div style={{ marginTop: '2rem', marginBottom: '1.5rem', textAlign: 'center' }}>
           <img src="/logo.png" alt="easyPG" style={{ height: 100, objectFit: 'contain' }} />
@@ -406,10 +431,10 @@ const AuthPage = () => {
 
         {/* Headings */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#111827', margin: '0 0 0.4rem 0' }}>
+          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-bright, #111827)', margin: '0 0 0.4rem 0' }}>
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h1>
-          <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: 0 }}>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-dim, #6b7280)', margin: 0 }}>
             {isLogin ? 'Login to your account' : 'Sign up to get started'}
           </p>
         </div>
@@ -419,7 +444,7 @@ const AuthPage = () => {
           
           {!isLogin && (
             <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#111827', marginBottom: '0.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
                 Full Name
               </label>
               <input 
@@ -432,10 +457,10 @@ const AuthPage = () => {
                   width: '100%',
                   padding: '0.875rem 1.25rem',
                   borderRadius: '12px',
-                  border: '1px solid #f3f4f6',
-                  backgroundColor: '#ffffff',
+                  border: '1px solid var(--border-muted, #f3f4f6)',
+                  backgroundColor: 'var(--bg-surface, #ffffff)',
                   fontSize: '0.9rem',
-                  color: '#111827',
+                  color: 'var(--text-bright, #111827)',
                   outline: 'none',
                   boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
                 }}
@@ -444,7 +469,7 @@ const AuthPage = () => {
           )}
 
           <div style={{ marginBottom: '1.25rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#111827', marginBottom: '0.5rem' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
               Email
             </label>
             <input 
@@ -457,10 +482,10 @@ const AuthPage = () => {
                 width: '100%',
                 padding: '0.875rem 1.25rem',
                 borderRadius: '12px',
-                border: '1px solid #f3f4f6',
-                backgroundColor: '#ffffff',
+                border: '1px solid var(--border-muted, #f3f4f6)',
+                backgroundColor: 'var(--bg-surface, #ffffff)',
                 fontSize: '0.9rem',
-                color: '#111827',
+                color: 'var(--text-bright, #111827)',
                 outline: 'none',
                 boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
               }}
@@ -468,7 +493,7 @@ const AuthPage = () => {
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#111827', marginBottom: '0.5rem' }}>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
               Password
             </label>
             <div style={{ position: 'relative' }}>
@@ -482,10 +507,10 @@ const AuthPage = () => {
                   width: '100%',
                   padding: '0.875rem 2.5rem 0.875rem 1.25rem',
                   borderRadius: '12px',
-                  border: '1px solid #f3f4f6',
-                  backgroundColor: '#ffffff',
+                  border: '1px solid var(--border-muted, #f3f4f6)',
+                  backgroundColor: 'var(--bg-surface, #ffffff)',
                   fontSize: '0.9rem',
-                  color: '#111827',
+                  color: 'var(--text-bright, #111827)',
                   outline: 'none',
                   boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
                 }}
@@ -514,7 +539,7 @@ const AuthPage = () => {
 
           {!isLogin && (
             <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#111827', marginBottom: '0.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
                 Confirm Password
               </label>
               <div style={{ position: 'relative' }}>
@@ -528,10 +553,10 @@ const AuthPage = () => {
                     width: '100%',
                     padding: '0.875rem 2.5rem 0.875rem 1.25rem',
                     borderRadius: '12px',
-                    border: '1px solid #f3f4f6',
-                    backgroundColor: '#ffffff',
+                    border: '1px solid var(--border-muted, #f3f4f6)',
+                    backgroundColor: 'var(--bg-surface, #ffffff)',
                     fontSize: '0.9rem',
-                    color: '#111827',
+                    color: 'var(--text-bright, #111827)',
                     outline: 'none',
                     boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
                   }}
@@ -589,7 +614,7 @@ const AuthPage = () => {
           )}
 
           <div style={{ textAlign: 'center', marginTop: 'auto', paddingTop: '3rem' }}>
-            <span style={{ color: '#6b7280', fontSize: '0.85rem' }}>
+            <span style={{ color: 'var(--text-dim, #6b7280)', fontSize: '0.85rem' }}>
               {isLogin ? "Don't have an account?" : "Already have an account?"}
             </span>
             <button 
