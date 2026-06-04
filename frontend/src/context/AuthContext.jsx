@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, useRef, useCallback } from 'react';
 import api from '../api';
+import { supabase } from '../supabaseClient';
 
 const AuthContext = createContext();
 
@@ -112,11 +113,23 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Backend logout failed, forcing frontend clear', err);
     } finally {
+      try { await supabase.auth.signOut(); } catch (e) {}
+      
       sessionStorage.clear();
       localStorage.removeItem('access_token');
       localStorage.removeItem('cached_user');
+      
+      const isNative = typeof window !== 'undefined' &&
+        (window.Capacitor?.isNativePlatform?.() || window.cordova !== undefined);
+      if (isNative) {
+        localStorage.clear();
+      }
+      
       setUser(null);
-      window.location.href = '/login';
+      
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 150);
     }
   }, []);
 
