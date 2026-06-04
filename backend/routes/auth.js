@@ -354,4 +354,28 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+// Delete Account
+router.delete('/delete-account', requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    // Delete user from database (cascade handles related data if set up, or it just deletes the user)
+    const { error } = await supabase.from('users').delete().eq('id', userId);
+    
+    if (error) throw error;
+
+    // Clear the cookie
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none'
+    });
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (err) {
+    console.error('Delete account error:', err);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+});
+
 export default router;
