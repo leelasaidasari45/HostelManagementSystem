@@ -248,26 +248,12 @@ const LandingPage = () => {
         </p>
 
         <div className="hero-cta scroll-reveal reveal-fade-in delay-3">
-          <Link to="/register" className="btn btn-primary btn-lg pulse-glow">
-            Start Free Trial <ArrowRight size={18} />
-          </Link>
           <button className="btn btn-secondary btn-lg demo-video-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
             <Play size={16} fill="currentColor" /> Demo Video
           </button>
-          <Link to="/login" className="btn btn-ghost btn-lg">
-            Sign In
+          <Link to="/register" className="btn btn-primary btn-lg pulse-glow">
+            Start Free Trial <ArrowRight size={18} />
           </Link>
-        </div>
-
-        {/* Stats bar */}
-        <div className="stats-bar scroll-reveal reveal-fade-in delay-4">
-          <div className="stat-pill"><strong>500+</strong> <span>Properties</span></div>
-          <div className="stat-divider" />
-          <div className="stat-pill"><strong>12k+</strong> <span>Tenants</span></div>
-          <div className="stat-divider" />
-          <div className="stat-pill"><strong>99.9%</strong> <span>Uptime</span></div>
-          <div className="stat-divider" />
-          <div className="stat-pill"><strong>₹2Cr+</strong> <span>Processed</span></div>
         </div>
       </main>
 
