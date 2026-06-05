@@ -25,6 +25,7 @@ const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
 const TenantDashboard = lazy(() => import('./pages/tenant/TenantDashboard'));
 const SearchHostels = lazy(() => import('./pages/tenant/SearchHostels'));
 const JoinHostel = lazy(() => import('./pages/tenant/JoinHostel'));
+const TenantProfilePage = lazy(() => import('./pages/tenant/TenantProfilePage'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
@@ -200,6 +201,7 @@ function AppContent() {
           <Route path="/tenant/search" element={<ProtectedRoute roleType="tenant"><SearchHostels /></ProtectedRoute>} />
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
           <Route path="/tenant/dashboard" element={<ProtectedRoute roleType="tenant"><TenantDashboard /></ProtectedRoute>} />
+          <Route path="/tenant/profile" element={<ProtectedRoute roleType="tenant"><TenantProfilePage /></ProtectedRoute>} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>

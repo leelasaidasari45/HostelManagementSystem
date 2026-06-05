@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { LogOut, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '../../context/AuthContext';
-import NotificationBell from '../NotificationBell';
+import React from 'react';
+import { User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../owner/MobileOwnerHeader.css';
 
 const MobileTenantHeader = ({ dashData }) => {
-  const { isDarkMode, toggleTheme } = useTheme();
-  const { logoutContext } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="mobile-header-container">
@@ -26,12 +23,8 @@ const MobileTenantHeader = ({ dashData }) => {
         </div>
         
         <div className="header-right">
-          <NotificationBell />
-          <button className="icon-circle-btn" onClick={toggleTheme} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
-            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <button className="icon-circle-btn" onClick={logoutContext} title="Logout">
-            <LogOut size={18} />
+          <button className="icon-circle-btn" style={{ background: '#fff' }} onClick={() => navigate('/tenant/profile')} title="Profile">
+            <User size={18} color="#000" fill="#000" />
           </button>
         </div>
       </header>
