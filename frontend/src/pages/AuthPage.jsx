@@ -316,7 +316,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', email: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '', identifier: '', password: '', confirmPassword: '' });
 
   const t = translations[selectedLang] || translations.en;
 
@@ -356,7 +356,8 @@ const AuthPage = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const res = await api.post('/api/auth/login', { email: formData.email, password: formData.password });
+        if (!formData.identifier.trim()) throw new Error('Please enter email or mobile number');
+        const res = await api.post('/api/auth/login', { identifier: formData.identifier, password: formData.password });
         loginContext(res.data);
         toast.success('Welcome back!');
         navigate(res.data.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
@@ -496,13 +497,13 @@ const AuthPage = () => {
 
           <div style={{ marginBottom: '1.25rem' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
-              Email
+              {isLogin ? 'Email or Mobile Number' : 'Email Address'}
             </label>
             <input 
-              type="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              type={isLogin ? "text" : "email"}
+              placeholder={isLogin ? "e.g. name@domain.com or 9876543210" : "Enter your email"}
+              value={isLogin ? formData.identifier : formData.email}
+              onChange={(e) => setFormData({ ...formData, [isLogin ? 'identifier' : 'email']: e.target.value })}
               required
               style={{
                 width: '100%',
@@ -795,14 +796,14 @@ const AuthPage = () => {
                 )}
                 
                 <div className="form-group-v2">
-                  <label>Email Address</label>
+                  <label>{isLogin ? 'Email or Mobile Number' : 'Email Address'}</label>
                   <div className="input-field">
                     <Mail size={20} />
                     <input 
-                      type="email" 
-                      placeholder="name@company.com"
-                      value={formData.email} 
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                      type={isLogin ? "text" : "email"}
+                      placeholder={isLogin ? "name@domain.com or 9876543210" : "name@company.com"}
+                      value={isLogin ? formData.identifier : formData.email} 
+                      onChange={(e) => setFormData({ ...formData, [isLogin ? 'identifier' : 'email']: e.target.value })} 
                       required
                     />
                   </div>

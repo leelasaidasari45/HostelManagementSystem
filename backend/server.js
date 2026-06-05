@@ -11,6 +11,7 @@ import subscriptionRoutes from './routes/subscription.js';
 import cashfreeRoutes from './routes/cashfree.js';
 import adminRoutes from './routes/admin.js';
 import notificationRoutes from './routes/notifications.js';
+import { startCronJobs } from './cronJobs.js';
 
 dotenv.config();
 
@@ -51,6 +52,9 @@ app.use((err, req, res, next) => {
     message: err.message
   });
 });
+
+// Start Cron Jobs
+startCronJobs();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
