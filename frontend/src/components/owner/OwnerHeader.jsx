@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, QrCode, XCircle, Download, Sun, Moon } from 'lucide-react';
+import { LogOut, QrCode, XCircle, Download, Sun, Moon, Trash2, AlertTriangle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { useHostel } from '../../context/HostelContext';
@@ -7,6 +7,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import TrialBadge from '../TrialBadge';
 import toast from 'react-hot-toast';
+import api from '../../api';
 
 const OwnerHeader = ({ title, subtitle }) => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const OwnerHeader = ({ title, subtitle }) => {
   const { logoutContext, user } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const [showQrModal, setShowQrModal] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (showQrModal) document.body.classList.add('hide-sidebar-all');
@@ -41,6 +44,23 @@ const OwnerHeader = ({ title, subtitle }) => {
       img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
       toast.success('QR downloaded!');
     };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      await api.delete('/api/auth/delete-account');
+      toast.success('Account deleted successfully');
+      
+      setTimeout(() => {
+        logoutContext();
+      }, 1000);
+    } catch (err) {
+      setIsDeleting(false);
+      setShowConfirmDelete(false);
+      toast.error('Failed to delete account');
+      console.error(err);
+    }
+  };
 
 
 
@@ -88,8 +108,11 @@ const OwnerHeader = ({ title, subtitle }) => {
             </button>
           )}
 
-          {/* Avatar + Logout */}
-
+          {/* Avatar + Logout + Delete */}
+          <button onClick={() => setShowConfirmDelete(true)} className="icon-btn" title="Delete Account" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+            <Trash2 size={18} />
+          </button>
+          
           <button onClick={logoutContext} className="header-logout-btn" title="Logout">
             <LogOut size={16} /> <span className="btn-label">Logout</span>
           </button>
@@ -123,6 +146,38 @@ const OwnerHeader = ({ title, subtitle }) => {
               </button>
               <button className="btn btn-secondary w-full" onClick={() => { navigator.clipboard.writeText(joinUrl); toast.success('Link copied!'); }}>
                 Copy Join Link
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {showConfirmDelete && (
+        <div className="modal-backdrop fade-in" onClick={() => !isDeleting && setShowConfirmDelete(false)} style={{ zIndex: 10000 }}>
+          <div className="modal-card slide-up" onClick={e => e.stopPropagation()} style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px' }}>
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+              <AlertTriangle size={30} />
+            </div>
+            <h3 style={{ marginBottom: '0.5rem', color: '#f87171' }}>Delete Account?</h3>
+            <p style={{ color: 'var(--text-dim)', fontSize: '0.95rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+              This action is permanent and cannot be undone. All your properties, tenants, and payment history will be permanently deleted.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                className="btn btn-secondary w-full" 
+                onClick={() => setShowConfirmDelete(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary w-full" 
+                style={{ background: '#ef4444', border: 'none' }}
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Yes, Delete'}
               </button>
             </div>
           </div>
