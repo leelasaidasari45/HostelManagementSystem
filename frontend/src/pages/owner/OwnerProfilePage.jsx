@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Moon, Sun, QrCode, Bell, LogOut, Landmark, CreditCard, MessageSquare, Trash2, AlertTriangle, Download, XCircle, ChevronRight } from 'lucide-react';
-import { useAuth } from '../../../context/AuthContext';
-import { useTheme } from '../../../context/ThemeContext';
-import { useHostel } from '../../../context/HostelContext';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { useHostel } from '../../context/HostelContext';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
-import api from '../../../api';
+import api from '../../api';
 import './OwnerProfilePage.css';
 
 const OwnerProfilePage = () => {
