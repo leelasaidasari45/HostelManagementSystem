@@ -65,9 +65,9 @@ const OwnerProfilePage = () => {
           <span style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 600 }}>Help</span>
         </div>
         <div className="profile-user-info">
-          <h2>{user?.name || 'Owner'}</h2>
-          <p>{user?.phone || ''}</p>
-          <p>{user?.email || ''}</p>
+          <h2>{user?.name || user?.phone || 'Owner'}</h2>
+          {user?.name && user?.phone && <p>{user?.phone}</p>}
+          {user?.email && <p>{user?.email}</p>}
         </div>
       </div>
 
