@@ -13,6 +13,7 @@ import SubscriptionGuard from './components/SubscriptionGuard';
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const OwnerDashboard = lazy(() => import('./pages/owner/OwnerDashboard'));
+const OwnerProfilePage = lazy(() => import('./pages/owner/OwnerProfilePage'));
 const CreateHostel = lazy(() => import('./pages/owner/CreateHostel'));
 const RoomsPage = lazy(() => import('./pages/owner/RoomsPage'));
 const TenantsPage = lazy(() => import('./pages/owner/TenantsPage'));
@@ -188,6 +189,7 @@ function AppContent() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/owner/dashboard" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><OwnerDashboard /></SubscriptionGuard></ProtectedRoute>} />
+          <Route path="/owner/profile" element={<ProtectedRoute roleType="owner"><OwnerProfilePage /></ProtectedRoute>} />
           <Route path="/owner/create-hostel" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><CreateHostel /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/owner/rooms" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><RoomsPage /></SubscriptionGuard></ProtectedRoute>} />
           <Route path="/owner/complaints" element={<ProtectedRoute roleType="owner"><SubscriptionGuard><ComplaintsPage /></SubscriptionGuard></ProtectedRoute>} />
