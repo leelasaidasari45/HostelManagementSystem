@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Moon, Sun, QrCode, Bell, LogOut, Landmark, CreditCard, MessageSquare, Trash2, AlertTriangle, Download, XCircle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, QrCode, Bell, LogOut, Landmark, CreditCard, MessageSquare, Trash2, AlertTriangle, Download, XCircle, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useHostel } from '../../context/HostelContext';
@@ -54,21 +54,31 @@ const OwnerProfilePage = () => {
     }
   };
 
+  const displayName = user?.name && user.name !== user.phone ? user.name : (user?.name || user?.phone || 'Owner Profile');
+  const displayPhone = user?.phone && user.phone !== displayName ? user.phone : null;
+
   return (
     <div className="profile-page-container">
-      {/* Top Gradient Card */}
-      <div className="profile-top-card">
+      {/* Banner */}
+      <div className="profile-banner">
         <div className="profile-header">
           <button className="back-btn" onClick={() => navigate(-1)}>
-            <ArrowLeft size={24} color="#fff" />
+            <ArrowLeft size={24} className="icon-contrast" />
           </button>
-          <span style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 600 }}>Help</span>
+          <span className="header-title">Profile</span>
         </div>
-        <div className="profile-user-info">
-          <h2>{user?.name || user?.phone || 'Owner'}</h2>
-          {user?.name && user?.phone && <p>{user?.phone}</p>}
-          {user?.email && <p>{user?.email}</p>}
+      </div>
+
+      {/* Avatar and Info */}
+      <div className="profile-info-section">
+        <div className="profile-avatar">
+          <User size={40} className="avatar-icon" />
         </div>
+        <h2 className="profile-name">{displayName}</h2>
+        {displayPhone && <p className="profile-phone">{displayPhone}</p>}
+        {user?.email && <p className="profile-email">{user?.email}</p>}
+        
+        <div className="profile-role-badge">Property Owner</div>
       </div>
 
       <div className="profile-content">
