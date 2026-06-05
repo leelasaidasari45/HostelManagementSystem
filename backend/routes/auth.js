@@ -195,13 +195,27 @@ router.put('/update-role', requireAuth, async (req, res) => {
 // Login Route
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body;
+    const { identifier, email, password } = req.body;
+    const loginId = (identifier || email || '').trim();
     
-    // Check if user exists by email or phone
-    const { data: user, error } = await supabase.from('users')
+    // First check if user exists by email
+    let { data: user, error } = await supabase.from('users')
       .select('*')
-      .or(`email.eq."${identifier}",phone.eq."${identifier}"`)
+      .eq('email', loginId)
       .maybeSingle();
+
+    // If not found by email, check by phone
+    if (!user) {
+      const { data: userByPhone } = await supabase.from('users')
+        .select('*')
+        .eq('phone', loginId)
+        .maybeSingle();
+      
+      if (userByPhone) {
+        user = userByPhone;
+        error = null;
+      }
+    }
     
     if (error || !user) {
       return res.status(401).json({ error: 'Invalid login credentials' });
