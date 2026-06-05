@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Moon, Sun, CheckCircle2, Phone, Zap, Shield, BarChart3 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Moon, Sun, CheckCircle2, Phone, Zap, Shield, BarChart3, User, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -316,7 +316,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formData, setFormData] = useState({ phone: '', email: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '', password: '', confirmPassword: '' });
 
   const t = translations[selectedLang] || translations.en;
 
@@ -361,10 +361,11 @@ const AuthPage = () => {
         toast.success('Welcome back!');
         navigate(res.data.role === 'owner' ? '/owner/dashboard' : '/tenant/dashboard');
       } else {
+        if (!formData.name.trim()) throw new Error('Please enter your full name');
         if (!formData.phone.trim()) throw new Error(t.enterPhoneError);
         if (formData.password !== formData.confirmPassword) throw new Error(t.passwordMatchError);
         const res = await api.post('/api/auth/register', { 
-          name: formData.phone, 
+          name: formData.name, 
           phone: formData.phone,
           email: formData.email, 
           password: formData.password 
@@ -443,29 +444,54 @@ const AuthPage = () => {
         <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: 400 }}>
           
           {!isLogin && (
-            <div style={{ marginBottom: '1.25rem' }}>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
-                Full Name
-              </label>
-              <input 
-                type="text"
-                placeholder="Enter your name"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                required={!isLogin}
-                style={{
-                  width: '100%',
-                  padding: '0.875rem 1.25rem',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border-muted, #f3f4f6)',
-                  backgroundColor: 'var(--bg-surface, #ffffff)',
-                  fontSize: '0.9rem',
-                  color: 'var(--text-bright, #111827)',
-                  outline: 'none',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
-                }}
-              />
-            </div>
+            <>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
+                  Full Name
+                </label>
+                <input 
+                  type="text"
+                  placeholder="Enter your name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required={!isLogin}
+                  style={{
+                    width: '100%',
+                    padding: '0.875rem 1.25rem',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-muted, #f3f4f6)',
+                    backgroundColor: 'var(--bg-surface, #ffffff)',
+                    fontSize: '0.9rem',
+                    color: 'var(--text-bright, #111827)',
+                    outline: 'none',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-bright, #111827)', marginBottom: '0.5rem' }}>
+                  Mobile Number
+                </label>
+                <input 
+                  type="tel"
+                  placeholder="Enter your mobile number"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  required={!isLogin}
+                  style={{
+                    width: '100%',
+                    padding: '0.875rem 1.25rem',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-muted, #f3f4f6)',
+                    backgroundColor: 'var(--bg-surface, #ffffff)',
+                    fontSize: '0.9rem',
+                    color: 'var(--text-bright, #111827)',
+                    outline: 'none',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.02)'
+                  }}
+                />
+              </div>
+            </>
           )}
 
           <div style={{ marginBottom: '1.25rem' }}>
@@ -738,19 +764,34 @@ const AuthPage = () => {
               {/* Form */}
               <form onSubmit={handleSubmit} className="auth-form-v2">
                 {!isLogin && (
-                  <div className="form-group-v2">
-                    <label>{t.mobileNumber}</label>
-                    <div className="input-field">
-                      <Phone size={20} />
-                      <input 
-                        type="tel" 
-                        placeholder="e.g. 9876543210"
-                        value={formData.phone} 
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
-                        required={!isLogin}
-                      />
+                  <>
+                    <div className="form-group-v2">
+                      <label>Full Name</label>
+                      <div className="input-field">
+                        <User size={20} />
+                        <input 
+                          type="text" 
+                          placeholder="e.g. John Doe"
+                          value={formData.name} 
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                          required={!isLogin}
+                        />
+                      </div>
                     </div>
-                  </div>
+                    <div className="form-group-v2">
+                      <label>{t.mobileNumber}</label>
+                      <div className="input-field">
+                        <Phone size={20} />
+                        <input 
+                          type="tel" 
+                          placeholder="e.g. 9876543210"
+                          value={formData.phone} 
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
+                          required={!isLogin}
+                        />
+                      </div>
+                    </div>
+                  </>
                 )}
                 
                 <div className="form-group-v2">
