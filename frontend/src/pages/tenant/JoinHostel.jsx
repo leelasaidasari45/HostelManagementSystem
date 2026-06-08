@@ -294,15 +294,24 @@ const JoinHostel = () => {
 
       <div className="join-card">
         {/* Header */}
-        <div className="join-header">
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <img src="/logo.png" alt="easyPG" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
-          </Link>
-          {step === 2 && (
-            <button onClick={() => setStep(1)} className="join-back-btn">
-              <ArrowLeft size={16} /> Back
-            </button>
-          )}
+        <div className="join-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+              <img src="/logo.png" alt="easyPG" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+            </Link>
+            {step === 2 && (
+              <button onClick={() => setStep(1)} className="join-back-btn" style={{ marginLeft: '1rem' }}>
+                <ArrowLeft size={16} /> Back
+              </button>
+            )}
+          </div>
+          <button 
+            onClick={logoutContext} 
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+          >
+            <LogOut size={14} />
+            Logout
+          </button>
         </div>
 
         {/* Step indicators */}
