@@ -17,6 +17,7 @@
     font-weight: 700;
     color: var(--text-bright);
     margin-bottom: 1rem;
+    text-align: left;
   }
   
   /* Summary Section */
