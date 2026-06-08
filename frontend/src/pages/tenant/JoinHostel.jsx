@@ -371,7 +371,7 @@ const JoinHostel = () => {
           <div className="join-form-wrapper slide-up">
             <div className="form-card-elevated">
               <div className="hostel-found-banner">
-                <Sparkles size={20} style={{ color: '#f97316', flexShrink: 0 }} />
+                <Sparkles size={20} style={{ color: '#10b981', flexShrink: 0 }} />
                 <span>Joining <strong>{hostelName}</strong></span>
               </div>
 
