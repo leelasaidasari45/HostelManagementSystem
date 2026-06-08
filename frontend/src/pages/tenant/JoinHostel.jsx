@@ -368,102 +368,113 @@ const JoinHostel = () => {
 
         {/* ───── STEP 2: Application Form ───── */}
         {step === 2 && (
-          <div className="join-body slide-up">
-            <div className="hostel-found-banner" style={{ background: 'rgba(52,211,153,0.1)', borderColor: 'rgba(52,211,153,0.2)' }}>
-              <Sparkles size={18} style={{ color: '#34d399', flexShrink: 0 }} />
-              <span>Joining <strong>{hostelName}</strong></span>
+          <div className="join-form-layout slide-up">
+            <div className="premium-hostel-banner">
+              <div className="banner-icon"><Sparkles size={20} /></div>
+              <div className="banner-text">
+                <span className="banner-label">Joining Hostel</span>
+                <span className="banner-name">{hostelName}</span>
+              </div>
+              <div className="banner-check"><CheckCircle2 size={20} /></div>
             </div>
 
-            <h2 style={{ marginBottom: '.3rem' }}>Your Details</h2>
-            <p className="join-subtitle">This info is shared with your hostel owner for approval.</p>
+            <div className="form-header">
+              <h2>Your Details</h2>
+              <p>This info is shared with your hostel owner for approval.</p>
+            </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="premium-form">
               {[
-                { icon: <User size={16} />, label: 'Full Name',      key: 'tenantName',  type: 'text', placeholder: 'John Doe',         required: true },
-                { icon: <Phone size={16} />, label: 'Phone Number',  key: 'mobile',      type: 'tel',  placeholder: '+91 9876543210',    required: true },
-                { icon: <User size={16} />, label: "Father's Name",  key: 'fatherName',  type: 'text', placeholder: "Father's full name", required: true },
+                { icon: <User size={18} />, label: 'Full Name',      key: 'tenantName',  type: 'text', placeholder: 'John Doe',         required: true },
+                { icon: <Phone size={18} />, label: 'Phone Number',  key: 'mobile',      type: 'tel',  placeholder: '+91 9876543210',    required: true },
+                { icon: <User size={18} />, label: "Father's Name",  key: 'fatherName',  type: 'text', placeholder: "Father's full name", required: true },
               ].map(({ icon, label, key, type, placeholder, required }) => (
-                <div className="form-group" key={key}>
-                  <label className="form-label">{icon}&nbsp;{label}</label>
-                  <input type={type} className="form-control" placeholder={placeholder}
-                    value={formData[key]} onChange={e => setFormData({ ...formData, [key]: e.target.value })} required={required} />
+                <div className="premium-input-group" key={key}>
+                  <label className="premium-label">{label}</label>
+                  <div className="premium-input-wrapper">
+                    <span className="input-icon">{icon}</span>
+                    <input type={type} className="premium-input" placeholder={placeholder}
+                      value={formData[key]} onChange={e => setFormData({ ...formData, [key]: e.target.value })} required={required} />
+                  </div>
                 </div>
               ))}
 
-              <div className="form-group">
-                <label className="form-label"><Home size={16} />&nbsp;Permanent Address</label>
-                <textarea className="form-control" rows="2" placeholder="Street, City, State"
-                  value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} required />
+              <div className="premium-input-group">
+                <label className="premium-label">Permanent Address</label>
+                <div className="premium-input-wrapper textarea-wrapper">
+                  <span className="input-icon"><Home size={18} /></span>
+                  <textarea className="premium-input" rows="2" placeholder="Street, City, State"
+                    value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} required />
+                </div>
               </div>
 
               {/* Room number with auto rent lookup */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div className="form-group">
-                  <label className="form-label"><Hash size={16} />&nbsp;Room No.</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="e.g. 101"
-                    value={formData.roomNumber}
-                    onChange={e => handleRoomNumberChange(e.target.value)}
-                    required
-                  />
+              <div className="premium-grid-2">
+                <div className="premium-input-group">
+                  <label className="premium-label">Room No.</label>
+                  <div className="premium-input-wrapper">
+                    <span className="input-icon"><Hash size={18} /></span>
+                    <input
+                      type="text"
+                      className="premium-input"
+                      placeholder="e.g. 101"
+                      value={formData.roomNumber}
+                      onChange={e => handleRoomNumberChange(e.target.value)}
+                      required
+                    />
+                  </div>
                   {/* Rent auto-display */}
                   {roomRent && (
-                    <div style={{ marginTop: '.4rem', padding: '.4rem .7rem', background: 'rgba(124, 58, 237,0.1)', borderRadius: '8px', border: '1px solid rgba(124, 58, 237,0.2)', display: 'flex', alignItems: 'center', gap: '.4rem' }}>
-                      <IndianRupee size={13} style={{ color: 'var(--aurora-1)' }} />
-                      <span style={{ fontSize: '.82rem', color: 'var(--aurora-1)', fontWeight: 700 }}>
-                        Monthly Rent: ₹{roomRent.rent_amount.toLocaleString('en-IN')}
-                      </span>
+                    <div className="rent-badge fade-in">
+                      <IndianRupee size={12} /> ₹{roomRent.rent_amount.toLocaleString('en-IN')} / mo
                     </div>
                   )}
                 </div>
-                <div className="form-group">
-                  <label className="form-label"><Car size={16} />&nbsp;Vehicle (opt.)</label>
-                  <input type="text" className="form-control" placeholder="KA01AB1234"
-                    value={formData.vehicleNumber} onChange={e => setFormData({ ...formData, vehicleNumber: e.target.value })} />
+                <div className="premium-input-group">
+                  <label className="premium-label">Vehicle (opt.)</label>
+                  <div className="premium-input-wrapper">
+                    <span className="input-icon"><Car size={18} /></span>
+                    <input type="text" className="premium-input" placeholder="KA01AB1234"
+                      value={formData.vehicleNumber} onChange={e => setFormData({ ...formData, vehicleNumber: e.target.value })} />
+                  </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label"><Calendar size={16} />&nbsp;Expected Joining Date</label>
-                <input type="date" className="form-control"
-                  value={formData.admissionDate} onChange={e => setFormData({ ...formData, admissionDate: e.target.value })} required />
+              <div className="premium-input-group">
+                <label className="premium-label">Expected Joining Date</label>
+                <div className="premium-input-wrapper">
+                  <span className="input-icon"><Calendar size={18} /></span>
+                  <input type="date" className="premium-input"
+                    value={formData.admissionDate} onChange={e => setFormData({ ...formData, admissionDate: e.target.value })} required />
+                </div>
                 {formData.admissionDate && (
-                  <p style={{ fontSize: '.75rem', color: 'var(--text-ghost)', marginTop: '.3rem' }}>
-                    💡 Your rent will be due on the <strong>{new Date(formData.admissionDate).getDate()}</strong> of every month.
+                  <p className="date-hint fade-in">
+                    Rent due on the <strong>{new Date(formData.admissionDate).getDate()}</strong> of every month.
                   </p>
                 )}
               </div>
 
               {/* Aadhaar upload */}
-              <div className="form-group">
-                <label className="form-label"><Upload size={16} />&nbsp;Aadhaar Card (PDF / Image)</label>
-                <label className="file-upload-zone">
+              <div className="premium-input-group">
+                <label className="premium-label">Aadhaar Card (PDF / Image)</label>
+                <label className="premium-file-upload">
                   <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => setFormData({ ...formData, aadhaarFile: e.target.files[0] })} required style={{ display: 'none' }} />
                   {formData.aadhaarFile ? (
-                    <span style={{ color: 'var(--success)', fontWeight: 600 }}>✓ {formData.aadhaarFile.name}</span>
+                    <div className="file-success"><CheckCircle2 size={24} /> <span>{formData.aadhaarFile.name}</span></div>
                   ) : (
-                    <>
-                      <Upload size={22} style={{ color: 'var(--text-dim)', marginBottom: '.4rem' }} />
-                      <span style={{ fontSize: '.85rem', color: 'var(--text-dim)' }}>Tap to upload Aadhaar</span>
-                      <span style={{ fontSize: '.75rem', color: 'var(--text-ghost)' }}>PDF, JPG, PNG supported</span>
-                    </>
+                    <div className="file-prompt">
+                      <div className="upload-icon-circle"><Upload size={20} /></div>
+                      <span className="upload-text">Tap to upload Aadhaar</span>
+                      <span className="upload-sub">PDF, JPG, PNG supported</span>
+                    </div>
                   )}
                 </label>
               </div>
 
-              <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loadingSubmit} style={{ marginTop: '.5rem' }}>
+              <button type="submit" className="btn-swipe-primary mt-4" disabled={loadingSubmit}>
                 {loadingSubmit ? (
-                  <span className="pulse-opacity">
-                    Submitting
-                    <span className="pulsing-dot-container">
-                      <span className="pulsing-dot"></span>
-                      <span className="pulsing-dot"></span>
-                      <span className="pulsing-dot"></span>
-                    </span>
-                  </span>
-                ) : (<><FileText size={18} /> Submit Application</>)}
+                  <span className="pulse-opacity">Submitting...</span>
+                ) : (<><FileText size={20} /> Submit Application</>)}
               </button>
             </form>
           </div>
