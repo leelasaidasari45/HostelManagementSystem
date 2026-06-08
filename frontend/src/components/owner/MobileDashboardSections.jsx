@@ -228,10 +228,6 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
       <section className="dashboard-section summary-section">
         <div className="summary-header">
           <h2 className="summary-title">{currentMonth} Collection Status</h2>
-          <div className="summary-dropdown">
-            <span>All Properties</span>
-            <ChevronDown size={14} />
-          </div>
         </div>
         
         <div className="summary-cards-scroll">
