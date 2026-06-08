@@ -128,85 +128,176 @@
 }
 .join-step.active span { color: var(--text-dim); }
 
-/* Body */
-.join-body {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-muted);
-  border-radius: var(--r-xl);
-  padding: 2rem 1.75rem;
-  box-shadow: var(--shadow-md), 0 0 40px rgba(124, 58, 237,0.06);
-}
-
-/* Step 1 */
-.join-icon-wrap {
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.15));
-  border-radius: 20px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 1.5rem;
-  box-shadow: inset 0 2px 10px rgba(255,255,255,0.1);
-}
-
-h2.join-body { margin-bottom: .4rem; }
-.join-subtitle {
-  color: var(--text-dim);
-  font-size: .9rem;
-  line-height: 1.6;
-  margin-bottom: 1.75rem;
-  text-align: center;
-}
-
-/* Large code input */
-.code-input-wrap {
-  margin-bottom: 1rem;
+/* Step 1 Premium Layout */
+.join-hero-layout {
   display: flex;
-  justify-content: center;
-}
-.code-input {
+  flex-direction: column;
   width: 100%;
-  padding: 1.125rem 1.25rem;
-  background: var(--bg-base);
-  border: 1.5px solid var(--border-muted);
-  border-radius: 16px;
-  color: var(--text-bright);
-  font-family: 'JetBrains Mono', monospace;
+}
+.join-hero-graphic {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border-radius: 28px;
+  padding: 2.5rem 2rem 4.5rem;
+  color: white;
+  text-align: center;
+  margin-bottom: -3rem; /* Overlap with action area */
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(249,115,22,0.3);
+}
+.glass-icon-wrapper {
+  width: 72px; height: 72px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.25rem;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.hero-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+.hero-subtitle {
+  font-size: 1rem;
+  opacity: 0.9;
+  line-height: 1.5;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.join-action-area {
+  background: var(--bg-surface);
+  border-radius: 32px;
+  padding: 2.5rem 1.5rem 2rem;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.06);
+  position: relative;
+  z-index: 2;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Floating Input */
+.floating-input-wrap {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+.code-input-premium {
+  width: 100%;
+  padding: 2.2rem 1.25rem 1rem;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: 20px;
   font-size: 1.6rem;
   font-weight: 800;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
+  color: var(--text-bright);
   text-align: center;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   outline: none;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
-.code-input::placeholder { color: var(--text-ghost); font-size: 1.1rem; letter-spacing: .05em; font-weight: 600; }
-.code-input:focus {
+.code-input-premium:focus {
   border-color: #f97316;
-  box-shadow: 0 0 0 4px rgba(249,115,22,0.15), inset 0 2px 4px rgba(0,0,0,0.02);
-  transform: translateY(-2px);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 4px rgba(249,115,22,0.1);
+}
+.floating-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-ghost);
+  font-size: 1.1rem;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+.code-input-premium:focus ~ .floating-label,
+.code-input-premium:not(:placeholder-shown) ~ .floating-label {
+  top: 16px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f97316;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* Premium Verify Button */
-.verify-btn {
+/* Modern buttons */
+.btn-swipe-primary {
   width: 100%;
   padding: 1.125rem;
-  background: linear-gradient(135deg, #f97316, #ea580c);
-  color: #fff;
+  background: var(--text-bright); /* Dark sleek button for light theme, bright for dark */
+  color: var(--bg-base);
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
   border: none;
-  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+[data-theme='dark'] .btn-swipe-primary {
+  background: #f97316;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(249,115,22,0.25);
+}
+.btn-swipe-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.btn-swipe-primary:active { transform: scale(0.98); }
+.btn-swipe-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.divider-modern {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.divider-modern::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: var(--border-subtle);
+  z-index: 1;
+}
+.divider-modern span {
+  background: var(--bg-surface);
+  padding: 0 1rem;
+  color: var(--text-ghost);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 2;
+  text-transform: uppercase;
+}
+
+.btn-swipe-secondary {
+  width: 100%;
+  padding: 1.125rem;
+  background: var(--bg-elevated);
+  color: var(--text-bright);
+  border-radius: 20px;
   font-size: 1.05rem;
   font-weight: 700;
-  cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  border: 2px solid var(--border-subtle);
+  cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(249,115,22,0.3);
-  letter-spacing: 0.01em;
 }
-.verify-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(249,115,22,0.4);
+.btn-swipe-secondary:hover {
+  border-color: #f97316;
+  color: #f97316;
+  background: rgba(249,115,22,0.05);
 }
-.verify-btn:active { transform: scale(0.98); }
-.verify-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* Divider */
 .join-divider {

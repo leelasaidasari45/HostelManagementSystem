@@ -327,44 +327,42 @@ const JoinHostel = () => {
 
         {/* ───── STEP 1: Enter Code / Scan ───── */}
         {step === 1 && (
-          <div className="join-body slide-up">
-            <div className="join-icon-wrap">
-              <QrCode size={28} style={{ color: '#f97316' }} />
-            </div>
-            <h2>Join Your Hostel</h2>
-            <p className="join-subtitle">Enter the code your owner shared, or scan the QR code posted in the hostel.</p>
-
-            <form onSubmit={handleVerifyCode}>
-              <div className="code-input-wrap">
-                <input
-                  type="text"
-                  className="code-input"
-                  placeholder="e.g.  HST-8821"
-                  value={hostelCode}
-                  onChange={(e) => setHostelCode(e.target.value.toUpperCase())}
-                  maxLength={10}
-                  required
-                />
+          <div className="join-hero-layout slide-up">
+            <div className="join-hero-graphic">
+              <div className="glass-icon-wrapper">
+                <Home size={34} style={{ color: '#fff' }} />
               </div>
-              <button type="submit" className="verify-btn" disabled={loadingCode}>
-                {loadingCode ? (
-                  <span className="pulse-opacity">
-                    Verifying
-                    <span className="pulsing-dot-container">
-                      <span className="pulsing-dot"></span>
-                      <span className="pulsing-dot"></span>
-                      <span className="pulsing-dot"></span>
-                    </span>
-                  </span>
-                ) : (<><ChevronRight size={18} /> Verify Code</>)}
+              <h1 className="hero-title">Find Your Space</h1>
+              <p className="hero-subtitle">Enter your hostel code or scan the QR to securely connect to your property.</p>
+            </div>
+
+            <div className="join-action-area">
+              <form onSubmit={handleVerifyCode}>
+                <div className="floating-input-wrap">
+                  <input
+                    type="text"
+                    className="floating-input code-input-premium"
+                    placeholder=" "
+                    value={hostelCode}
+                    onChange={(e) => setHostelCode(e.target.value.toUpperCase())}
+                    maxLength={10}
+                    required
+                  />
+                  <label className="floating-label">Hostel Code</label>
+                </div>
+                <button type="submit" className="btn-swipe-primary" disabled={loadingCode}>
+                  {loadingCode ? (
+                    <span className="pulse-opacity">Verifying...</span>
+                  ) : (<><ChevronRight size={20} /> Verify & Join</>)}
+                </button>
+              </form>
+
+              <div className="divider-modern"><span>OR</span></div>
+
+              <button className="btn-swipe-secondary" onClick={() => setIsScanning(true)}>
+                <QrCode size={20} /> Scan QR Code
               </button>
-            </form>
-
-            <div className="join-divider"><span>or</span></div>
-
-            <button className="btn btn-secondary w-full" onClick={() => setIsScanning(true)}>
-              <Camera size={18} /> Scan QR Code
-            </button>
+            </div>
           </div>
         )}
 
