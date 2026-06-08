@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench, X, Send, CheckCircle2, Clock, CreditCard, AlertTriangle, Home } from 'lucide-react';
+import { Users, DoorOpen, Bell, Utensils, MessageSquare, QrCode, ChevronDown, Coins, ClipboardList, Key, Eye, Wrench, X, Send, CheckCircle2, Clock, CreditCard, AlertTriangle } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import { useHostel } from '../../context/HostelContext';
 import './MobileDashboardSections.css';
 
 /* ─── Trial Countdown Banner ─── */
@@ -119,7 +118,6 @@ const TrialCountdownBanner = () => {
 };
 
 const MobileDashboardSections = ({ analytics, activeHostel }) => {
-  const { hostels, switchHostel } = useHostel();
   const now = new Date();
   const currentMonth = now.toLocaleString('default', { month: 'short' });
   const lastMonthDate = new Date();
@@ -338,53 +336,39 @@ const MobileDashboardSections = ({ analytics, activeHostel }) => {
         </div>
       </section>
 
-      {/* Properties List Section */}
-      <section className="dashboard-section mt-4">
-        <h2 className="section-title">Your Properties</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {hostels.map(h => (
-            <div 
-              key={h._id} 
-              className="property-list-card"
-              onClick={() => { switchHostel(h._id); window.scrollTo({ top: 0, behavior: 'smooth' }); toast.success('Switched to ' + h.name); }}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '1rem 1.25rem',
-                background: 'var(--bg-surface)',
-                border: activeHostel?._id === h._id ? '1px solid #f97316' : '1px solid var(--border-subtle)',
-                borderRadius: '16px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: '12px',
-                  background: activeHostel?._id === h._id ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'rgba(249, 115, 22, 0.1)',
-                  color: activeHostel?._id === h._id ? '#fff' : '#ea580c',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0
-                }}>
-                  <Home size={22} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-bright)', margin: '0 0 0.15rem 0' }}>{h.name}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <Key size={13} /> {h.code}
-                    </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                      <Users size={13} /> {h.capacity || 0} Beds
-                    </span>
-                  </div>
-                </div>
-              </div>
-              {activeHostel?._id === h._id && (
-                <CheckCircle2 size={20} style={{ color: '#f97316' }} />
-              )}
+      {/* What's New carousel */}
+      <section className="dashboard-section">
+        <h2 className="section-title">What's New</h2>
+        <div className="features-carousel" ref={carouselRef} onScroll={handleScroll}>
+          <div className="feature-banner banner-purple">
+            <div className="feature-badge" style={{ color: '#6366f1', background: 'var(--bg-base)' }}>
+              <span className="dot" style={{ background: '#10b981' }}></span> New Feature
             </div>
-          ))}
+            <h3>Never Miss Tenants With<br/><span style={{ background: '#4f46e5', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>QR Onboarding</span></h3>
+            <p style={{ marginBottom: '1rem' }}>Tenants scan and join instantly without manual entry.</p>
+            <div className="feature-btn">Generate QR</div>
+          </div>
+          <div className="feature-banner banner-blue">
+            <div className="feature-badge" style={{ color: '#2563eb', background: 'var(--bg-base)' }}>
+              <span className="dot" style={{ background: '#10b981' }}></span> New Feature
+            </div>
+            <h3>Never Miss Rent With<br/><span style={{ background: '#2563eb', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>Autopay</span></h3>
+            <p style={{ marginBottom: '1rem' }}>Set up automatic monthly rent payments easily.</p>
+            <div className="feature-btn">Activate Now</div>
+          </div>
+          <div className="feature-banner banner-green">
+            <div className="feature-badge" style={{ color: '#059669', background: 'var(--bg-base)' }}>
+              <span className="dot" style={{ background: '#10b981' }}></span> Now Live
+            </div>
+            <h3>Smart<br/><span style={{ background: '#059669', color: '#fff', padding: '2px 8px', borderRadius: '8px' }}>Tenant Tracking</span></h3>
+            <p style={{ marginBottom: '1rem' }}>Track all dues and collections automatically.</p>
+            <div className="feature-btn">Track Now</div>
+          </div>
+        </div>
+        <div className="carousel-dots">
+          <span className={`carousel-dot ${activeSlide === 0 ? 'active' : ''}`} onClick={() => { const el = carouselRef.current; if (el) el.scrollTo({ left: 0, behavior: 'smooth' }); }}></span>
+          <span className={`carousel-dot ${activeSlide === 1 ? 'active' : ''}`} onClick={() => { const el = carouselRef.current; if (el) el.scrollTo({ left: el.getBoundingClientRect().width, behavior: 'smooth' }); }}></span>
+          <span className={`carousel-dot ${activeSlide === 2 ? 'active' : ''}`} onClick={() => { const el = carouselRef.current; if (el) el.scrollTo({ left: el.getBoundingClientRect().width * 2, behavior: 'smooth' }); }}></span>
         </div>
       </section>
 

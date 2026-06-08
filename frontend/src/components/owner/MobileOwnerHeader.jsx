@@ -46,22 +46,22 @@ const MobileOwnerHeader = () => {
           style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
             background: 'rgba(6, 8, 16, 0.75)', backdropFilter: 'blur(8px)',
-            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-            zIndex: 1000, animation: 'fadeIn 0.2s ease-out'
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 1000, animation: 'fadeIn 0.2s ease-out', padding: '1.5rem'
           }}
           onClick={() => setShowHostelModal(false)}
         >
           <div 
             style={{
-              width: '100%', background: 'var(--bg-surface)', 
-              borderRadius: '28px 28px 0 0', padding: '1.5rem',
-              boxShadow: '0 -10px 40px rgba(0,0,0,0.2)',
-              animation: 'slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+              width: '100%', maxWidth: '400px', background: 'var(--bg-surface)', 
+              borderRadius: '24px', padding: '1.5rem',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
+              animation: 'scaleUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
               maxHeight: '80vh', display: 'flex', flexDirection: 'column'
             }}
             onClick={e => e.stopPropagation()}
           >
-            <div style={{ width: 40, height: 4, background: 'var(--border-muted)', borderRadius: 4, margin: '0 auto 1.5rem' }} />
+
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <div>
@@ -101,7 +101,7 @@ const MobileOwnerHeader = () => {
                       </div>
                       <div>
                         <div style={{ fontSize: '1.05rem', fontWeight: 700, color: isActive ? '#ea580c' : 'var(--text-bright)' }}>{h.name}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-ghost)', marginTop: '0.15rem' }}>Code: {h.code}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-ghost)', marginTop: '0.15rem' }}>Code: {h.code} • Capacity: {h.capacity || 'N/A'}</div>
                       </div>
                     </div>
                     {isActive && <CheckCircle2 size={22} style={{ color: '#ea580c' }} />}
@@ -114,9 +114,9 @@ const MobileOwnerHeader = () => {
       )}
       
       <style>{`
-        @keyframes slideUpSheet {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
+        @keyframes scaleUpModal {
+          from { transform: scale(0.95); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
         }
         @keyframes fadeIn {
           from { opacity: 0; }
