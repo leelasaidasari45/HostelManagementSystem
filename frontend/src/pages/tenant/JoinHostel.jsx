@@ -329,7 +329,7 @@ const JoinHostel = () => {
         {step === 1 && (
           <div className="join-body slide-up">
             <div className="join-icon-wrap">
-              <QrCode size={28} style={{ color: 'var(--aurora-1)' }} />
+              <QrCode size={28} style={{ color: '#f97316' }} />
             </div>
             <h2>Join Your Hostel</h2>
             <p className="join-subtitle">Enter the code your owner shared, or scan the QR code posted in the hostel.</p>
@@ -346,7 +346,7 @@ const JoinHostel = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loadingCode}>
+              <button type="submit" className="verify-btn" disabled={loadingCode}>
                 {loadingCode ? (
                   <span className="pulse-opacity">
                     Verifying
