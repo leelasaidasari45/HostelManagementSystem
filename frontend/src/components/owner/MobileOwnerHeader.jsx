@@ -34,8 +34,8 @@ const MobileOwnerHeader = () => {
         </div>
         
         <div className="header-right">
-          <button className="icon-circle-btn" style={{ background: '#fff' }} onClick={() => navigate('/owner/profile')} title="Profile">
-            <User size={18} color="#000" fill="#000" />
+          <button className="icon-circle-btn" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(4px)' }} onClick={() => navigate('/owner/profile')} title="Profile">
+            <User size={18} color="#fff" strokeWidth={2.5} />
           </button>
         </div>
       </header>
