@@ -99,13 +99,13 @@ const JoinHostel = () => {
   }, []); // ← empty array: run once only, never re-trigger
 
 
-  // Auto-verify code from URL (go straight to payment step)
+  // Auto-verify code from URL (go straight to application step)
   const autoVerifyCode = async (code) => {
     try {
       const res = await api.get(`/api/tenant/verify-hostel/${code}`);
       setHostelName(res.data.name);
       setHostelData(res.data);
-      setStep(1.5); // Go directly to payment step
+      setStep(2); // Go directly to application step
     } catch {
       setStep(1);
     }
@@ -164,7 +164,7 @@ const JoinHostel = () => {
       setHostelName(res.data.name);
       setHostelData(res.data);
       toast.success(`Found: ${res.data.name}`);
-      setStep(1.5); // → Payment step
+      setStep(2); // Skip payment step
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid hostel code');
     } finally { setLoadingCode(false); }
@@ -284,8 +284,8 @@ const JoinHostel = () => {
   );
 
   // Step labels for progress bar
-  const stepLabels = ['Hostel Code', 'Payment', 'Your Details', 'Done'];
-  const currentStepIndex = step === 1 ? 0 : step === 1.5 ? 1 : step === 2 ? 2 : 3;
+  const stepLabels = ['Hostel Code', 'Your Details', 'Done'];
+  const currentStepIndex = step === 1 ? 0 : step === 2 ? 1 : 2;
 
   return (
     <div className="join-page">
@@ -298,8 +298,8 @@ const JoinHostel = () => {
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <img src="/logo.png" alt="easyPG" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
           </Link>
-          {(step === 1.5 || step === 2) && (
-            <button onClick={() => setStep(step === 2 ? 1.5 : 1)} className="join-back-btn">
+          {step === 2 && (
+            <button onClick={() => setStep(1)} className="join-back-btn">
               <ArrowLeft size={16} /> Back
             </button>
           )}
@@ -359,99 +359,12 @@ const JoinHostel = () => {
           </div>
         )}
 
-        {/* ───── STEP 1.5: Payment Page ───── */}
-        {step === 1.5 && (
-          <div className="join-body slide-up" style={{ padding: 0 }}>
-
-            {/* Header banner */}
-            <div className="pay-hostel-banner">
-              <div className="pay-hostel-avatar">
-                {hostelName?.[0] || 'H'}
-              </div>
-              <div className="pay-hostel-info">
-                <span className="pay-hostel-label">Paying to</span>
-                <span className="pay-hostel-name">{hostelName}</span>
-              </div>
-              <div className="pay-hostel-check">✓</div>
-            </div>
-
-            <div className="pay-body">
-              {/* Amount Card */}
-              <div className="pay-amount-card">
-                <div className="pay-amount-label">Admission Amount (₹)</div>
-                <div className="pay-amount-input-wrap">
-                  <span className="pay-rupee-sym">₹</span>
-                  <input
-                    type="number"
-                    className="pay-amount-input"
-                    placeholder="0"
-                    value={admissionAmount}
-                    onChange={e => setAdmissionAmount(e.target.value)}
-                    min="1"
-                    inputMode="numeric"
-                  />
-                </div>
-                <p className="pay-amount-hint">Ask your hostel owner for the exact amount</p>
-              </div>
-
-              {/* What you get */}
-              <div className="pay-features">
-                <div className="pay-feature-row">
-                  <div className="pay-feature-icon pay-feature-green">✓</div>
-                  <div>
-                    <div className="pay-feature-title">Instant Confirmation</div>
-                    <div className="pay-feature-sub">Receipt sent immediately after payment</div>
-                  </div>
-                </div>
-                <div className="pay-feature-row">
-                  <div className="pay-feature-icon pay-feature-amber">🔒</div>
-                  <div>
-                    <div className="pay-feature-title">Secured by Cashfree</div>
-                    <div className="pay-feature-sub">UPI · Cards · Net Banking accepted</div>
-                  </div>
-                </div>
-                <div className="pay-feature-row">
-                  <div className="pay-feature-icon pay-feature-purple">→</div>
-                  <div>
-                    <div className="pay-feature-title">Fill Details Next</div>
-                    <div className="pay-feature-sub">Complete your profile after payment</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Pay Button */}
-              <button
-                className="pay-now-btn"
-                onClick={handlePayment}
-                disabled={loadingPayment || !admissionAmount || parseFloat(admissionAmount) <= 0}
-                id="pay-now-btn"
-              >
-                {loadingPayment ? (
-                  <span className="pay-btn-loading">
-                    <span className="pay-spinner" />
-                    Processing Payment...
-                  </span>
-                ) : (
-                  <>
-                    <span className="pay-btn-icon">💳</span>
-                    Pay ₹{admissionAmount || '0'} Now
-                  </>
-                )}
-              </button>
-
-              <p className="pay-footer-note">
-                After payment, you'll fill your details and submit the application.
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* ───── STEP 2: Application Form ───── */}
         {step === 2 && (
           <div className="join-body slide-up">
             <div className="hostel-found-banner" style={{ background: 'rgba(52,211,153,0.1)', borderColor: 'rgba(52,211,153,0.2)' }}>
               <Sparkles size={18} style={{ color: '#34d399', flexShrink: 0 }} />
-              <span>Payment done! Now joining <strong>{hostelName}</strong></span>
+              <span>Joining <strong>{hostelName}</strong></span>
             </div>
 
             <h2 style={{ marginBottom: '.3rem' }}>Your Details</h2>
