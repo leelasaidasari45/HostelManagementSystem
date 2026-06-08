@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Building2, Users, LogOut, Check, Shield, BarChart3, Bell, CreditCard, Sparkles, ArrowRight } from 'lucide-react';
+import { Building2, Users, LogOut, CheckCircle2, ShieldCheck, PieChart, BellRing, Wallet, Sparkles, ArrowRight, Home, QrCode } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import api from '../api';
 import toast from 'react-hot-toast';
 
-/* ─── Feature pill ─── */
-const FeaturePill = ({ icon: Icon, text, color }) => (
+/* ─── Premium Feature Item ─── */
+const FeatureItem = ({ icon: Icon, text, color }) => (
   <div style={{
-    display: 'flex', alignItems: 'center', gap: '0.5rem',
-    background: `rgba(${color},0.08)`,
-    border: `1px solid rgba(${color},0.18)`,
-    borderRadius: 100,
-    padding: '0.35rem 0.85rem',
-    fontSize: '0.78rem',
-    fontWeight: 600,
-    color: `rgb(${color})`,
-    whiteSpace: 'nowrap',
+    display: 'flex', alignItems: 'center', gap: '0.6rem',
+    color: 'var(--text-dim)',
+    fontSize: '0.85rem',
+    fontWeight: 500,
   }}>
-    <Icon size={12} />
+    <div style={{
+      width: 24, height: 24, borderRadius: '50%',
+      background: `rgba(${color}, 0.1)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      color: `rgb(${color})`
+    }}>
+      <Icon size={12} />
+    </div>
     {text}
   </div>
 );
@@ -75,62 +77,42 @@ const SelectRolePage = () => {
     processRoleSelection('tenant', path);
   };
 
-  const ownerFeatures = [
-    { icon: BarChart3, text: 'Live Analytics', color: '124, 58, 237' },
-    { icon: Users, text: 'Tenant Management', color: '124, 58, 237' },
-    { icon: CreditCard, text: 'Rent Collection', color: '124, 58, 237' },
-    { icon: Bell, text: 'Smart Notices', color: '124, 58, 237' },
-    { icon: Shield, text: 'Verified Tenants', color: '124, 58, 237' },
-    { icon: Building2, text: 'Multi-Property', color: '124, 58, 237' },
-  ];
-
-  const tenantFeatures = [
-    { icon: CreditCard, text: 'Easy Payments', color: '5,150,105' },
-    { icon: Bell, text: 'Instant Notices', color: '5,150,105' },
-    { icon: Shield, text: 'Complaint Portal', color: '5,150,105' },
-    { icon: BarChart3, text: 'Track Dues', color: '5,150,105' },
-  ];
-
   return (
     <div style={s.page}>
 
-      {/* Header */}
+      {/* Modern Header */}
       <header style={s.header}>
         <Link to="/" style={s.logoWrap}>
-          <img src="/logo.png" alt="easyPG" style={{ height: 38, objectFit: 'contain' }} />
+          <img src="/logo.png" alt="easyPG" style={{ height: 32, objectFit: 'contain' }} />
         </Link>
         <div style={s.headerRight}>
           <ThemeToggle />
-          <button onClick={handleLogout} style={s.logoutBtn} title="Logout">
-            <LogOut size={15} />
-            <span>Logout</span>
+          <button onClick={handleLogout} style={s.logoutBtn}>
+            <LogOut size={16} />
           </button>
         </div>
       </header>
 
       {/* Main Content */}
       <main style={s.main}>
-
-        {/* Top badge */}
-        <div style={s.topBadge}>
-          <Sparkles size={14} style={{ color: '#fbbf24' }} />
-          <span>Choose your journey on easyPG</span>
-        </div>
-
-        {/* Headline */}
+        
+        {/* Sleek Headline Area */}
         <div style={s.headlineWrap}>
-          <h1 style={s.headline}>Who are you in this story?</h1>
+          <div style={s.pillBadge}>
+            <Sparkles size={14} color="#f59e0b" />
+            <span>Select Your Journey</span>
+          </div>
+          <h1 style={s.headline}>Welcome to easyPG</h1>
           <p style={s.subline}>
-            Pick your role to unlock a tailored experience. This is a one-time choice.
+            Choose how you want to use the platform. This is a one-time selection that customizes your entire experience.
           </p>
         </div>
 
-        {/* Role Cards Grid */}
-        <div style={s.cardsRow}>
+        {/* Premium Role Cards */}
+        <div style={s.cardsContainer}>
 
           {/* ── OWNER CARD ── */}
           <button
-            id="role-owner"
             onClick={() => handleRoleSelection('owner')}
             onMouseEnter={() => setHoveredCard('owner')}
             onMouseLeave={() => setHoveredCard(null)}
@@ -139,57 +121,44 @@ const SelectRolePage = () => {
               ...s.card,
               ...(hoveredCard === 'owner' ? s.cardHoverOwner : {}),
               ...(selected === 'owner' ? s.cardActiveOwner : {}),
-              opacity: loading && selected !== 'owner' ? 0.45 : 1,
+              opacity: loading && selected !== 'owner' ? 0.5 : 1,
             }}
+            className="role-card"
           >
+            <div style={s.cardContentWrapper}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div style={{ ...s.iconBox, background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.15))', color: '#7c3aed' }}>
+                  <Building2 size={28} />
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <h2 style={s.cardTitle}>Hostel Owner</h2>
+                  <span style={s.cardSubtitle}>Manage properties</span>
+                </div>
+              </div>
 
+              <p style={s.cardDesc}>
+                Run your PG like a pro. Automate rent collection, track analytics, and manage tenants effortlessly.
+              </p>
 
-            {/* Icon */}
-            <div style={{ ...s.iconWrap, background: 'rgba(124, 58, 237,0.1)', border: '1px solid rgba(124, 58, 237,0.25)' }}>
-              <Building2 size={36} style={{ color: '#a78bfa' }} />
+              <div style={s.featuresGrid}>
+                <FeatureItem icon={PieChart} text="Live Analytics" color="124, 58, 237" />
+                <FeatureItem icon={Wallet} text="Auto Rent" color="124, 58, 237" />
+                <FeatureItem icon={BellRing} text="Smart Notices" color="124, 58, 237" />
+                <FeatureItem icon={ShieldCheck} text="Verification" color="124, 58, 237" />
+              </div>
             </div>
 
-            <h2 style={{ ...s.cardTitle, color: '#a78bfa' }}>Hostel Owner</h2>
-
-            <p style={s.cardDesc}>
-              Run your PG / hostel like a pro. Manage rooms, collect rent, and grow your business — all in one place.
-            </p>
-
-            {/* Feature pills */}
-            <div style={s.pillsWrap}>
-              {ownerFeatures.map((f, i) => (
-                <FeaturePill key={i} {...f} />
-              ))}
-            </div>
-
-
-
-            {/* CTA */}
-            <div style={{
-              ...s.cta,
-              background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
-              boxShadow: hoveredCard === 'owner' ? '0 6px 24px rgba(124, 58, 237,0.45)' : '0 2px 10px rgba(124, 58, 237,0.25)',
-            }}>
+            <div style={{ ...s.ctaButton, background: selected === 'owner' || hoveredCard === 'owner' ? 'linear-gradient(135deg, #7c3aed, #4f46e5)' : 'var(--bg-elevated)', color: selected === 'owner' || hoveredCard === 'owner' ? '#fff' : 'var(--text-bright)' }}>
               {loading && selected === 'owner' ? (
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={s.spinner} /> Setting up…
-                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span className="spinner-border" /> Loading...</span>
               ) : (
-                <> Continue as Owner <ArrowRight size={16} /> </>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}>Continue as Owner <ArrowRight size={18} /></span>
               )}
             </div>
           </button>
 
-          {/* ── OR DIVIDER ── */}
-          <div style={s.orDivider}>
-            <div style={s.orLine} />
-            <span style={s.orText}>OR</span>
-            <div style={s.orLine} />
-          </div>
-
           {/* ── TENANT CARD ── */}
           <button
-            id="role-tenant"
             onClick={() => handleRoleSelection('tenant')}
             onMouseEnter={() => setHoveredCard('tenant')}
             onMouseLeave={() => setHoveredCard(null)}
@@ -198,128 +167,105 @@ const SelectRolePage = () => {
               ...s.card,
               ...(hoveredCard === 'tenant' ? s.cardHoverTenant : {}),
               ...(selected === 'tenant' ? s.cardActiveTenant : {}),
-              opacity: loading && selected !== 'tenant' ? 0.45 : 1,
+              opacity: loading && selected !== 'tenant' ? 0.5 : 1,
             }}
+            className="role-card"
           >
+            <div style={s.cardContentWrapper}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div style={{ ...s.iconBox, background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.15))', color: '#10b981' }}>
+                  <Users size={28} />
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <h2 style={s.cardTitle}>Tenant / Resident</h2>
+                  <span style={s.cardSubtitle}>Find & manage stays</span>
+                </div>
+              </div>
 
+              <p style={s.cardDesc}>
+                Your digital companion. Pay rent instantly, raise complaints, and stay connected with your hostel.
+              </p>
 
-            {/* Icon */}
-            <div style={{ ...s.iconWrap, background: 'rgba(5,150,105,0.1)', border: '1px solid rgba(5,150,105,0.25)' }}>
-              <Users size={36} style={{ color: '#34d399' }} />
+              <div style={s.featuresGrid}>
+                <FeatureItem icon={Wallet} text="Easy Payments" color="16, 185, 129" />
+                <FeatureItem icon={CheckCircle2} text="Join instantly" color="16, 185, 129" />
+                <FeatureItem icon={ShieldCheck} text="Complaints" color="16, 185, 129" />
+                <FeatureItem icon={BellRing} text="Updates" color="16, 185, 129" />
+              </div>
             </div>
 
-            <h2 style={{ ...s.cardTitle, color: '#34d399' }}>Tenant / Resident</h2>
-
-            <p style={s.cardDesc}>
-              Your digital hostel companion. Pay rent, stay updated, report issues — everything in your pocket.
-            </p>
-
-            {/* Feature pills */}
-            <div style={s.pillsWrap}>
-              {tenantFeatures.map((f, i) => (
-                <FeaturePill key={i} {...f} />
-              ))}
-            </div>
-
-
-
-            {/* Benefit checklist */}
-            <ul style={s.checklist}>
-              {[
-                'Join any hostel with invite code',
-                'Receive room & notices',
-                'Raise complaints instantly',
-              ].map((item, i) => (
-                <li key={i} style={s.checkItem}>
-                  <span style={{ ...s.checkIcon, background: 'rgba(5,150,105,0.12)', color: '#34d399' }}>
-                    <Check size={11} />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            {/* CTA */}
-            <div style={{
-              ...s.cta,
-              background: 'linear-gradient(135deg, #059669, #0891b2)',
-              boxShadow: hoveredCard === 'tenant' ? '0 6px 24px rgba(5,150,105,0.4)' : '0 2px 10px rgba(5,150,105,0.2)',
-            }}>
+            <div style={{ ...s.ctaButton, background: selected === 'tenant' || hoveredCard === 'tenant' ? 'linear-gradient(135deg, #10b981, #06b6d4)' : 'var(--bg-elevated)', color: selected === 'tenant' || hoveredCard === 'tenant' ? '#fff' : 'var(--text-bright)' }}>
               {loading && selected === 'tenant' ? (
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={s.spinner} /> Setting up…
-                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span className="spinner-border" /> Loading...</span>
               ) : (
-                <> Join as Tenant <ArrowRight size={16} /> </>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}>Continue as Tenant <ArrowRight size={18} /></span>
               )}
             </div>
           </button>
+
         </div>
 
-        {/* Footer note */}
-        <p style={s.footerNote}>
-          🔒 Your role is permanent. Choose carefully — you can only select once.
-        </p>
       </main>
 
-      {/* Tenant Path Modal */}
+      {/* Premium Tenant Path Modal */}
       {showTenantModal && (
-        <div style={s.modalOverlay}>
-          <div style={s.modalContent} className="slide-up">
-            <h3 style={s.modalTitle}>Choose your path</h3>
-            <p style={s.modalDesc}>How would you like to proceed?</p>
-            
-            <div style={s.modalOptions}>
-              <button 
-                onClick={() => handleTenantPath('/tenant/search')}
-                style={{ ...s.modalOptionCard, borderColor: 'rgba(5,150,105,0.4)' }}
-              >
-                <div style={{...s.iconWrap, background: 'rgba(5,150,105,0.1)', width: 50, height: 50}}>
-                  <Building2 size={24} color="#34d399" />
-                </div>
-                <div style={s.modalOptionText}>
-                  <strong style={{ fontSize: '1.1rem', display: 'block', color: 'var(--text-bright)' }}>Search Hostels</strong>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>Browse verified hostels on our platform</span>
-                </div>
-                <ArrowRight size={18} color="#34d399" />
-              </button>
-
-              <button 
-                onClick={() => handleTenantPath('/tenant/join')}
-                style={{ ...s.modalOptionCard, borderColor: 'rgba(8,145,178,0.4)' }}
-              >
-                <div style={{...s.iconWrap, background: 'rgba(8,145,178,0.1)', width: 50, height: 50}}>
-                  <Sparkles size={24} color="#22d3ee" />
-                </div>
-                <div style={s.modalOptionText}>
-                  <strong style={{ fontSize: '1.1rem', display: 'block', color: 'var(--text-bright)' }}>Join with Code</strong>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>I already have an invite code from an owner</span>
-                </div>
-                <ArrowRight size={18} color="#22d3ee" />
-              </button>
+        <div style={s.modalOverlay} onClick={() => setShowTenantModal(false)}>
+          <div style={s.modalContent} onClick={e => e.stopPropagation()} className="slide-up">
+            <div style={s.modalHeader}>
+              <h3 style={s.modalTitle}>How would you like to join?</h3>
+              <p style={s.modalDesc}>Select a method to find your hostel</p>
             </div>
             
-            <button style={s.modalCloseBtn} onClick={() => setShowTenantModal(false)}>Cancel</button>
+            <div style={s.modalOptions}>
+              <button onClick={() => handleTenantPath('/tenant/search')} style={s.modalOptionBtn}>
+                <div style={{...s.modalIconBox, background: 'rgba(16,185,129,0.1)', color: '#10b981'}}>
+                  <Home size={22} />
+                </div>
+                <div style={s.modalOptionTextWrap}>
+                  <strong style={s.modalOptionTitle}>Search Hostels</strong>
+                  <span style={s.modalOptionDesc}>Browse all verified properties on our platform</span>
+                </div>
+                <ArrowRight size={18} color="var(--text-ghost)" />
+              </button>
+
+              <button onClick={() => handleTenantPath('/tenant/join')} style={s.modalOptionBtn}>
+                <div style={{...s.modalIconBox, background: 'rgba(139,92,246,0.1)', color: '#8b5cf6'}}>
+                  <QrCode size={22} />
+                </div>
+                <div style={s.modalOptionTextWrap}>
+                  <strong style={s.modalOptionTitle}>Join with Code / QR</strong>
+                  <span style={s.modalOptionDesc}>Use an invite code or scan the hostel's QR code</span>
+                </div>
+                <ArrowRight size={18} color="var(--text-ghost)" />
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       <style>{`
-        @keyframes spin360 { to { transform: rotate(360deg); } }
-        #role-owner, #role-tenant {
+        .role-card {
           cursor: pointer;
           text-align: left;
-          transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        #role-owner:hover, #role-tenant:hover { transform: translateY(-4px); }
-        #role-owner:active, #role-tenant:active { transform: translateY(-1px); }
-        #role-owner:disabled, #role-tenant:disabled { cursor: not-allowed; transform: none !important; }
+        .role-card:active { transform: scale(0.98); }
+        .spinner-border {
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top-color: #fff;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
       `}</style>
     </div>
   );
 };
 
-/* ─── Styles ─── */
+/* ─── Premium Styles ─── */
 const s = {
   page: {
     minHeight: '100vh',
@@ -328,15 +274,18 @@ const s = {
     fontFamily: "'Inter', system-ui, sans-serif",
     display: 'flex',
     flexDirection: 'column',
+    position: 'relative',
+    overflow: 'hidden',
   },
 
   header: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '1.25rem 2rem',
-    borderBottom: '1px solid var(--border-subtle)',
-    background: 'var(--bg-surface)',
+    padding: '1.25rem 5%',
+    background: 'transparent',
+    position: 'relative',
+    zIndex: 10,
   },
   logoWrap: {
     display: 'flex',
@@ -346,20 +295,20 @@ const s = {
   headerRight: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem',
+    gap: '1rem',
   },
   logoutBtn: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.5rem',
+    justifyContent: 'center',
+    width: 38,
+    height: 38,
     background: 'var(--bg-elevated)',
     border: '1px solid var(--border-muted)',
     color: 'var(--text-dim)',
-    padding: '0.5rem 1rem',
-    borderRadius: 8,
-    fontSize: '0.85rem',
-    fontWeight: 500,
+    borderRadius: '50%',
     cursor: 'pointer',
+    transition: 'all 0.2s',
   },
 
   main: {
@@ -367,272 +316,216 @@ const s = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: '3rem 1.5rem 4rem',
-    gap: '2rem',
-  },
-
-  topBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    background: 'rgba(251,191,36,0.08)',
-    border: '1px solid rgba(251,191,36,0.2)',
-    color: '#fbbf24',
-    padding: '0.4rem 1rem',
-    borderRadius: 100,
-    fontSize: '0.8rem',
-    fontWeight: 600,
+    padding: '2rem 1.5rem 5rem',
+    position: 'relative',
+    zIndex: 10,
   },
 
   headlineWrap: {
     textAlign: 'center',
-    maxWidth: 520,
+    maxWidth: 600,
+    marginBottom: '3.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  pillBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    background: 'rgba(245,158,11,0.1)',
+    color: '#f59e0b',
+    padding: '0.4rem 1rem',
+    borderRadius: 100,
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    letterSpacing: '0.05em',
+    textTransform: 'uppercase',
+    marginBottom: '1.5rem',
   },
   headline: {
-    fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
+    fontSize: 'clamp(2rem, 5vw, 3rem)',
     fontWeight: 800,
-    letterSpacing: '-0.03em',
-    margin: '0 0 0.75rem 0',
+    letterSpacing: '-0.04em',
+    margin: '0 0 1rem 0',
     color: 'var(--text-bright)',
   },
   subline: {
-    fontSize: '0.95rem',
+    fontSize: '1.05rem',
     color: 'var(--text-dim)',
-    lineHeight: 1.7,
+    lineHeight: 1.6,
     margin: 0,
+    maxWidth: 500,
   },
 
-  cardsRow: {
-    display: 'flex',
-    alignItems: 'stretch',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+  cardsContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '2rem',
     width: '100%',
-    maxWidth: 900,
+    maxWidth: 800,
   },
 
   card: {
-    flex: '1 1 340px',
-    maxWidth: 400,
-    minWidth: 300,
     display: 'flex',
     flexDirection: 'column',
-    gap: '1.1rem',
-    padding: '2rem 1.75rem',
-    borderRadius: 16,
-    border: '1px solid var(--border-muted)',
+    justifyContent: 'space-between',
     background: 'var(--bg-surface)',
-    position: 'relative',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: 24,
+    padding: '0',
     overflow: 'hidden',
     outline: 'none',
-    margin: '0.75rem',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
   },
-
   cardHoverOwner: {
-    borderColor: 'rgba(124, 58, 237,0.4)',
-    boxShadow: '0 8px 30px rgba(124, 58, 237,0.12)',
+    borderColor: 'rgba(124, 58, 237, 0.4)',
+    boxShadow: '0 12px 40px rgba(124, 58, 237, 0.15)',
+    transform: 'translateY(-5px)',
   },
   cardActiveOwner: {
-    borderColor: 'rgba(124, 58, 237,0.6)',
+    borderColor: '#7c3aed',
+    borderWidth: 2,
   },
   cardHoverTenant: {
-    borderColor: 'rgba(5,150,105,0.4)',
-    boxShadow: '0 8px 30px rgba(5,150,105,0.1)',
+    borderColor: 'rgba(16, 185, 129, 0.4)',
+    boxShadow: '0 12px 40px rgba(16, 185, 129, 0.15)',
+    transform: 'translateY(-5px)',
   },
   cardActiveTenant: {
-    borderColor: 'rgba(5,150,105,0.6)',
+    borderColor: '#10b981',
+    borderWidth: 2,
   },
 
-
-
-  iconWrap: {
-    width: 68,
-    height: 68,
-    borderRadius: 16,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-
-  cardTitle: {
-    fontSize: '1.5rem',
-    fontWeight: 800,
-    margin: 0,
-    letterSpacing: '-0.02em',
-    fontFamily: "'Space Grotesk', sans-serif",
-  },
-
-  cardDesc: {
-    fontSize: '0.88rem',
-    color: 'var(--text-dim)',
-    lineHeight: 1.7,
-    margin: 0,
-  },
-
-  pillsWrap: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.4rem',
-  },
-
-
-
-  checklist: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.55rem',
-  },
-  checkItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.6rem',
-    fontSize: '0.85rem',
-    color: 'var(--text-dim)',
-    lineHeight: 1.5,
-  },
-  checkIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 6,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-
-  cta: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.5rem',
-    padding: '0.9rem 1.5rem',
-    borderRadius: 10,
-    border: 'none',
-    color: '#fff',
-    fontSize: '0.92rem',
-    fontWeight: 700,
-    cursor: 'pointer',
-    marginTop: 'auto',
-    letterSpacing: '0.01em',
-    fontFamily: "'Inter', sans-serif",
-  },
-
-  spinner: {
-    display: 'inline-block',
-    width: 15,
-    height: 15,
-    border: '2px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
-    borderRadius: '50%',
-    animation: 'spin360 0.7s linear infinite',
-  },
-
-  orDivider: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.4rem',
-    padding: '0 0.25rem',
-    alignSelf: 'center',
-  },
-  orLine: {
-    width: 1,
+  cardContentWrapper: {
+    padding: '2.25rem',
     flex: 1,
-    minHeight: 40,
-    background: 'var(--border-subtle)',
   },
-  orText: {
-    fontSize: '0.7rem',
+  iconBox: {
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: 'inset 0 2px 10px rgba(255,255,255,0.1)',
+  },
+  cardTitle: {
+    fontSize: '1.4rem',
+    fontWeight: 800,
+    margin: '0 0 0.2rem 0',
+    color: 'var(--text-bright)',
+    letterSpacing: '-0.02em',
+  },
+  cardSubtitle: {
+    fontSize: '0.8rem',
+    color: 'var(--text-ghost)',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  },
+  cardDesc: {
+    fontSize: '0.9rem',
+    color: 'var(--text-dim)',
+    lineHeight: 1.6,
+    margin: '0 0 1.75rem 0',
+  },
+  featuresGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '1rem 0.5rem',
+  },
+
+  ctaButton: {
+    padding: '1.25rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1rem',
     fontWeight: 700,
-    color: 'var(--text-ghost)',
-    letterSpacing: '0.08em',
-  },
-
-  footerNote: {
-    fontSize: '0.82rem',
-    color: 'var(--text-ghost)',
-    textAlign: 'center',
-    paddingTop: '1rem',
     borderTop: '1px solid var(--border-subtle)',
-    width: '100%',
-    maxWidth: 900,
+    transition: 'all 0.3s ease',
   },
 
-  /* ── Modal Styles ── */
+  /* ── Premium Modal Styles ── */
   modalOverlay: {
     position: 'fixed',
     top: 0, left: 0, right: 0, bottom: 0,
-    background: 'rgba(0,0,0,0.6)',
-    backdropFilter: 'blur(4px)',
+    background: 'rgba(0,0,0,0.5)',
+    backdropFilter: 'blur(8px)',
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
     zIndex: 9999,
-    padding: '1rem',
   },
   modalContent: {
-    background: 'var(--bg-elevated)',
-    border: '1px solid var(--border-muted)',
-    borderRadius: 20,
-    padding: '2rem',
+    background: 'var(--bg-surface)',
     width: '100%',
-    maxWidth: 420,
-    boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
+    maxWidth: 480,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    padding: '2.5rem 2rem 3rem',
+    boxShadow: '0 -10px 40px rgba(0,0,0,0.2)',
+    border: '1px solid var(--border-subtle)',
+    borderBottom: 'none',
+  },
+  modalHeader: {
+    textAlign: 'center',
+    marginBottom: '2rem',
   },
   modalTitle: {
-    margin: 0,
-    fontSize: '1.4rem',
+    margin: '0 0 0.5rem 0',
+    fontSize: '1.5rem',
     fontWeight: 800,
     color: 'var(--text-bright)',
-    textAlign: 'center',
+    letterSpacing: '-0.02em',
   },
   modalDesc: {
-    margin: '0 0 1rem 0',
-    fontSize: '0.9rem',
+    margin: 0,
+    fontSize: '0.95rem',
     color: 'var(--text-dim)',
-    textAlign: 'center',
   },
   modalOptions: {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
   },
-  modalOptionCard: {
+  modalOptionBtn: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    background: 'var(--bg-surface)',
+    background: 'var(--bg-elevated)',
     border: '1px solid var(--border-subtle)',
-    borderRadius: 16,
-    padding: '1rem',
+    borderRadius: 20,
+    padding: '1.25rem',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.2s',
     textAlign: 'left',
   },
-  modalOptionText: {
-    flex: 1,
-    marginLeft: '1rem',
+  modalIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
-  modalCloseBtn: {
-    marginTop: '1rem',
-    padding: '0.75rem',
-    background: 'transparent',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: 10,
+  modalOptionTextWrap: {
+    flex: 1,
+    marginLeft: '1.25rem',
+  },
+  modalOptionTitle: {
+    fontSize: '1.1rem',
+    fontWeight: 700,
+    color: 'var(--text-bright)',
+    display: 'block',
+    marginBottom: '0.2rem',
+  },
+  modalOptionDesc: {
+    fontSize: '0.85rem',
     color: 'var(--text-dim)',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  }
+    lineHeight: 1.4,
+  },
 };
 
 export default SelectRolePage;
