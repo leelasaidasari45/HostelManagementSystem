@@ -598,7 +598,7 @@ const TenantDashboard = () => {
                   </div>
                   <button
                     id="pay-now-btn"
-                    className="btn btn-primary btn-lg w-full"
+                    className="btn-swipe-primary"
                     onClick={handlePayment}
                     disabled={isPaying || !dueInfo?.amount}
                     style={{ marginTop:'1.5rem' }}

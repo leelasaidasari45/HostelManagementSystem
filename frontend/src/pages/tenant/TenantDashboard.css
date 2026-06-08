@@ -520,7 +520,7 @@
   gap: 1.5rem;
   align-items: start;
 }
-.td-payment-card-new { max-width: 100%; }
+.td-payment-card-new { max-width: 100%; border-radius: 28px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); border: 1px solid var(--border-subtle); padding: 2rem; }
 .td-payment-hero {
   display: flex; align-items: center; gap: 1rem;
   margin-bottom: 1.5rem;
@@ -529,10 +529,10 @@
 }
 .td-payment-hero-icon {
   width: 60px; height: 60px; flex-shrink: 0;
-  background: rgba(124, 58, 237,0.12);
+  background: rgba(249,115,22,0.12);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: var(--aurora-1);
+  color: #f97316;
 }
 .td-payment-hero h2 { font-size: 1.3rem; }
 .td-payment-amount-display {
@@ -548,18 +548,18 @@
 }
 .td-payment-amount-big {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 4rem; font-weight: 800;
-  background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
+  font-size: 4.5rem; font-weight: 800;
+  background: linear-gradient(135deg, #f97316, #ea580c);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1;
 }
 .td-payment-breakdown {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-lg);
-  padding: 1rem;
+  background: rgba(249,115,22,0.03);
+  border: 1px solid rgba(249,115,22,0.15);
+  border-radius: 20px;
+  padding: 1.25rem 1.5rem;
 }
 .td-breakdown-row {
   display: flex; justify-content: space-between;
@@ -808,3 +808,30 @@
 .light-mode .td-menu-item { background: #f7f9fc; }
 .light-mode .td-amenity-item { background: #f7f9fc; }
 .light-mode .td-contact-card { background: #f7f9fc; }
+
+/* Premium Swipe Button (Orange) */
+.btn-swipe-primary {
+  width: 100%;
+  padding: 1.125rem;
+  background: var(--text-bright);
+  color: var(--bg-base);
+  border-radius: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+[data-theme='dark'] .btn-swipe-primary {
+  background: #f97316;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(249,115,22,0.25);
+}
+.btn-swipe-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.btn-swipe-primary:active { transform: scale(0.98); }
+.btn-swipe-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
