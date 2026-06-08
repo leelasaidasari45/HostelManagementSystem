@@ -309,6 +309,39 @@
   content: ''; flex: 1; height: 1px; background: var(--border-subtle);
 }
 
+/* Step 2 Form Card Layout */
+.join-form-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+.form-card-elevated {
+  width: 100%;
+  background: var(--bg-surface);
+  border-radius: 28px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  border: 1px solid var(--border-subtle);
+}
+.form-card-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.form-card-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  color: var(--text-bright);
+}
+.form-card-header p {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* Hostel found banner Premium */
 .hostel-found-banner {
   display: flex; align-items: center; gap: .75rem;

@@ -368,16 +368,19 @@ const JoinHostel = () => {
 
         {/* ───── STEP 2: Application Form ───── */}
         {step === 2 && (
-          <div className="join-body slide-up">
-            <div className="hostel-found-banner">
-              <Sparkles size={20} style={{ color: '#f97316', flexShrink: 0 }} />
-              <span>Joining <strong>{hostelName}</strong></span>
-            </div>
+          <div className="join-form-wrapper slide-up">
+            <div className="form-card-elevated">
+              <div className="hostel-found-banner">
+                <Sparkles size={20} style={{ color: '#f97316', flexShrink: 0 }} />
+                <span>Joining <strong>{hostelName}</strong></span>
+              </div>
 
-            <h2 style={{ marginBottom: '.3rem' }}>Your Details</h2>
-            <p className="join-subtitle">This info is shared with your hostel owner for approval.</p>
+              <div className="form-card-header">
+                <h2>Your Details</h2>
+                <p>This info is shared with your hostel owner for approval.</p>
+              </div>
 
-            <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit}>
               {[
                 { icon: <User size={16} />, label: 'Full Name',      key: 'tenantName',  type: 'text', placeholder: 'John Doe',         required: true },
                 { icon: <Phone size={16} />, label: 'Phone Number',  key: 'mobile',      type: 'tel',  placeholder: '+91 9876543210',    required: true },
@@ -466,6 +469,7 @@ const JoinHostel = () => {
                 ) : (<><FileText size={18} /> Submit Application</>)}
               </button>
             </form>
+            </div>
           </div>
         )}
 
