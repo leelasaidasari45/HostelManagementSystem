@@ -619,7 +619,7 @@ const TenantsPage = () => {
 
               {/* ── Modal Header Banner ── */}
               <div style={{
-                background: 'linear-gradient(135deg, var(--aurora-1) 0%, var(--aurora-2) 100%)',
+                background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
                 padding: '1.75rem 1.75rem 4rem',
                 position: 'relative',
               }}>
@@ -635,7 +635,7 @@ const TenantsPage = () => {
               <div style={{ padding: '0 1.75rem', marginTop: -36, marginBottom: '1.25rem', display: 'flex', alignItems: 'flex-end', gap: '1rem', zIndex: 5 }}>
                 <div style={{
                   width: 72, height: 72, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, var(--aurora-1), var(--aurora-2))',
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.75rem', fontWeight: 800, color: '#fff',
                   border: '3px solid var(--bg-surface)',
@@ -1065,8 +1065,8 @@ const TenantsPage = () => {
                   gap: 0.4rem;
                 }
                 .modal-tab-btn.active {
-                  color: var(--aurora-1);
-                  border-bottom-color: var(--aurora-1);
+                  color: #f97316;
+                  border-bottom-color: #f97316;
                 }
                 .modal-tab-btn:hover:not(.active) {
                   color: var(--text-dim);
