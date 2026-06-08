@@ -3,7 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   QrCode, FileText, CheckCircle2, RefreshCw, XCircle, Camera,
   ChevronRight, User, Phone, Home, Hash, Car, Calendar,
-  Upload, ArrowLeft, IndianRupee, CreditCard, ShieldCheck, Sparkles
+  Upload, ArrowLeft, IndianRupee, CreditCard, ShieldCheck, Sparkles, LogOut
 } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import toast from 'react-hot-toast';
