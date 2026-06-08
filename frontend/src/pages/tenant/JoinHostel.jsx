@@ -296,9 +296,6 @@ const JoinHostel = () => {
         {/* Header */}
         <div className="join-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-              <img src="/logo.png" alt="easyPG" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
-            </Link>
             {step === 2 && (
               <button onClick={() => setStep(1)} className="join-back-btn" style={{ marginLeft: '1rem' }}>
                 <ArrowLeft size={16} /> Back
