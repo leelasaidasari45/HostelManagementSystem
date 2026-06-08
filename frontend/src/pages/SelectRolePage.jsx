@@ -127,7 +127,7 @@ const SelectRolePage = () => {
           >
             <div style={s.cardContentWrapper}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
-                <div style={{ ...s.iconBox, background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.15))', color: '#7c3aed' }}>
+                <div style={{ ...s.iconBox, background: 'linear-gradient(135deg, rgba(249,115,22,0.15), rgba(234,88,12,0.15))', color: '#f97316' }}>
                   <Briefcase size={28} />
                 </div>
                 <div style={{ textAlign: 'left' }}>
@@ -148,7 +148,7 @@ const SelectRolePage = () => {
               </div>
             </div>
 
-            <div style={{ ...s.ctaButton, background: selected === 'owner' || hoveredCard === 'owner' ? 'linear-gradient(135deg, #7c3aed, #4f46e5)' : 'var(--bg-elevated)', color: selected === 'owner' || hoveredCard === 'owner' ? '#fff' : 'var(--text-bright)' }}>
+            <div style={{ ...s.ctaButton, background: selected === 'owner' || hoveredCard === 'owner' ? 'linear-gradient(135deg, #f97316, #ea580c)' : 'var(--bg-elevated)', color: selected === 'owner' || hoveredCard === 'owner' ? '#fff' : 'var(--text-bright)' }}>
               {loading && selected === 'owner' ? (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><span className="spinner-border" /> Loading...</span>
               ) : (
@@ -381,12 +381,12 @@ const s = {
     boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
   },
   cardHoverOwner: {
-    borderColor: 'rgba(124, 58, 237, 0.4)',
-    boxShadow: '0 12px 40px rgba(124, 58, 237, 0.15)',
+    borderColor: 'rgba(249, 115, 22, 0.4)',
+    boxShadow: '0 12px 40px rgba(249, 115, 22, 0.15)',
     transform: 'translateY(-5px)',
   },
   cardActiveOwner: {
-    borderColor: '#7c3aed',
+    borderColor: '#f97316',
     borderWidth: 2,
   },
   cardHoverTenant: {
