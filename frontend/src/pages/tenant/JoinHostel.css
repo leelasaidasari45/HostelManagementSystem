@@ -309,17 +309,53 @@
   content: ''; flex: 1; height: 1px; background: var(--border-subtle);
 }
 
-/* Hostel found banner */
+/* Hostel found banner Premium */
 .hostel-found-banner {
-  display: flex; align-items: center; gap: .6rem;
-  background: rgba(5,150,105,0.1);
-  border: 1px solid rgba(5,150,105,0.25);
-  border-radius: var(--r-md);
-  padding: .75rem 1rem;
-  margin-bottom: 1.5rem;
-  font-size: .9rem;
-  font-weight: 500;
+  display: flex; align-items: center; gap: .75rem;
+  background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(234,88,12,0.05));
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--text-bright);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+/* Premium Form Controls */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-control-premium {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: 14px;
+  color: var(--text-bright);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  outline: none;
+}
+.form-control-premium:focus {
+  border-color: #f97316;
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 4px rgba(249,115,22,0.1);
+}
+.form-control-premium::placeholder {
+  color: var(--text-ghost);
+  font-weight: 400;
 }
 
 /* File upload zone */
@@ -328,20 +364,20 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: .25rem;
+  gap: .35rem;
   width: 100%;
-  padding: 1.5rem;
+  padding: 2rem;
   background: var(--bg-elevated);
   border: 2px dashed var(--border-muted);
-  border-radius: var(--r-lg);
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 200ms;
+  transition: all 0.3s ease;
   text-align: center;
-  min-height: 100px;
+  min-height: 120px;
 }
 .file-upload-zone:hover {
-  border-color: var(--aurora-1);
-  background: rgba(124, 58, 237,0.06);
+  border-color: #f97316;
+  background: rgba(249,115,22,0.05);
 }
 
 /* Pending icon */

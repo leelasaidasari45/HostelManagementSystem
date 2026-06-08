@@ -369,8 +369,8 @@ const JoinHostel = () => {
         {/* ───── STEP 2: Application Form ───── */}
         {step === 2 && (
           <div className="join-body slide-up">
-            <div className="hostel-found-banner" style={{ background: 'rgba(52,211,153,0.1)', borderColor: 'rgba(52,211,153,0.2)' }}>
-              <Sparkles size={18} style={{ color: '#34d399', flexShrink: 0 }} />
+            <div className="hostel-found-banner">
+              <Sparkles size={20} style={{ color: '#f97316', flexShrink: 0 }} />
               <span>Joining <strong>{hostelName}</strong></span>
             </div>
 
@@ -385,14 +385,14 @@ const JoinHostel = () => {
               ].map(({ icon, label, key, type, placeholder, required }) => (
                 <div className="form-group" key={key}>
                   <label className="form-label">{icon}&nbsp;{label}</label>
-                  <input type={type} className="form-control" placeholder={placeholder}
+                  <input type={type} className="form-control-premium" placeholder={placeholder}
                     value={formData[key]} onChange={e => setFormData({ ...formData, [key]: e.target.value })} required={required} />
                 </div>
               ))}
 
               <div className="form-group">
                 <label className="form-label"><Home size={16} />&nbsp;Permanent Address</label>
-                <textarea className="form-control" rows="2" placeholder="Street, City, State"
+                <textarea className="form-control-premium" rows="2" placeholder="Street, City, State"
                   value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} required />
               </div>
 
@@ -402,7 +402,7 @@ const JoinHostel = () => {
                   <label className="form-label"><Hash size={16} />&nbsp;Room No.</label>
                   <input
                     type="text"
-                    className="form-control"
+                    className="form-control-premium"
                     placeholder="e.g. 101"
                     value={formData.roomNumber}
                     onChange={e => handleRoomNumberChange(e.target.value)}
@@ -420,14 +420,14 @@ const JoinHostel = () => {
                 </div>
                 <div className="form-group">
                   <label className="form-label"><Car size={16} />&nbsp;Vehicle (opt.)</label>
-                  <input type="text" className="form-control" placeholder="KA01AB1234"
+                  <input type="text" className="form-control-premium" placeholder="KA01AB1234"
                     value={formData.vehicleNumber} onChange={e => setFormData({ ...formData, vehicleNumber: e.target.value })} />
                 </div>
               </div>
 
               <div className="form-group">
                 <label className="form-label"><Calendar size={16} />&nbsp;Expected Joining Date</label>
-                <input type="date" className="form-control"
+                <input type="date" className="form-control-premium"
                   value={formData.admissionDate} onChange={e => setFormData({ ...formData, admissionDate: e.target.value })} required />
                 {formData.admissionDate && (
                   <p style={{ fontSize: '.75rem', color: 'var(--text-ghost)', marginTop: '.3rem' }}>
@@ -453,7 +453,7 @@ const JoinHostel = () => {
                 </label>
               </div>
 
-              <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loadingSubmit} style={{ marginTop: '.5rem' }}>
+              <button type="submit" className="btn-swipe-primary" disabled={loadingSubmit} style={{ marginTop: '1.5rem' }}>
                 {loadingSubmit ? (
                   <span className="pulse-opacity">
                     Submitting
