@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Building2, Users, LogOut, CheckCircle2, ShieldCheck, PieChart, BellRing, Wallet, Sparkles, ArrowRight, Home, QrCode } from 'lucide-react';
+import { Crown, User, LogOut, CheckCircle2, ShieldCheck, PieChart, BellRing, Wallet, Sparkles, ArrowRight, Home, QrCode } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import api from '../api';
@@ -128,7 +128,7 @@ const SelectRolePage = () => {
             <div style={s.cardContentWrapper}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
                 <div style={{ ...s.iconBox, background: 'linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.15))', color: '#7c3aed' }}>
-                  <Building2 size={28} />
+                  <Crown size={28} />
                 </div>
                 <div style={{ textAlign: 'left' }}>
                   <h2 style={s.cardTitle}>Hostel Owner</h2>
@@ -174,7 +174,7 @@ const SelectRolePage = () => {
             <div style={s.cardContentWrapper}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
                 <div style={{ ...s.iconBox, background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(6,182,212,0.15))', color: '#10b981' }}>
-                  <Users size={28} />
+                  <User size={28} />
                 </div>
                 <div style={{ textAlign: 'left' }}>
                   <h2 style={s.cardTitle}>Tenant / Resident</h2>
