@@ -12,15 +12,30 @@ router.use(requireOwner);
 router.get('/hostels', async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const { data: hostels, error } = await supabase.from('hostels').select('*').eq('owner_id', ownerId);
+    const { data: hostels, error } = await supabase.from('hostels')
+      .select('*, floors(rooms(capacity))')
+      .eq('owner_id', ownerId);
     if (error) throw error;
     
     // Map id to _id and pg_code to code for React frontend
-    const mappedHostels = hostels.map(h => ({ 
-      ...h, 
-      _id: h.id, 
-      code: h.pg_code 
-    }));
+    const mappedHostels = hostels.map(h => {
+      let totalCapacity = 0;
+      if (h.floors) {
+        h.floors.forEach(f => {
+          if (f.rooms) {
+            f.rooms.forEach(r => {
+              totalCapacity += (r.capacity || 0);
+            });
+          }
+        });
+      }
+      return { 
+        ...h, 
+        _id: h.id, 
+        code: h.pg_code,
+        capacity: totalCapacity
+      };
+    });
     
     res.json(mappedHostels);
   } catch (err) {
