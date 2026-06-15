@@ -607,7 +607,7 @@ const TenantDashboard = () => {
                       : 'Rent not configured'}
                   </button>
                   <p style={{ fontSize:'.78rem', color:'var(--text-ghost)', textAlign:'center', marginTop:'.75rem' }}>
-                    🔒 Secured & encrypted via Cashfree Payments
+                    🔒 Secured & encrypted via PhonePe Payments
                   </p>
                 </>
               )}

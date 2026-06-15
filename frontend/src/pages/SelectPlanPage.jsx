@@ -83,74 +83,29 @@ const SelectPlanPage = () => {
   const handleAnnualPro = async () => {
     setLoadingAnnual(true);
     try {
-      // Step 1: Create Cashfree order for ₹40,000
-      const res = await api.post('/api/cashfree/create-order', {
+      // Step 1: Create PhonePe order for ₹40,000
+      const res = await api.post('/api/phonepe/create-order', {
         amount: 40000,
         month: 'Annual',
         year: new Date().getFullYear(),
         type: 'subscription',
       });
-      const { payment_session_id, order_id, environment } = res.data;
+      const { payPageUrl } = res.data;
 
-      // Step 2: Load Cashfree SDK
-      const CF_MODE = environment || 'production';
-      const loadSDK = () => new Promise((resolve, reject) => {
-        if (window.Cashfree) { resolve(window.Cashfree); return; }
-        const s = document.createElement('script');
-        s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
-        s.onload = () => resolve(window.Cashfree);
-        s.onerror = () => reject(new Error('Failed to load Cashfree'));
-        document.body.appendChild(s);
-      });
-      await loadSDK();
-      const cashfree = await window.Cashfree({ mode: CF_MODE });
-
-      // Step 3: Launch Cashfree drop-in checkout
-      const result = await cashfree.checkout({
-        paymentSessionId: payment_session_id,
-        redirectTarget: '_modal',
-      });
-
-      const userCancelled = result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
-                            result?.error?.type === 'user_cancelled';
-      if (userCancelled) {
-        toast('Payment cancelled.', { icon: 'ℹ️' });
+      if (!payPageUrl) {
+        toast.error('Could not initiate payment. Please try again.');
         setLoadingAnnual(false);
         return;
       }
 
-      toast.loading('Verifying payment...', { id: 'sub-verify' });
-      try {
-        const verifyRes = await api.post('/api/subscription/verify-cashfree', {
-          order_id,
-          amount: 40000,
-          plan_name: 'Annual Pro',
-        });
-        toast.dismiss('sub-verify');
-        if (verifyRes.data.success) {
-          loginContext({ 
-            ...user, 
-            payment_setup_complete: true, 
-            subscription_status: 'active',
-            trial_end_date: verifyRes.data.end_date
-          });
-          toast.success('🎉 Annual Pro activated!');
-          navigate('/owner/dashboard', { replace: true });
-        } else {
-          toast.error('Payment done but verification failed. Contact support.');
-        }
-      } catch (verifyErr) {
-        toast.dismiss('sub-verify');
-        if (verifyErr.response?.status === 400) {
-          toast('Payment may still be processing. Check dashboard in a moment.', { icon: '⏳' });
-          setTimeout(() => navigate('/owner/dashboard', { replace: true }), 2000);
-        } else {
-          toast.error('Verification error. Contact support.');
-        }
-      }
+      // Step 2: Redirect to PhonePe secure checkout
+      toast.loading('Redirecting to PhonePe...', { id: 'pp-plan-redirect' });
+      setTimeout(() => {
+        toast.dismiss('pp-plan-redirect');
+        window.location.href = payPageUrl;
+      }, 800);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to initiate payment');
-    } finally {
       setLoadingAnnual(false);
     }
   };
@@ -464,7 +419,7 @@ const SelectPlanPage = () => {
           <div style={styles.trustBadges}>
             <div style={styles.trustItem}>
               <ShieldCheck size={16} style={{ color: '#059669', marginRight: 4 }} />
-              <span>Secured by Cashfree</span>
+              <span>Secured by PhonePe</span>
             </div>
             <div style={styles.separator} />
             <span>Cancel anytime</span>
