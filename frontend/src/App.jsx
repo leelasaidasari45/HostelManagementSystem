@@ -32,6 +32,9 @@ const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const BankAccountsPage = lazy(() => import('./pages/owner/BankAccountsPage'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
+const RefundPolicy = lazy(() => import('./pages/RefundPolicy'));
 
 import { Navigate } from 'react-router-dom';
 import { HostelProvider } from './context/HostelContext';
@@ -204,6 +207,9 @@ function AppContent() {
           <Route path="/tenant/profile" element={<ProtectedRoute roleType="tenant"><TenantProfilePage /></ProtectedRoute>} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
         </Routes>
       </Suspense>
     </div>

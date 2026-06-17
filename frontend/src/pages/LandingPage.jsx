@@ -431,6 +431,17 @@ const LandingPage = () => {
       <footer className="landing-footer">
         <img src="/logo.png" alt="easyPG" style={{ height: 32, objectFit: 'contain' }} />
         <span style={{ color: 'var(--text-ghost)', fontSize: '.82rem' }}>© 2026 easyPG. All rights reserved.</span>
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <a href="/privacy-policy" style={{ color: 'var(--text-ghost)', fontSize: '.82rem', textDecoration: 'none', transition: 'color 0.2s' }}
+            onMouseOver={e => e.target.style.color = 'var(--aurora-1)'}
+            onMouseOut={e => e.target.style.color = 'var(--text-ghost)'}>Privacy Policy</a>
+          <a href="/terms" style={{ color: 'var(--text-ghost)', fontSize: '.82rem', textDecoration: 'none', transition: 'color 0.2s' }}
+            onMouseOver={e => e.target.style.color = 'var(--aurora-1)'}
+            onMouseOut={e => e.target.style.color = 'var(--text-ghost)'}>Terms &amp; Conditions</a>
+          <a href="/refund-policy" style={{ color: 'var(--text-ghost)', fontSize: '.82rem', textDecoration: 'none', transition: 'color 0.2s' }}
+            onMouseOver={e => e.target.style.color = 'var(--aurora-1)'}
+            onMouseOut={e => e.target.style.color = 'var(--text-ghost)'}>Refund Policy</a>
+        </div>
       </footer>
 
       {/* Floating Demo Request Button */}
