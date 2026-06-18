@@ -19,7 +19,15 @@ import MobileTenantHeader from '../../components/tenant/MobileTenantHeader';
 import MobileTenantBottomNav from '../../components/tenant/MobileTenantBottomNav';
 import './TenantDashboard.css';
 
-
+const CF_ENV = import.meta.env.VITE_CASHFREE_ENV || 'sandbox';
+const loadCashfreeSDK = () => new Promise((resolve, reject) => {
+  if (window.Cashfree) { resolve(window.Cashfree); return; }
+  const s = document.createElement('script');
+  s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+  s.onload = () => resolve(window.Cashfree);
+  s.onerror = () => reject(new Error('Failed to load Cashfree'));
+  document.body.appendChild(s);
+});
 
 const tabs = [
   { id: 'dashboard', label: 'Home',     icon: <Home size={16} /> },
@@ -124,7 +132,7 @@ const TenantDashboard = () => {
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ps = params.get('payment');
-    if (ps === 'success') { toast.success(`Payment successful! 🎉 Txn: ${params.get('txnId')}`); setPaymentSuccess(true); window.history.replaceState({}, '', '/tenant/dashboard'); }
+    if (ps === 'success') { toast.success(`Payment successful! 🎉`); setPaymentSuccess(true); window.history.replaceState({}, '', '/tenant/dashboard'); }
     else if (ps === 'failed') { toast.error('Payment failed or cancelled.'); window.history.replaceState({}, '', '/tenant/dashboard'); }
     else if (ps === 'error')  { toast.error('Payment error. Please try again.'); window.history.replaceState({}, '', '/tenant/dashboard'); }
   }, []);
@@ -165,23 +173,36 @@ const TenantDashboard = () => {
     if (!amount || amount <= 0) return toast.error('Rent amount not set. Contact your owner.');
     setIsPaying(true);
     try {
-      // Step 1: Create PhonePe order on backend
-      const res = await api.post('/api/phonepe/create-order', { amount, month, year, type: 'rent' });
-      const { payPageUrl, merchantTransactionId } = res.data;
+      // Step 1: Create Cashfree order
+      const res = await api.post('/api/cashfree/create-order', { amount, month, year, type: 'rent' });
+      const { payment_session_id, order_id, environment } = res.data;
 
-      if (!payPageUrl) {
-        toast.error('Could not initiate payment. Please try again.');
-        return;
+      // Step 2: Load Cashfree JS SDK
+      await loadCashfreeSDK();
+      const cashfree = await window.Cashfree({ mode: environment || CF_ENV });
+
+      // Step 3: Open Cashfree modal checkout
+      const result = await cashfree.checkout({
+        paymentSessionId: payment_session_id,
+        redirectTarget: '_modal',
+      });
+
+      const cancelled =
+        result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
+        result?.error?.type === 'user_cancelled';
+      if (cancelled) { toast('ℹ️ Payment cancelled.'); return; }
+
+      // Step 4: Verify on backend
+      toast.loading('Verifying payment...', { id: 'vrfy' });
+      try {
+        const vRes = await api.post('/api/cashfree/verify', { order_id, amount, month, year });
+        toast.dismiss('vrfy');
+        if (vRes.data.success) { setPaymentSuccess(true); toast.success('Rent paid successfully! 🎉'); }
+        else { toast.error('Verification failed. Contact support.'); }
+      } catch {
+        toast.dismiss('vrfy');
+        toast.error('Verification error. If payment was deducted, contact support.');
       }
-
-      // Step 2: Redirect user to PhonePe payment page
-      // PhonePe handles the full checkout in their secure page
-      toast.loading('Redirecting to PhonePe...', { id: 'pp-redirect' });
-      setTimeout(() => {
-        toast.dismiss('pp-redirect');
-        window.location.href = payPageUrl;
-      }, 800);
-
     } catch (err) {
       toast.error(err.response?.data?.error || 'Payment failed. Please try again.');
     } finally {
@@ -607,7 +628,7 @@ const TenantDashboard = () => {
                       : 'Rent not configured'}
                   </button>
                   <p style={{ fontSize:'.78rem', color:'var(--text-ghost)', textAlign:'center', marginTop:'.75rem' }}>
-                    🔒 Secured & encrypted via PhonePe Payments
+                    🔒 Secured & encrypted via Cashfree Payments
                   </p>
                 </>
               )}

@@ -163,7 +163,7 @@ const AddAccountModal = ({ onClose, onAdded }) => {
 
         <div className="ba-modal-secure">
           <ShieldCheck size={13} />
-          <span>256-bit encrypted · Secured by PhonePe</span>
+          <span>256-bit encrypted · Secured by Cashfree</span>
         </div>
 
         <form onSubmit={handleSubmit}>

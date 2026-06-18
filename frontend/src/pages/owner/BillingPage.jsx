@@ -112,33 +112,76 @@ const BillingPage = () => {
   // Production return URL — always use Vercel, never localhost
   const PROD_URL = 'https://easypg-zeta.vercel.app';
 
-  // Upgrade using PhonePe
+  // Upgrade using Cashfree
   const handleUpgrade = async () => {
     setProcessing(true);
     try {
-      // Step 1: Create PhonePe order for ₹40,000
-      const res = await api.post('/api/phonepe/create-order', {
+      // Step 1: Create Cashfree order for ₹40,000
+      const res = await api.post('/api/cashfree/create-order', {
         amount: 40000,
         month: 'Annual',
         year: new Date().getFullYear(),
         type: 'subscription',
+        return_url: `${PROD_URL}/owner/billing?payment=success&order_id={order_id}`,
       });
-      const { payPageUrl } = res.data;
+      const { payment_session_id, order_id, environment } = res.data;
 
-      if (!payPageUrl) {
-        toast.error('Could not initiate payment. Please try again.');
+      // Step 2: Load Cashfree SDK
+      const CF_MODE = environment || 'production';
+      const loadSDK = () => new Promise((resolve, reject) => {
+        if (window.Cashfree) { resolve(window.Cashfree); return; }
+        const s = document.createElement('script');
+        s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+        s.onload = () => resolve(window.Cashfree);
+        s.onerror = () => reject(new Error('Failed to load Cashfree SDK'));
+        document.body.appendChild(s);
+      });
+      await loadSDK();
+      const cashfree = await window.Cashfree({ mode: CF_MODE });
+
+      // Step 3: Launch Cashfree modal checkout
+      const result = await cashfree.checkout({
+        paymentSessionId: payment_session_id,
+        redirectTarget: '_modal',
+      });
+
+      const userCancelled =
+        result?.error?.code === 'PAYMENT_CANCELLED_BY_USER' ||
+        result?.error?.type === 'user_cancelled' ||
+        result?.error?.message?.toLowerCase().includes('cancel');
+      if (userCancelled) {
+        toast.error('❌ Payment cancelled. No charges were made.', { duration: 4000 });
         setProcessing(false);
         return;
       }
 
-      // Step 2: Redirect to PhonePe secure checkout
-      toast.loading('Redirecting to PhonePe...', { id: 'pp-sub-redirect' });
-      setTimeout(() => {
-        toast.dismiss('pp-sub-redirect');
-        window.location.href = payPageUrl;
-      }, 800);
+      // Step 4: Verify payment
+      toast.loading('Verifying payment...', { id: 'sub-verify' });
+      try {
+        const verifyRes = await api.post('/api/subscription/verify-cashfree', {
+          order_id,
+          amount: 40000,
+          plan_name: 'Annual Pro',
+        });
+        toast.dismiss('sub-verify');
+        if (verifyRes.data.success) {
+          toast.success('🎉 Annual Pro activated!');
+          fetchStatus();
+        } else {
+          toast.error('Payment done but verification failed. Contact support.');
+        }
+      } catch (verifyErr) {
+        toast.dismiss('sub-verify');
+        if (verifyErr.response?.status === 400) {
+          toast('Payment may still be processing. Refreshing...', { icon: '⏳' });
+          setTimeout(() => fetchStatus(), 2000);
+        } else {
+          toast.error('Verification error. Contact support.');
+        }
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to initiate payment');
+    } finally {
       setProcessing(false);
     }
   };
@@ -340,7 +383,7 @@ const BillingPage = () => {
                 >
                   {processing ? (
                     <span className="pulse-opacity">
-                      Opening PhonePe Checkout...
+                      Opening Cashfree Checkout...
                     </span>
                   ) : (
                     <>
@@ -365,7 +408,7 @@ const BillingPage = () => {
 
               <p className="billing-secure-note">
                 <ShieldCheck size={12} />
-                Secured by PhonePe · Cancel anytime
+                Secured by Cashfree · Cancel anytime
               </p>
             </div>
 

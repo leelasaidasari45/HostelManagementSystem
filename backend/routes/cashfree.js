@@ -12,7 +12,7 @@ const getCFBase = () =>
     ? 'https://api.cashfree.com/pg'
     : 'https://sandbox.cashfree.com/pg';
 
-// ─── Helper: Cashfree headers ─────────────────────────────────
+// ─── Cashfree headers ─────────────────────────────────────────
 const cfHeaders = () => ({
   'Content-Type':    'application/json',
   'x-api-version':   CF_VERSION,
@@ -30,7 +30,7 @@ router.post('/create-order', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Invalid amount' });
     }
 
-    // Fetch user details for customer info
+    // Fetch user details
     const { data: user } = await supabase
       .from('users')
       .select('name, email, phone')
@@ -38,10 +38,11 @@ router.post('/create-order', requireAuth, async (req, res) => {
       .single();
 
     const orderId = `easypg_${type}_${Date.now()}`;
-
     const FRONTEND = process.env.FRONTEND_URL || 'https://easypg-zeta.vercel.app';
     const returnPath = type === 'subscription' ? '/owner/dashboard' : '/tenant/dashboard';
-    const finalReturnUrl = req.body.return_url || `${FRONTEND}${returnPath}?payment=success&order_id={order_id}`;
+    const finalReturnUrl =
+      req.body.return_url ||
+      `${FRONTEND}${returnPath}?payment=success&order_id={order_id}`;
 
     const body = {
       order_id:       orderId,
@@ -59,13 +60,14 @@ router.post('/create-order', requireAuth, async (req, res) => {
       },
     };
 
-    // EasySplit Vendor Routing for Rent Payments
+    // EasySplit vendor routing for rent payments
     if (type === 'rent') {
-      const { data: tenantData } = await supabase.from('users').select('hostel_id').eq('id', userId).single();
+      const { data: tenantData } = await supabase
+        .from('users').select('hostel_id').eq('id', userId).single();
       if (tenantData?.hostel_id) {
-        const { data: hostelData } = await supabase.from('hostels').select('owner_id').eq('id', tenantData.hostel_id).single();
+        const { data: hostelData } = await supabase
+          .from('hostels').select('owner_id').eq('id', tenantData.hostel_id).single();
         if (hostelData?.owner_id) {
-          // Use the primary bank account's vendor_id
           const { data: primaryAccount } = await supabase
             .from('bank_accounts')
             .select('vendor_id')
@@ -112,7 +114,6 @@ router.post('/verify', requireAuth, async (req, res) => {
 
     if (!order_id) return res.status(400).json({ error: 'order_id required' });
 
-    // Fetch payments for the order
     const response = await fetch(`${getCFBase()}/orders/${order_id}/payments`, {
       headers: cfHeaders(),
     });
@@ -130,6 +131,16 @@ router.post('/verify', requireAuth, async (req, res) => {
 
     if (!successPayment) {
       return res.status(400).json({ error: 'Payment not successful yet' });
+    }
+
+    // Prevent duplicate entries
+    const { data: existing } = await supabase
+      .from('payments').select('id')
+      .eq('utr_id', String(successPayment.cf_payment_id || order_id))
+      .maybeSingle();
+
+    if (existing) {
+      return res.json({ success: true, message: 'Payment already recorded!' });
     }
 
     // Record in payments table
@@ -152,7 +163,7 @@ router.post('/verify', requireAuth, async (req, res) => {
   }
 });
 
-// ─── GET /api/cashfree/order/:orderId — check order status ───
+// ─── GET /api/cashfree/order/:orderId ─────────────────────────
 router.get('/order/:orderId', requireAuth, async (req, res) => {
   try {
     const response = await fetch(`${getCFBase()}/orders/${req.params.orderId}`, {
@@ -168,7 +179,9 @@ router.get('/order/:orderId', requireAuth, async (req, res) => {
 // ─── POST /api/cashfree/webhook ───────────────────────────────
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   try {
-    const webhookData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    const webhookData =
+      typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
     if (webhookData?.type === 'PAYMENT_SUCCESS_WEBHOOK') {
       const order      = webhookData.data?.order;
       const payment    = webhookData.data?.payment;
