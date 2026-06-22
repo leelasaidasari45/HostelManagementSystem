@@ -430,6 +430,34 @@ router.get('/tenant-payments/:tenantId', async (req, res) => {
   }
 });
 
+// Mark tenant as paid (owner manually confirms cash/offline payment)
+router.put('/tenants/:tenantId/mark-paid', async (req, res) => {
+  try {
+    const { tenantId } = req.params;
+    const { amount, month, year } = req.body;
+
+    if (!amount || !month || !year) {
+      return res.status(400).json({ error: 'amount, month, and year are required' });
+    }
+
+    const { error } = await supabase.from('payments').insert([{
+      tenant_id: tenantId,
+      amount: parseFloat(amount),
+      month,
+      year: parseInt(year),
+      status: 'completed',
+      utr_id: `CASH-${Date.now()}`,
+      paid_at: new Date().toISOString()
+    }]);
+
+    if (error) throw error;
+
+    res.json({ message: 'Payment marked as completed successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Complaints
 router.get('/complaints', async (req, res) => {
   try {

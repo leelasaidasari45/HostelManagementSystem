@@ -68,6 +68,9 @@ const TenantsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active'); // 'active' or 'dues'
   const [modalTab, setModalTab] = useState('profile'); // 'profile', 'payments', 'actions'
+  const [markPaidModal, setMarkPaidModal] = useState(null); // tenant object
+  const [markPaidNote, setMarkPaidNote] = useState('');
+  const [markingPaid, setMarkingPaid] = useState(false);
   const { logoutContext } = useAuth();
 
   // Reset loading when hostel changes to prevent displaying stale property data
@@ -216,6 +219,31 @@ const TenantsPage = () => {
       fetchTenants();
     } catch (err) {
       toast.error("Failed to process move out");
+    }
+  };
+
+  const handleMarkPaid = async () => {
+    if (!markPaidModal) return;
+    setMarkingPaid(true);
+    try {
+      const now = new Date();
+      const month = now.toLocaleString('default', { month: 'long' });
+      const year = now.getFullYear();
+      const amount = markPaidModal.rent_amount || markPaidModal.due_amount || 0;
+      await api.put(`/api/owner/tenants/${markPaidModal.tenant_id}/mark-paid`, {
+        amount,
+        month,
+        year,
+        note: markPaidNote || 'Marked as paid by owner'
+      });
+      toast.success(`✅ Payment marked as completed for ${markPaidModal.user?.name || 'tenant'}!`);
+      setMarkPaidModal(null);
+      setMarkPaidNote('');
+      fetchTenants();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to mark as paid');
+    } finally {
+      setMarkingPaid(false);
     }
   };
 
@@ -518,6 +546,28 @@ const TenantsPage = () => {
                             View Details
                           </button>
 
+                          {t.payment_status !== 'paid' && (
+                            <button
+                              onClick={() => { setMarkPaidModal(t); setMarkPaidNote(''); }}
+                              style={{
+                                padding: '0.45rem 0.9rem',
+                                background: 'rgba(16, 185, 129, 0.12)',
+                                color: '#10b981',
+                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                borderRadius: '10px',
+                                fontSize: '0.8rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              <CheckCircle size={14} /> Mark Paid
+                            </button>
+                          )}
+
                           <button
                             className="tenant-btn-vacate"
                             onClick={() => handleCompleteVacate(t._id)}
@@ -594,6 +644,26 @@ const TenantsPage = () => {
                             onClick={() => openTenantDetail(t)}
                           >
                             View Details
+                          </button>
+
+                          <button
+                            onClick={() => { setMarkPaidModal(t); setMarkPaidNote(''); }}
+                            style={{
+                              padding: '0.45rem 0.9rem',
+                              background: 'rgba(16, 185, 129, 0.12)',
+                              color: '#10b981',
+                              border: '1px solid rgba(16, 185, 129, 0.3)',
+                              borderRadius: '10px',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            <CheckCircle size={14} /> Mark Paid
                           </button>
 
                           <button
@@ -1092,6 +1162,144 @@ const TenantsPage = () => {
           </div>
         )}
       </main>
+
+      {/* ── Mark Paid Confirmation Modal ── */}
+      {markPaidModal && (
+        <div
+          onClick={() => { setMarkPaidModal(null); setMarkPaidNote(''); }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem'
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-muted)',
+              borderRadius: '20px',
+              padding: '2rem',
+              width: '100%',
+              maxWidth: '420px',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
+              animation: 'scaleUpDetails 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+          >
+            {/* Icon */}
+            <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+              <div style={{
+                width: '64px', height: '64px', borderRadius: '50%',
+                background: 'rgba(16, 185, 129, 0.12)',
+                border: '2px solid rgba(16, 185, 129, 0.3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 1rem'
+              }}>
+                <CheckCircle size={32} color="#10b981" />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-bright)', margin: 0 }}>
+                Confirm Payment
+              </h3>
+              <p style={{ color: 'var(--text-dim)', fontSize: '0.875rem', marginTop: '0.4rem' }}>
+                Mark rent as received for this tenant
+              </p>
+            </div>
+
+            {/* Tenant Info */}
+            <div style={{
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '12px',
+              padding: '1rem',
+              marginBottom: '1.25rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>Tenant</span>
+                <span style={{ fontWeight: 700, color: 'var(--text-bright)' }}>{markPaidModal.user?.name || 'Tenant'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>Room</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-bright)' }}>{markPaidModal.roomNumber || 'N/A'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>Month</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-bright)' }}>
+                  {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
+                <span style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>Amount</span>
+                <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#10b981' }}>
+                  ₹{(markPaidModal.rent_amount || markPaidModal.due_amount || 0).toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+
+            {/* Optional Note */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-dim)', marginBottom: '0.4rem' }}>
+                Note (optional)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Cash received, UPI transfer..."
+                value={markPaidNote}
+                onChange={e => setMarkPaidNote(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.9rem',
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-muted)',
+                  borderRadius: '10px',
+                  color: 'var(--text-bright)',
+                  fontSize: '0.875rem',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                onClick={() => { setMarkPaidModal(null); setMarkPaidNote(''); }}
+                style={{
+                  flex: 1, padding: '0.75rem',
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-muted)',
+                  borderRadius: '12px',
+                  color: 'var(--text-dim)',
+                  fontWeight: 600, fontSize: '0.9rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMarkPaid}
+                disabled={markingPaid}
+                style={{
+                  flex: 2, padding: '0.75rem',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: '#fff',
+                  fontWeight: 700, fontSize: '0.9rem',
+                  cursor: markingPaid ? 'not-allowed' : 'pointer',
+                  opacity: markingPaid ? 0.7 : 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <CheckCircle size={16} />
+                {markingPaid ? 'Saving...' : 'Confirm Payment'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
