@@ -126,7 +126,7 @@ const OwnerDashboard = () => {
                   <DoorOpen size={18} style={{ color:'var(--aurora-3)' }} />
                 </div>
                 <h3>{analytics?.metrics?.occupancyRate || 0}%</h3>
-                <span className="stat-trend">{analytics?.metrics?.availableRooms || 0} rooms available</span>
+                <span className="stat-trend">{analytics?.metrics?.availableRooms || 0} beds available</span>
               </div>
                 </>
               )}
