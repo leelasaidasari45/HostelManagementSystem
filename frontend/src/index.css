@@ -68,8 +68,8 @@
   --bg-glass: rgba(255, 255, 255, 0.85);
   --bg-glass-hover: rgba(255, 255, 255, 0.95);
 
-  --aurora-1: #008BA3;
-  --aurora-2: #558B2F;
+  --aurora-1: #4f46e5; /* Indigo */
+  --aurora-2: #3b82f6; /* Blue */
   --aurora-3: #10b981;
 
   --text-bright: #0f172a;
@@ -88,9 +88,9 @@
   --accent-glow: rgba(0, 188, 212, 0.1);
   --ticker-invert: 1;
 
-  --btn-bg: #334155;
-  --btn-text: #ffffff;
-  --btn-hover: #1e293b;
+  --btn-bg: #F5F5DC;
+  --btn-text: #1a1a1a;
+  --btn-hover: #E8E8D0;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -141,10 +141,8 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-bright);
+  background: none;
   display: inline-block;
 }
 .text-gradient-gold {
