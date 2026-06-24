@@ -88,9 +88,9 @@
   --accent-glow: rgba(0, 188, 212, 0.1);
   --ticker-invert: 1;
 
-  --btn-bg: #F5F5DC;
-  --btn-text: #1a1a1a;
-  --btn-hover: #E8E8D0;
+  --btn-bg: #334155;
+  --btn-text: #ffffff;
+  --btn-hover: #1e293b;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -141,7 +141,7 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Gradient text */
 .text-gradient {
-  color: var(--text-bright);
+  color: #5C4033; /* Dark Brown / Coffee */
   background: none;
   display: inline-block;
 }
