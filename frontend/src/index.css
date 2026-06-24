@@ -317,7 +317,7 @@ a:focus-visible, button:focus-visible {
   background: var(--bg-base);
   transition: grid-template-columns var(--transition-slow);
 }
-.dashboard-layout.sidebar-expanded {
+.dashboard-layout:has(.sidebar-exp) {
   grid-template-columns:240px minmax(0,1fr);
 }
 
