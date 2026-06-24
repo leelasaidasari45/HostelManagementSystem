@@ -380,7 +380,7 @@ a:focus-visible, button:focus-visible {
 
 /* Sidebar */
 .sidebar {
-  background:#D2BEAA; /* Adobe Beige */
+  background:#75675A; /* Darker Beige/Taupe */
   border-right:1px solid var(--border-subtle);
   position:sticky; top:0; height:100vh;
   overflow-y:auto; overflow-x:hidden;
