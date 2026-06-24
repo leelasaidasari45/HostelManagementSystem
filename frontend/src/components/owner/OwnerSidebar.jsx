@@ -74,8 +74,8 @@ const OwnerSidebar = () => {
         title={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          width: 28, height: 28, borderRadius: '50%', border: '1px solid var(--border-subtle)',
-          background: 'var(--bg-elevated)', color: 'var(--text-dim)', cursor: 'pointer',
+          width: 28, height: 28, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.3)',
+          background: 'rgba(255,255,255,0.1)', color: '#ffffff', cursor: 'pointer',
           transition: 'all 200ms', marginTop: 'auto', flexShrink: 0,
         }}
       >

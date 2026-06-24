@@ -380,7 +380,7 @@ a:focus-visible, button:focus-visible {
 
 /* Sidebar */
 .sidebar {
-  background:var(--bg-surface);
+  background:#D2BEAA; /* Adobe Beige */
   border-right:1px solid var(--border-subtle);
   position:sticky; top:0; height:100vh;
   overflow-y:auto; overflow-x:hidden;
@@ -400,28 +400,28 @@ a:focus-visible, button:focus-visible {
 .nav-item {
   display:flex; align-items:center; justify-content:center;
   gap:.75rem; padding:.75rem; border-radius:var(--r-md);
-  color:var(--text-dim); text-decoration:none; font-weight:500;
+  color:#ffffff; text-decoration:none; font-weight:500;
   font-size:.9rem; transition:all var(--transition);
   border:1px solid transparent; position:relative;
   white-space:nowrap; overflow:hidden;
   width:100%;
 }
 .nav-item span.nav-label { display:none; }
-.nav-item:hover { background:var(--bg-elevated); color:var(--text-bright); }
+.nav-item:hover { background:rgba(255,255,255,0.2); color:#ffffff; }
 .nav-item.active {
-  background:rgba(124, 58, 237,0.15);
-  color:var(--aurora-1);
-  border-color:rgba(124, 58, 237,0.3);
-  box-shadow:0 0 12px rgba(124, 58, 237,0.1);
+  background:rgba(255,255,255,0.3);
+  color:#ffffff;
+  border-color:rgba(255,255,255,0.4);
+  box-shadow:0 0 12px rgba(255,255,255,0.2);
 }
 .nav-item-create {
-  color:var(--aurora-1) !important;
-  border:1px dashed rgba(124, 58, 237,0.4) !important;
-  background:rgba(124, 58, 237,0.05) !important;
+  color:#ffffff !important;
+  border:1px dashed rgba(255, 255, 255, 0.4) !important;
+  background:rgba(255, 255, 255, 0.1) !important;
 }
 .nav-item-create:hover {
   border-style:solid !important;
-  background:rgba(124, 58, 237,0.12) !important;
+  background:rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Sidebar divider */
