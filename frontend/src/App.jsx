@@ -29,8 +29,6 @@ const TenantProfilePage = lazy(() => import('./pages/tenant/TenantProfilePage'))
 const AuthCallback = lazy(() => import('./pages/AuthCallback'));
 const SelectRolePage = lazy(() => import('./pages/SelectRolePage'));
 const SelectPlanPage = lazy(() => import('./pages/SelectPlanPage'));
-const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const BankAccountsPage = lazy(() => import('./pages/owner/BankAccountsPage'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
@@ -118,19 +116,14 @@ function AppContent() {
   // Initialize push notifications (for native mobile app)
   usePushNotifications(user);
 
-  // Log page visits on path change
-  React.useEffect(() => {
-    api.post('/api/admin/visit', { page: location.pathname }).catch(() => {});
-  }, [location.pathname]);
-
-  // Show splash: always show for 3 seconds when the website is opened
+  // Show splash: reduced to 1.2s for faster perceived performance
   const [showSplash, setShowSplash] = React.useState(true);
 
   React.useEffect(() => {
     if (showSplash) {
       const timer = setTimeout(() => {
         setShowSplash(false);
-      }, 3000);
+      }, 1200);
       return () => clearTimeout(timer);
     }
   }, [showSplash]);
@@ -205,8 +198,6 @@ function AppContent() {
           <Route path="/tenant/join" element={<ProtectedRoute roleType="tenant"><JoinHostel /></ProtectedRoute>} />
           <Route path="/tenant/dashboard" element={<ProtectedRoute roleType="tenant"><TenantDashboard /></ProtectedRoute>} />
           <Route path="/tenant/profile" element={<ProtectedRoute roleType="tenant"><TenantProfilePage /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />

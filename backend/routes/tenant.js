@@ -141,20 +141,23 @@ router.get('/dashboard', async (req, res) => {
     
     // Only fetch hostel data if they are actively connected to one
     if (hostelId && tenant.status !== 'new') {
-        const { data: hostelData } = await supabase.from('hostels').select('name, owner_id').eq('id', hostelId).maybeSingle();
-        hostelName = hostelData?.name || "";
-
-        if (hostelData?.owner_id) {
-            const { data: ownerData } = await supabase.from('users').select('phone').eq('id', hostelData.owner_id).maybeSingle();
-            ownerPhone = ownerData?.phone || "";
-        }
-
-        const { data: noticesData } = await supabase.from('notices').select('*').eq('hostel_id', hostelId).order('created_at', { ascending: false });
-        notices = noticesData || [];
-        
+        // ⚡ Fetch hostel info, notices, and today's menu IN PARALLEL
         const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-        const { data: menuData } = await supabase.from('menus').select('*').eq('hostel_id', hostelId).eq('day', today).maybeSingle();
-        menu = menuData;
+        const [hostelRes, noticesRes, menuRes] = await Promise.all([
+            supabase.from('hostels').select('name, owner_id').eq('id', hostelId).maybeSingle(),
+            supabase.from('notices').select('id, title, message, created_at').eq('hostel_id', hostelId).order('created_at', { ascending: false }).limit(20),
+            supabase.from('menus').select('*').eq('hostel_id', hostelId).eq('day', today).maybeSingle(),
+        ]);
+
+        hostelName = hostelRes.data?.name || '';
+        notices    = noticesRes.data || [];
+        menu       = menuRes.data || null;
+
+        if (hostelRes.data?.owner_id) {
+            const { data: ownerData } = await supabase
+                .from('users').select('phone').eq('id', hostelRes.data.owner_id).maybeSingle();
+            ownerPhone = ownerData?.phone || '';
+        }
     }
 
     res.json({ tenant, notices, menu, hostelName, ownerPhone });
