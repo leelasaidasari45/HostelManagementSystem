@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, MessageSquare, Plus, History, ChevronRight, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, MessageSquare, Plus, History, ChevronRight, CreditCard, User } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { to: '/owner/complaints', icon: <MessageSquare size={20} />, label: 'Issues' },
   { to: '/owner/past-tenants', icon: <History size={20} />, label: 'Vacated' },
   { to: '/owner/billing', icon: <CreditCard size={20} />, label: 'Billing' },
+  { to: '/owner/profile', icon: <User size={20} />, label: 'Profile' },
 ];
 
 const OwnerSidebar = () => {

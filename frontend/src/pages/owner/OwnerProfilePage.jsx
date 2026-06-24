@@ -5,6 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useHostel } from '../../context/HostelContext';
 import { QRCodeSVG } from 'qrcode.react';
+import OwnerSidebar from '../../components/owner/OwnerSidebar';
+import OwnerHeader from '../../components/owner/OwnerHeader';
 import toast from 'react-hot-toast';
 import api from '../../api';
 import './OwnerProfilePage.css';
@@ -58,139 +60,149 @@ const OwnerProfilePage = () => {
   const displayPhone = user?.phone && user.phone !== displayName ? user.phone : null;
 
   return (
-    <div className="profile-page-container">
-      {/* Banner */}
-      <div className="profile-banner">
-        <div className="profile-header">
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            <ArrowLeft size={24} className="icon-contrast" />
-          </button>
-          <span className="header-title">Profile</span>
-        </div>
-      </div>
-
-      {/* Avatar and Info */}
-      <div className="profile-info-section">
-        <div className="profile-avatar">
-          <User size={40} className="avatar-icon" />
-        </div>
-        <h2 className="profile-name">{displayName}</h2>
-        {displayPhone && <p className="profile-phone">{displayPhone}</p>}
-        {user?.email && <p className="profile-email">{user?.email}</p>}
-        
-        <div className="profile-role-badge">Property Owner</div>
-      </div>
-
-      <div className="profile-content">
-        {/* 4 Features Row (From old header) */}
-        <div className="profile-features-grid">
-          <button className="feature-card" onClick={toggleTheme}>
-            <div className="feature-icon">{isDarkMode ? <Sun size={24} /> : <Moon size={24} />}</div>
-            <span>Theme</span>
-          </button>
-          <button className="feature-card" onClick={() => activeHostel ? setShowQrModal(true) : toast.error('Select a hostel first')}>
-            <div className="feature-icon"><QrCode size={24} /></div>
-            <span>QR Code</span>
-          </button>
-          <button className="feature-card" onClick={() => navigate('/owner/complaints')}>
-            <div className="feature-icon"><Bell size={24} /></div>
-            <span>Alerts</span>
-          </button>
-          <button className="feature-card" onClick={logoutContext}>
-            <div className="feature-icon"><LogOut size={24} /></div>
-            <span>Logout</span>
-          </button>
+    <div className="dashboard-layout">
+      <OwnerSidebar />
+      
+      <main className="dashboard-content fade-in mobile-pb">
+        <div className="desktop-only-widgets">
+          <OwnerHeader title="My Profile" subtitle="Account Settings" />
         </div>
 
-        {/* Vertical List from Bottom Nav "More" */}
-        <div className="profile-list">
-          <button className="list-item" onClick={() => navigate('/owner/bank-accounts')}>
-            <Landmark size={20} className="list-icon" />
-            <span>Bank Accounts</span>
-            <ChevronRight size={18} className="list-chevron" />
-          </button>
-          <button className="list-item" onClick={() => navigate('/owner/billing')}>
-            <CreditCard size={20} className="list-icon" />
-            <span>Billing & Subscriptions</span>
-            <ChevronRight size={18} className="list-chevron" />
-          </button>
-          <button className="list-item" onClick={() => navigate('/owner/complaints')}>
-            <MessageSquare size={20} className="list-icon" />
-            <span>Complaints</span>
-            <ChevronRight size={18} className="list-chevron" />
-          </button>
-          <button className="list-item" onClick={() => setShowConfirmDelete(true)}>
-            <Trash2 size={20} color="#ef4444" className="list-icon" />
-            <span style={{ color: '#ef4444' }}>Delete Account</span>
-            <ChevronRight size={18} className="list-chevron" />
-          </button>
-        </div>
-      </div>
-
-      {/* QR Modal */}
-      {showQrModal && (
-        <div className="modal-backdrop fade-in" onClick={() => setShowQrModal(false)}>
-          <div className="modal-card slide-up" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setShowQrModal(false)}
-              style={{ position:'absolute', top:'1rem', right:'1rem', background:'transparent', border:'none', color:'var(--text-dim)', cursor:'pointer' }}>
-              <XCircle size={22} />
-            </button>
-            <h3 style={{ marginBottom:'.5rem' }}>Hostel QR Code</h3>
-            <p style={{ color:'var(--text-dim)', fontSize:'.88rem', marginBottom:'1.5rem' }}>
-              Tenants scan this to join <strong>{activeHostel?.name}</strong>
-            </p>
-            <div style={{ background:'#fff', padding:'1rem', borderRadius:'12px', width:'fit-content', margin:'0 auto 1.5rem' }}>
-              <QRCodeSVG id="profile-hostel-qr" value={joinUrl} size={180} level="H" includeMargin />
+        <div className="profile-page-container">
+          {/* Banner */}
+          <div className="profile-banner">
+            <div className="profile-header">
+              <button className="back-btn" onClick={() => navigate(-1)}>
+                <ArrowLeft size={24} className="icon-contrast" />
+              </button>
+              <span className="header-title">Profile</span>
             </div>
-            <div style={{ textAlign:'center', marginBottom:'1rem' }}>
-              <span style={{ fontSize:'.75rem', color:'var(--text-dim)' }}>Hostel Code</span>
-              <div style={{ fontFamily:'JetBrains Mono, monospace', fontSize:'1.5rem', fontWeight:700, color:'#f97316', letterSpacing:'.15em' }}>
-                {activeHostel?.code}
+          </div>
+
+          {/* Avatar and Info */}
+          <div className="profile-info-section">
+            <div className="profile-avatar">
+              <User size={40} className="avatar-icon" />
+            </div>
+            <h2 className="profile-name">{displayName}</h2>
+            {displayPhone && <p className="profile-phone">{displayPhone}</p>}
+            {user?.email && <p className="profile-email">{user?.email}</p>}
+            
+            <div className="profile-role-badge">Property Owner</div>
+          </div>
+
+          <div className="profile-content">
+            {/* 4 Features Row (From old header) */}
+            <div className="profile-features-grid">
+              <button className="feature-card" onClick={toggleTheme}>
+                <div className="feature-icon">{isDarkMode ? <Sun size={24} /> : <Moon size={24} />}</div>
+                <span>Theme</span>
+              </button>
+              <button className="feature-card" onClick={() => activeHostel ? setShowQrModal(true) : toast.error('Select a hostel first')}>
+                <div className="feature-icon"><QrCode size={24} /></div>
+                <span>QR Code</span>
+              </button>
+              <button className="feature-card" onClick={() => navigate('/owner/complaints')}>
+                <div className="feature-icon"><Bell size={24} /></div>
+                <span>Alerts</span>
+              </button>
+              <button className="feature-card" onClick={logoutContext}>
+                <div className="feature-icon"><LogOut size={24} /></div>
+                <span>Logout</span>
+              </button>
+            </div>
+
+            {/* Vertical List from Bottom Nav "More" */}
+            <div className="profile-list">
+              <button className="list-item" onClick={() => navigate('/owner/bank-accounts')}>
+                <Landmark size={20} className="list-icon" />
+                <span>Bank Accounts</span>
+                <ChevronRight size={18} className="list-chevron" />
+              </button>
+              <button className="list-item" onClick={() => navigate('/owner/billing')}>
+                <CreditCard size={20} className="list-icon" />
+                <span>Billing & Subscriptions</span>
+                <ChevronRight size={18} className="list-chevron" />
+              </button>
+              <button className="list-item" onClick={() => navigate('/owner/complaints')}>
+                <MessageSquare size={20} className="list-icon" />
+                <span>Complaints</span>
+                <ChevronRight size={18} className="list-chevron" />
+              </button>
+              <button className="list-item" onClick={() => setShowConfirmDelete(true)}>
+                <Trash2 size={20} color="#ef4444" className="list-icon" />
+                <span style={{ color: '#ef4444' }}>Delete Account</span>
+                <ChevronRight size={18} className="list-chevron" />
+              </button>
+            </div>
+          </div>
+
+          {/* QR Modal */}
+          {showQrModal && (
+            <div className="modal-backdrop fade-in" onClick={() => setShowQrModal(false)}>
+              <div className="modal-card slide-up" onClick={e => e.stopPropagation()}>
+                <button onClick={() => setShowQrModal(false)}
+                  style={{ position:'absolute', top:'1rem', right:'1rem', background:'transparent', border:'none', color:'var(--text-dim)', cursor:'pointer' }}>
+                  <XCircle size={22} />
+                </button>
+                <h3 style={{ marginBottom:'.5rem' }}>Hostel QR Code</h3>
+                <p style={{ color:'var(--text-dim)', fontSize:'.88rem', marginBottom:'1.5rem' }}>
+                  Tenants scan this to join <strong>{activeHostel?.name}</strong>
+                </p>
+                <div style={{ background:'#fff', padding:'1rem', borderRadius:'12px', width:'fit-content', margin:'0 auto 1.5rem' }}>
+                  <QRCodeSVG id="profile-hostel-qr" value={joinUrl} size={180} level="H" includeMargin />
+                </div>
+                <div style={{ textAlign:'center', marginBottom:'1rem' }}>
+                  <span style={{ fontSize:'.75rem', color:'var(--text-dim)' }}>Hostel Code</span>
+                  <div style={{ fontFamily:'JetBrains Mono, monospace', fontSize:'1.5rem', fontWeight:700, color:'#f97316', letterSpacing:'.15em' }}>
+                    {activeHostel?.code}
+                  </div>
+                </div>
+                <div style={{ display:'flex', flexDirection:'column', gap:'.5rem' }}>
+                  <button className="btn btn-primary w-full" onClick={downloadQR}>
+                    <Download size={16} /> Download QR
+                  </button>
+                  <button className="btn btn-secondary w-full" onClick={() => { navigator.clipboard.writeText(joinUrl); toast.success('Link copied!'); }}>
+                    Copy Join Link
+                  </button>
+                </div>
               </div>
             </div>
-            <div style={{ display:'flex', flexDirection:'column', gap:'.5rem' }}>
-              <button className="btn btn-primary w-full" onClick={downloadQR}>
-                <Download size={16} /> Download QR
-              </button>
-              <button className="btn btn-secondary w-full" onClick={() => { navigator.clipboard.writeText(joinUrl); toast.success('Link copied!'); }}>
-                Copy Join Link
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* Delete Account Confirmation Modal */}
-      {showConfirmDelete && (
-        <div className="modal-backdrop fade-in" onClick={() => !isDeleting && setShowConfirmDelete(false)} style={{ zIndex: 10000 }}>
-          <div className="modal-card slide-up" onClick={e => e.stopPropagation()} style={{ padding: '1.5rem', textAlign: 'center' }}>
-            <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-              <AlertTriangle size={30} />
+          {/* Delete Account Confirmation Modal */}
+          {showConfirmDelete && (
+            <div className="modal-backdrop fade-in" onClick={() => !isDeleting && setShowConfirmDelete(false)} style={{ zIndex: 10000 }}>
+              <div className="modal-card slide-up" onClick={e => e.stopPropagation()} style={{ padding: '1.5rem', textAlign: 'center' }}>
+                <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                  <AlertTriangle size={30} />
+                </div>
+                <h3 style={{ marginBottom: '0.5rem', color: '#f87171' }}>Delete Account?</h3>
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  This action is permanent and cannot be undone. All your properties, tenants, and payment history will be permanently deleted.
+                </p>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button 
+                    className="btn btn-secondary w-full" 
+                    onClick={() => setShowConfirmDelete(false)}
+                    disabled={isDeleting}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    className="btn btn-primary w-full" 
+                    style={{ background: '#ef4444', border: 'none' }}
+                    onClick={handleDeleteAccount}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                  </button>
+                </div>
+              </div>
             </div>
-            <h3 style={{ marginBottom: '0.5rem', color: '#f87171' }}>Delete Account?</h3>
-            <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-              This action is permanent and cannot be undone. All your properties, tenants, and payment history will be permanently deleted.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button 
-                className="btn btn-secondary w-full" 
-                onClick={() => setShowConfirmDelete(false)}
-                disabled={isDeleting}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn btn-primary w-full" 
-                style={{ background: '#ef4444', border: 'none' }}
-                onClick={handleDeleteAccount}
-                disabled={isDeleting}
-              >
-                {isDeleting ? 'Deleting...' : 'Yes, Delete'}
-              </button>
-            </div>
-          </div>
+          )}
         </div>
-      )}
+      </main>
     </div>
   );
 };

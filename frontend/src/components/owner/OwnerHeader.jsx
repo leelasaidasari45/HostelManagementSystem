@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogOut, QrCode, XCircle, Download, Sun, Moon, Trash2, AlertTriangle } from 'lucide-react';
+import { LogOut, QrCode, XCircle, Download, Sun, Moon, Trash2, AlertTriangle, User } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useAuth } from '../../context/AuthContext';
 import { useHostel } from '../../context/HostelContext';
@@ -94,6 +94,12 @@ const OwnerHeader = ({ title, subtitle }) => {
               onUpgrade={() => navigate('/select-plan')}
             />
           )}
+
+          {/* Profile button */}
+          <button className="icon-btn" onClick={() => navigate('/owner/profile')} title="My Profile"
+            style={{ color: 'var(--text-bright)', borderColor: 'var(--border-subtle)' }}>
+            <User size={18} />
+          </button>
 
           {/* Theme toggle */}
           <button className="icon-btn" onClick={toggleTheme} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
