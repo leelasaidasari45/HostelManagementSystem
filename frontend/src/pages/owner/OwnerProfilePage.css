@@ -271,23 +271,65 @@
   }
 
   .profile-card-wrapper {
-    border-radius: 20px;
-    overflow: hidden;
+    border-radius: 24px;
+    overflow: visible; /* allows inner elevated card shadow to pop out */
+  }
+
+  .profile-banner {
+    height: 180px;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .profile-body {
+    display: flex;
+    align-items: flex-start;
+    padding: 0 3rem 3rem;
+    gap: 3rem;
   }
 
   .profile-info-section {
-    padding: 0 2rem 1rem;
+    flex: 0 0 320px;
+    margin-top: -90px; /* pull up over the banner */
+    padding: 2.5rem 2rem;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .dark-mode .profile-info-section {
+    background: var(--bg-surface);
+    border-color: var(--border-subtle);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .avatar-icon {
+    width: 48px;
+    height: 48px;
   }
 
   .profile-content {
-    padding: 0 2rem 2rem;
+    flex: 1;
+    padding: 1.5rem 0 0 0;
   }
 
   .profile-features-grid {
-    max-width: 480px;
+    max-width: none;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem 1rem;
   }
 
   .profile-list {
-    max-width: 700px;
+    max-width: none;
+    margin-top: 2rem;
   }
 }

@@ -80,61 +80,63 @@ const OwnerProfilePage = () => {
             </div>
           </div>
 
-          {/* Avatar and Info */}
-          <div className="profile-info-section">
-            <div className="profile-avatar">
-              <User size={40} className="avatar-icon" />
-            </div>
-            <h2 className="profile-name">{displayName}</h2>
-            {displayPhone && <p className="profile-phone">{displayPhone}</p>}
-            {user?.email && <p className="profile-email">{user?.email}</p>}
-            
-            <div className="profile-role-badge">Property Owner</div>
-          </div>
-
-          <div className="profile-content">
-            {/* 4 Features Row (From old header) */}
-            <div className="profile-features-grid">
-              <button className="feature-card" onClick={toggleTheme}>
-                <div className="feature-icon">{isDarkMode ? <Sun size={24} /> : <Moon size={24} />}</div>
-                <span>Theme</span>
-              </button>
-              <button className="feature-card" onClick={() => activeHostel ? setShowQrModal(true) : toast.error('Select a hostel first')}>
-                <div className="feature-icon"><QrCode size={24} /></div>
-                <span>QR Code</span>
-              </button>
-              <button className="feature-card" onClick={() => navigate('/owner/complaints')}>
-                <div className="feature-icon"><Bell size={24} /></div>
-                <span>Alerts</span>
-              </button>
-              <button className="feature-card" onClick={logoutContext}>
-                <div className="feature-icon"><LogOut size={24} /></div>
-                <span>Logout</span>
-              </button>
+          <div className="profile-body">
+            {/* Avatar and Info */}
+            <div className="profile-info-section">
+              <div className="profile-avatar">
+                <User size={40} className="avatar-icon" />
+              </div>
+              <h2 className="profile-name">{displayName}</h2>
+              {displayPhone && <p className="profile-phone">{displayPhone}</p>}
+              {user?.email && <p className="profile-email">{user?.email}</p>}
+              
+              <div className="profile-role-badge">Property Owner</div>
             </div>
 
-            {/* Vertical List from Bottom Nav "More" */}
-            <div className="profile-list">
-              <button className="list-item" onClick={() => navigate('/owner/bank-accounts')}>
-                <Landmark size={20} className="list-icon" />
-                <span>Bank Accounts</span>
-                <ChevronRight size={18} className="list-chevron" />
-              </button>
-              <button className="list-item" onClick={() => navigate('/owner/billing')}>
-                <CreditCard size={20} className="list-icon" />
-                <span>Billing & Subscriptions</span>
-                <ChevronRight size={18} className="list-chevron" />
-              </button>
-              <button className="list-item" onClick={() => navigate('/owner/complaints')}>
-                <MessageSquare size={20} className="list-icon" />
-                <span>Complaints</span>
-                <ChevronRight size={18} className="list-chevron" />
-              </button>
-              <button className="list-item" onClick={() => setShowConfirmDelete(true)}>
-                <Trash2 size={20} color="#ef4444" className="list-icon" />
-                <span style={{ color: '#ef4444' }}>Delete Account</span>
-                <ChevronRight size={18} className="list-chevron" />
-              </button>
+            <div className="profile-content">
+              {/* 4 Features Row (From old header) */}
+              <div className="profile-features-grid">
+                <button className="feature-card" onClick={toggleTheme}>
+                  <div className="feature-icon">{isDarkMode ? <Sun size={24} /> : <Moon size={24} />}</div>
+                  <span>Theme</span>
+                </button>
+                <button className="feature-card" onClick={() => activeHostel ? setShowQrModal(true) : toast.error('Select a hostel first')}>
+                  <div className="feature-icon"><QrCode size={24} /></div>
+                  <span>QR Code</span>
+                </button>
+                <button className="feature-card" onClick={() => navigate('/owner/complaints')}>
+                  <div className="feature-icon"><Bell size={24} /></div>
+                  <span>Alerts</span>
+                </button>
+                <button className="feature-card" onClick={logoutContext}>
+                  <div className="feature-icon"><LogOut size={24} /></div>
+                  <span>Logout</span>
+                </button>
+              </div>
+
+              {/* Vertical List from Bottom Nav "More" */}
+              <div className="profile-list">
+                <button className="list-item" onClick={() => navigate('/owner/bank-accounts')}>
+                  <Landmark size={20} className="list-icon" />
+                  <span>Bank Accounts</span>
+                  <ChevronRight size={18} className="list-chevron" />
+                </button>
+                <button className="list-item" onClick={() => navigate('/owner/billing')}>
+                  <CreditCard size={20} className="list-icon" />
+                  <span>Billing & Subscriptions</span>
+                  <ChevronRight size={18} className="list-chevron" />
+                </button>
+                <button className="list-item" onClick={() => navigate('/owner/complaints')}>
+                  <MessageSquare size={20} className="list-icon" />
+                  <span>Complaints</span>
+                  <ChevronRight size={18} className="list-chevron" />
+                </button>
+                <button className="list-item" onClick={() => setShowConfirmDelete(true)}>
+                  <Trash2 size={20} color="#ef4444" className="list-icon" />
+                  <span style={{ color: '#ef4444' }}>Delete Account</span>
+                  <ChevronRight size={18} className="list-chevron" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
