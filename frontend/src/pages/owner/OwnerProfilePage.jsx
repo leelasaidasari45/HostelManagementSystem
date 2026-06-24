@@ -69,6 +69,7 @@ const OwnerProfilePage = () => {
         </div>
 
         <div className="profile-page-container">
+        <div className="profile-card-wrapper">
           {/* Banner */}
           <div className="profile-banner">
             <div className="profile-header">
@@ -136,6 +137,7 @@ const OwnerProfilePage = () => {
               </button>
             </div>
           </div>
+        </div>
 
           {/* QR Modal */}
           {showQrModal && (

@@ -1,16 +1,23 @@
+/* ─── Outer wrapper — page background ────────────────────────────────────── */
 .profile-page-container {
-  min-height: 100vh;
-  background-color: var(--bg-base);
-  padding-bottom: 80px;
   animation: fade-in 0.3s ease;
+  padding-bottom: 2rem;
 }
 
+/* ─── White card that holds EVERYTHING ───────────────────────────────────── */
+.profile-card-wrapper {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Orange banner inside the card ─────────────────────────────────────── */
 .profile-banner {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   height: 140px;
   position: relative;
-  border-bottom-left-radius: 24px;
-  border-bottom-right-radius: 24px;
   padding: 1.5rem;
   padding-top: 3.5rem;
 }
@@ -22,7 +29,7 @@
   right: -20%;
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -56,6 +63,7 @@
   letter-spacing: 0.5px;
 }
 
+/* ─── Avatar + Info (overlaps banner bottom) ─────────────────────────────── */
 .profile-info-section {
   display: flex;
   flex-direction: column;
@@ -63,30 +71,30 @@
   margin-top: -50px;
   position: relative;
   z-index: 3;
-  padding: 0 1.5rem;
+  padding: 0 1.5rem 1rem;
 }
 
 .profile-avatar {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: var(--bg-surface);
-  border: 4px solid var(--bg-base);
+  background: #f1f5f9;
+  border: 4px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
   margin-bottom: 1rem;
 }
 
 .avatar-icon {
-  color: var(--text-dim);
+  color: #64748b;
 }
 
 .profile-name {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--text-bright);
+  color: #1e293b;
   margin: 0 0 0.2rem 0;
   text-align: center;
   letter-spacing: -0.01em;
@@ -94,7 +102,7 @@
 
 .profile-phone, .profile-email {
   font-size: 0.9rem;
-  color: var(--text-dim);
+  color: #64748b;
   margin: 0 0 0.2rem 0;
   text-align: center;
 }
@@ -110,15 +118,12 @@
   letter-spacing: 0.5px;
 }
 
-body.dark-mode .profile-role-badge {
-  background: rgba(129, 140, 248, 0.15);
-  color: #818cf8;
-}
-
+/* ─── Content section inside the white card ──────────────────────────────── */
 .profile-content {
-  padding: 1.5rem;
+  padding: 0 1.5rem 1.5rem;
 }
 
+/* ─── Feature cards grid ─────────────────────────────────────────────────── */
 .profile-features-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -128,8 +133,8 @@ body.dark-mode .profile-role-badge {
 }
 
 .feature-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 1rem 0.5rem;
   display: flex;
@@ -138,13 +143,17 @@ body.dark-mode .profile-role-badge {
   justify-content: center;
   gap: 0.5rem;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
-  transition: transform 0.2s, background-color 0.2s;
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+.feature-card:hover {
+  background: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .feature-card:active {
   transform: scale(0.95);
-  background-color: var(--bg-base);
+  background-color: #e2e8f0;
 }
 
 .feature-icon {
@@ -153,23 +162,23 @@ body.dark-mode .profile-role-badge {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-bright);
+  color: #334155;
 }
 
 .feature-card span {
   font-size: 0.75rem;
-  color: var(--text-dim);
+  color: #64748b;
   text-align: center;
   font-weight: 500;
 }
 
+/* ─── List items — directly inside white card, no separate bg ────────────── */
 .profile-list {
-  background: var(--bg-surface);
   border-radius: 16px;
-  margin-top: 1.5rem;
-  border: 1px solid var(--border-subtle);
+  margin-top: 1.25rem;
+  border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+  background: #f8fafc;
 }
 
 .list-item {
@@ -179,14 +188,18 @@ body.dark-mode .profile-role-badge {
   padding: 1.1rem 1rem;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid #e2e8f0;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s;
+}
+
+.list-item:hover {
+  background-color: #f1f5f9;
 }
 
 .list-item:active {
-  background-color: var(--bg-base);
+  background-color: #e2e8f0;
 }
 
 .list-item:last-child {
@@ -194,65 +207,80 @@ body.dark-mode .profile-role-badge {
 }
 
 .list-icon {
-  color: var(--text-dim);
+  color: #64748b;
   margin-right: 1rem;
 }
 
 .list-item span {
   flex: 1;
   font-size: 0.95rem;
-  color: var(--text-bright);
+  color: #1e293b;
   font-weight: 500;
 }
 
 .list-chevron {
-  color: var(--text-ghost);
+  color: #94a3b8;
 }
 
-/* Dark Mode Overrides for more premium feel */
-body.dark-mode .feature-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+/* ─── Dark mode overrides ────────────────────────────────────────────────── */
+.dark-mode .profile-card-wrapper {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
-body.dark-mode .feature-card:active {
-  background: rgba(255, 255, 255, 0.08);
+.dark-mode .profile-avatar {
+  background: var(--bg-elevated);
+  border-color: var(--bg-surface);
 }
 
-body.dark-mode .profile-list {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: none;
+.dark-mode .avatar-icon { color: var(--text-dim); }
+.dark-mode .profile-name { color: var(--text-bright); }
+.dark-mode .profile-phone,
+.dark-mode .profile-email { color: var(--text-dim); }
+
+.dark-mode .feature-card {
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+}
+.dark-mode .feature-card:hover { background: rgba(255,255,255,0.08); }
+.dark-mode .feature-card:active { background: rgba(255,255,255,0.04); }
+.dark-mode .feature-icon { color: var(--text-bright); }
+.dark-mode .feature-card span { color: var(--text-dim); }
+
+.dark-mode .profile-list {
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+}
+.dark-mode .list-item { border-bottom-color: var(--border-subtle); }
+.dark-mode .list-item:hover { background: rgba(255,255,255,0.04); }
+.dark-mode .list-item:active { background: rgba(255,255,255,0.07); }
+.dark-mode .list-item span { color: var(--text-bright); }
+.dark-mode .list-icon { color: var(--text-dim); }
+.dark-mode .list-chevron { color: var(--text-ghost); }
+
+.dark-mode .profile-role-badge {
+  background: rgba(129, 140, 248, 0.15);
+  color: #818cf8;
 }
 
-body.dark-mode .list-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-body.dark-mode .list-item:active {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Desktop layout — full width */
+/* ─── Desktop ────────────────────────────────────────────────────────────── */
 @media (min-width: 769px) {
   .profile-page-container {
-    width: 100%;
-    background-color: transparent;
-    border-radius: 0;
-    overflow: visible;
+    padding: 0;
   }
 
-  .profile-banner {
+  .profile-card-wrapper {
     border-radius: 20px;
+    overflow: hidden;
   }
 
   .profile-info-section {
-    padding: 0 2rem;
+    padding: 0 2rem 1rem;
   }
 
   .profile-content {
-    padding: 1.5rem 2rem;
+    padding: 0 2rem 2rem;
   }
 
   .profile-features-grid {
@@ -263,5 +291,3 @@ body.dark-mode .list-item:active {
     max-width: 700px;
   }
 }
-
-
