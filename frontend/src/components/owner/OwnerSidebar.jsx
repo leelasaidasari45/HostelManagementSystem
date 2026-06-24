@@ -15,7 +15,21 @@ const navItems = [
 
 const OwnerSidebar = () => {
   const location = useLocation();
-  const [expanded, setExpanded] = useState(true);
+  
+  // Persist sidebar state in localStorage so it doesn't reset on navigation
+  const [expanded, setExpanded] = useState(() => {
+    const saved = localStorage.getItem('ownerSidebarExpanded');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  const toggleSidebar = () => {
+    setExpanded(prev => {
+      const newState = !prev;
+      localStorage.setItem('ownerSidebarExpanded', JSON.stringify(newState));
+      return newState;
+    });
+  };
+
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -55,7 +69,7 @@ const OwnerSidebar = () => {
 
       {/* Collapse / Expand toggle — desktop only */}
       <button
-        onClick={() => setExpanded(p => !p)}
+        onClick={toggleSidebar}
         className="sidebar-toggle"
         title={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
         style={{
