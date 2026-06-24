@@ -95,11 +95,6 @@ const OwnerHeader = ({ title, subtitle }) => {
             />
           )}
 
-          {/* Profile button */}
-          <button className="icon-btn" onClick={() => navigate('/owner/profile')} title="My Profile"
-            style={{ color: 'var(--text-bright)', borderColor: 'var(--border-subtle)' }}>
-            <User size={18} />
-          </button>
 
           {/* Theme toggle */}
           <button className="icon-btn" onClick={toggleTheme} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
