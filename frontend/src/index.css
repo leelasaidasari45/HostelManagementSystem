@@ -208,15 +208,15 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 .btn:disabled { opacity:.5; cursor:not-allowed; }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
-  color:#fff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  box-shadow: 0 0 20px rgba(0, 188, 212, 0.3);
+  background: #F5F5DC;
+  color: #1a1a1a;
+  text-shadow: none;
+  box-shadow: 0 0 15px rgba(245, 245, 220, 0.2);
   border: none;
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--aurora-2), var(--aurora-1));
-  box-shadow: 0 0 28px rgba(0, 188, 212, 0.45);
+  background: #E8E8D0;
+  box-shadow: 0 0 20px rgba(245, 245, 220, 0.35);
   transform: translateY(-1px);
 }
 .btn-secondary {
