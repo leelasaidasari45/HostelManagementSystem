@@ -54,6 +54,10 @@
   --text-muted: var(--text-ghost);
   --border-color: var(--border-muted);
   --shadow-card: var(--shadow-md);
+
+  --btn-bg: #F5F5DC;
+  --btn-text: #1a1a1a;
+  --btn-hover: #E8E8D0;
 }
 
 .light-mode {
@@ -83,6 +87,10 @@
 
   --accent-glow: rgba(0, 188, 212, 0.1);
   --ticker-invert: 1;
+
+  --btn-bg: #334155;
+  --btn-text: #ffffff;
+  --btn-hover: #1e293b;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -208,15 +216,15 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 .btn:disabled { opacity:.5; cursor:not-allowed; }
 
 .btn-primary {
-  background: #F5F5DC;
-  color: #1a1a1a;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   text-shadow: none;
-  box-shadow: 0 0 15px rgba(245, 245, 220, 0.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
   border: none;
 }
 .btn-primary:hover {
-  background: #E8E8D0;
-  box-shadow: 0 0 20px rgba(245, 245, 220, 0.35);
+  background: var(--btn-hover);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
 .btn-secondary {
