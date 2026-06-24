@@ -1,19 +1,4 @@
-/* Sidebar expanded variant */
-.sidebar-exp {
-  width: 220px !important;
-  align-items: flex-start !important;
-  padding: 1.25rem .75rem !important;
-}
-.sidebar-exp .sidebar-toggle { align-self: flex-end; }
-.sidebar-exp .logo-wrap { margin-left: .25rem; }
-.sidebar-exp .nav-item { justify-content: flex-start !important; }
-.sidebar-exp .nav-label { display: inline !important; }
 
-/* Hide sidebar toggle on mobile */
-@media (max-width: 768px) {
-  .sidebar-toggle { display: none !important; }
-  .sidebar-exp { width: 100% !important; }
-}
 
 /* Body class added by OwnerHeader when QR modal is open */
 body.hide-sidebar-all .sidebar { display: none !important; }

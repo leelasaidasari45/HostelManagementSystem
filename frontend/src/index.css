@@ -430,6 +430,23 @@ a:focus-visible, button:focus-visible {
   background:var(--border-subtle); margin:.5rem .6rem;
 }
 
+/* Sidebar expanded variant */
+.sidebar-exp {
+  width: 220px !important;
+  align-items: flex-start !important;
+  padding: 1.25rem .75rem !important;
+}
+.sidebar-exp .sidebar-toggle { align-self: flex-end; }
+.sidebar-exp .logo-wrap { margin-left: .25rem; }
+.sidebar-exp .nav-item { justify-content: flex-start !important; }
+.sidebar-exp .nav-label { display: inline !important; }
+
+/* Hide sidebar toggle on mobile */
+@media (max-width: 768px) {
+  .sidebar-toggle { display: none !important; }
+  .sidebar-exp { width: 100% !important; }
+}
+
 /* Expanded sidebar shows labels */
 .dashboard-layout.sidebar-expanded .nav-item {
   justify-content:flex-start;
