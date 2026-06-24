@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Building2, MessageSquare, Plus, History, ChevronRight, CreditCard, User } from 'lucide-react';
+import { LayoutDashboard, Users, Building2, MessageSquare, Plus, History, ChevronLeft, ChevronRight, CreditCard, User } from 'lucide-react';
 import MobileBottomNav from './MobileBottomNav';
 
 const navItems = [
@@ -15,7 +15,7 @@ const navItems = [
 
 const OwnerSidebar = () => {
   const location = useLocation();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -53,20 +53,19 @@ const OwnerSidebar = () => {
         </Link>
       </nav>
 
-      {/* Expand toggle — desktop only */}
+      {/* Collapse / Expand toggle — desktop only */}
       <button
         onClick={() => setExpanded(p => !p)}
         className="sidebar-toggle"
-        title={expanded ? 'Collapse' : 'Expand'}
+        title={expanded ? 'Collapse sidebar' : 'Expand sidebar'}
         style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           width: 28, height: 28, borderRadius: '50%', border: '1px solid var(--border-subtle)',
           background: 'var(--bg-elevated)', color: 'var(--text-dim)', cursor: 'pointer',
           transition: 'all 200ms', marginTop: 'auto', flexShrink: 0,
-          transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
         }}
       >
-        <ChevronRight size={14} />
+        {expanded ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
       </button>
     </aside>
     <MobileBottomNav />
