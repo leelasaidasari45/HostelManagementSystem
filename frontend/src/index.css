@@ -55,8 +55,8 @@
 }
 
 .light-mode {
-  --bg-void: #f1f4f9;
-  --bg-base: #f7f9fc;
+  --bg-void: #FFFFF0;
+  --bg-base: #FFFFF0;
   --bg-surface: #ffffff;
   --bg-elevated: #edf1f7;
   --bg-glass: rgba(255, 255, 255, 0.75);
