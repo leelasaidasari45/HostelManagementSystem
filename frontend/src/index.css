@@ -133,7 +133,7 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Gradient text */
 .text-gradient {
-  background: var(--rainbow-gradient);
+  background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
