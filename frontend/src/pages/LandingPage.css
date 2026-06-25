@@ -748,19 +748,59 @@
   z-index: 1;
 }
 
-/* Testimonials */
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+/* Testimonials Marquee (Train effect) */
+.marquee-container {
   width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 1rem 0;
+  white-space: nowrap;
+}
+
+.marquee-container::before,
+.marquee-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.marquee-container::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-base), transparent);
+}
+.marquee-container::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-base), transparent);
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 2rem;
+  animation: scrollTrain 35s linear infinite;
+  padding-left: 2rem; /* Initial padding */
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollTrain {
+  0% { transform: translateX(0); }
+  /* Translate exactly half of the width minus half gap, since there are two identical sets */
+  100% { transform: translateX(calc(-50% - 1rem)); }
 }
 .testimonial-card {
+  width: 350px; /* Fixed width for horizontal scrolling */
+  white-space: normal; /* Override the nowrap from container */
   padding: 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   text-align: left;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 .stars {
   color: #fbbf24;
@@ -1176,7 +1216,7 @@
 
 @media (max-width: 1024px) {
   .steps-grid { grid-template-columns: repeat(2, 1fr); }
-  .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+  .testimonial-card { width: 300px; padding: 1.5rem; }
   .pricing-grid { gap: 1.5rem; }
   
   /* Hide navigation links and actions on tablet/mobile and show toggle */
@@ -1210,7 +1250,7 @@
 
 @media (max-width: 768px) {
   .pricing-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
-  .testimonials-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+  .testimonial-card { width: 280px; }
   .founders-grid { grid-template-columns: 1fr; max-width: 400px; }
   .special-thanks-card { grid-column: auto; }
 }
