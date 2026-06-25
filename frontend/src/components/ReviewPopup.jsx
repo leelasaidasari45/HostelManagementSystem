@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { X, Star } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 import api from '../api';
 import toast from 'react-hot-toast';
 import './ReviewPopup.css';
 
 const ReviewPopup = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
@@ -14,7 +16,8 @@ const ReviewPopup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    // Only check if user is logged in AND has chosen a role (not unassigned)
+    if (!user || user.role === 'unassigned') return;
 
     const hasReviewed = localStorage.getItem(`hasReviewed_${user.id}`);
     if (hasReviewed === 'true') return;
@@ -22,25 +25,23 @@ const ReviewPopup = () => {
     const lastPromptDateStr = localStorage.getItem(`lastReviewPrompt_${user.id}`);
     const now = new Date();
 
-    if (lastPromptDateStr) {
-      const lastPromptDate = new Date(lastPromptDateStr);
-      const diffTime = Math.abs(now - lastPromptDate);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-      
-      if (diffDays >= 3) {
-        // Show immediately after 3 days have passed since last prompt
-        setIsOpen(true);
-        localStorage.setItem(`lastReviewPrompt_${user.id}`, now.toISOString());
-      }
-    } else {
-      // First time prompt
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        localStorage.setItem(`lastReviewPrompt_${user.id}`, now.toISOString());
-      }, 7000); // 7 seconds after they load the dash
-      return () => clearTimeout(timer);
+    if (!lastPromptDateStr) {
+      // Start the 3-day countdown as soon as they have a role
+      localStorage.setItem(`lastReviewPrompt_${user.id}`, now.toISOString());
+      return;
     }
-  }, [user]);
+
+    const lastPromptDate = new Date(lastPromptDateStr);
+    const diffTime = Math.abs(now - lastPromptDate);
+    // Use float to precisely measure 3 days (3 * 24 hours)
+    const diffDays = diffTime / (1000 * 60 * 60 * 24); 
+    
+    if (diffDays >= 3) {
+      setIsOpen(true);
+      // Reset the timer so it asks again in exactly 3 days if they dismiss it
+      localStorage.setItem(`lastReviewPrompt_${user.id}`, now.toISOString());
+    }
+  }, [user, location.pathname]);
 
   if (!isOpen) return null;
 
