@@ -110,6 +110,8 @@ import { usePushNotifications } from './hooks/usePushNotifications';
 import { Capacitor } from '@capacitor/core';
 const isNative = Capacitor.isNativePlatform();
 
+import ReviewPopup from './components/ReviewPopup';
+
 function AppContent() {
   const location = useLocation();
   const { user } = useAuth();
@@ -176,6 +178,7 @@ function AppContent() {
           error: { iconTheme: { primary: '#f87171', secondary: 'transparent' } },
         }}
       />
+      <ReviewPopup />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/" element={isNative ? <Navigate to="/login" replace /> : <LandingPage />} />

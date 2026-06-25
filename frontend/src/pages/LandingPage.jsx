@@ -20,6 +20,30 @@ const LandingPage = () => {
 
   const isNative = Capacitor.isNativePlatform();
 
+  const [dynamicReviews, setDynamicReviews] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await api.get('/reviews');
+        if (res.data) {
+          const formatted = res.data.map(r => ({
+            quote: r.quote,
+            name: r.name,
+            role: r.role,
+            pg: r.pg_name || '',
+            avatar: r.name ? r.name.substring(0, 2).toUpperCase() : 'U',
+            rating: Number(r.rating) || 5
+          }));
+          setDynamicReviews(formatted);
+        }
+      } catch (err) {
+        console.error('Failed to fetch dynamic reviews', err);
+      }
+    };
+    fetchReviews();
+  }, []);
+
   // Trigger popup after 7 seconds from initial page load
   React.useEffect(() => {
     if (isNative) return;
@@ -320,40 +344,38 @@ const LandingPage = () => {
         </h2>
         <div className="marquee-container">
           <div className="marquee-track">
-            {[
-              { quote: "easyPG completely transformed how we run our hostels. The QR onboarding alone saved us hundreds of hours.", name: "Tharun", role: "Owner", pg: "Amulya Men's Executive Hostel", avatar: "TH", rating: 5 },
-              { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Nagi Reddy", role: "Owner", pg: "Sri Sai Executive Men's Hostel", avatar: "NR", rating: 4.5 },
-              { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Aravind", role: "Owner", pg: "Ganesh Boy's Hostel", avatar: "AR", rating: 5 },
-              { quote: "Best management software we've used so far. Makes handling multiple properties a breeze.", name: "Srinivas", role: "Manager", pg: "SLV PG for Gents", avatar: "SR", rating: 4.5 },
-              { quote: "The built-in communication tools let us broadcast messages to all tenants effortlessly.", name: "Karthik", role: "Owner", pg: "Karthikeya Luxury Stays", avatar: "KA", rating: 5 },
-              { quote: "Room availability and occupancy metrics are always up-to-date. Absolutely essential for our growth.", name: "Ramesh", role: "Owner", pg: "Sri Venkateshwara Hostel", avatar: "RA", rating: 4 },
+            {(() => {
+              const staticReviews = [
+                { quote: "easyPG completely transformed how we run our hostels. The QR onboarding alone saved us hundreds of hours.", name: "Tharun", role: "Owner", pg: "Amulya Men's Executive Hostel", avatar: "TH", rating: 5 },
+                { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Nagi Reddy", role: "Owner", pg: "Sri Sai Executive Men's Hostel", avatar: "NR", rating: 4.5 },
+                { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Aravind", role: "Owner", pg: "Ganesh Boy's Hostel", avatar: "AR", rating: 5 },
+                { quote: "Best management software we've used so far. Makes handling multiple properties a breeze.", name: "Srinivas", role: "Manager", pg: "SLV PG for Gents", avatar: "SR", rating: 4.5 },
+                { quote: "The built-in communication tools let us broadcast messages to all tenants effortlessly.", name: "Karthik", role: "Owner", pg: "Karthikeya Luxury Stays", avatar: "KA", rating: 5 },
+                { quote: "Room availability and occupancy metrics are always up-to-date. Absolutely essential for our growth.", name: "Ramesh", role: "Owner", pg: "Sri Venkateshwara Hostel", avatar: "RA", rating: 4 }
+              ];
+              const combinedReviews = [...dynamicReviews, ...staticReviews];
               
-              // Duplicated for infinite scrolling effect
-              { quote: "easyPG completely transformed how we run our hostels. The QR onboarding alone saved us hundreds of hours.", name: "Tharun", role: "Owner", pg: "Amulya Men's Executive Hostel", avatar: "TH", rating: 5 },
-              { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Nagi Reddy", role: "Owner", pg: "Sri Sai Executive Men's Hostel", avatar: "NR", rating: 4.5 },
-              { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Aravind", role: "Owner", pg: "Ganesh Boy's Hostel", avatar: "AR", rating: 5 },
-              { quote: "Best management software we've used so far. Makes handling multiple properties a breeze.", name: "Srinivas", role: "Manager", pg: "SLV PG for Gents", avatar: "SR", rating: 4.5 },
-              { quote: "The built-in communication tools let us broadcast messages to all tenants effortlessly.", name: "Karthik", role: "Owner", pg: "Karthikeya Luxury Stays", avatar: "KA", rating: 5 },
-              { quote: "Room availability and occupancy metrics are always up-to-date. Absolutely essential for our growth.", name: "Ramesh", role: "Owner", pg: "Sri Venkateshwara Hostel", avatar: "RA", rating: 4 }
-            ].map((t, i) => (
-              <div key={i} className="testimonial-card glass-panel">
-                <div className="stars" style={{ display: 'flex', gap: '2px', color: '#fbbf24', marginBottom: '1rem' }}>
-                  {Array.from({ length: Math.floor(t.rating) }).map((_, idx) => (
-                    <Star key={idx} size={16} fill="currentColor" strokeWidth={0} />
-                  ))}
-                  {t.rating % 1 !== 0 && <StarHalf size={16} fill="currentColor" strokeWidth={0} />}
-                </div>
-                <p className="quote">"{t.quote}"</p>
-                <div className="author-info">
-                  <div className="author-avatar">{t.avatar}</div>
-                  <div className="author-details">
-                    <h4>{t.name}</h4>
-                    <span style={{ fontSize: '0.85rem' }}>{t.pg}</span>
-                    <span style={{ display: 'block', fontSize: '0.75rem', opacity: 0.7 }}>{t.role}</span>
+              // Map twice for the infinite scroll train effect
+              return [...combinedReviews, ...combinedReviews].map((t, i) => (
+                <div key={i} className="testimonial-card glass-panel">
+                  <div className="stars" style={{ display: 'flex', gap: '2px', color: '#fbbf24', marginBottom: '1rem' }}>
+                    {Array.from({ length: Math.floor(t.rating) }).map((_, idx) => (
+                      <Star key={`full-${idx}`} size={16} fill="currentColor" strokeWidth={0} />
+                    ))}
+                    {t.rating % 1 !== 0 && <StarHalf size={16} fill="currentColor" strokeWidth={0} />}
+                  </div>
+                  <p className="quote">"{t.quote}"</p>
+                  <div className="author-info">
+                    <div className="author-avatar">{t.avatar}</div>
+                    <div className="author-details">
+                      <h4>{t.name}</h4>
+                      <span style={{ fontSize: '0.85rem' }}>{t.pg}</span>
+                      <span style={{ display: 'block', fontSize: '0.75rem', opacity: 0.7 }}>{t.role}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </section>

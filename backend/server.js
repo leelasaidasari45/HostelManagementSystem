@@ -12,6 +12,7 @@ import paytmRoutes from './routes/paytm.js';
 import subscriptionRoutes from './routes/subscription.js';
 import cashfreeRoutes from './routes/cashfree.js';
 import notificationRoutes from './routes/notifications.js';
+import reviewsRoutes from './routes/reviews.js';
 import { startCronJobs } from './cronJobs.js';
 
 dotenv.config();
@@ -57,6 +58,7 @@ app.use('/api/paytm', paytmRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 app.use('/api/cashfree', cashfreeRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/reviews', reviewsRoutes);
 
 // ─── Error handler ────────────────────────────────────────────────────────────
 app.use((err, req, res, next) => {

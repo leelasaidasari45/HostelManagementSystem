@@ -1,0 +1,101 @@
+.review-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+.review-popup-content {
+  background: var(--bg-surface);
+  border-radius: var(--r-xl);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  text-align: center;
+  box-shadow: var(--shadow-xl);
+  animation: slideUpFade 0.3s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.review-popup-content .close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--r-md);
+  transition: all 0.2s;
+}
+
+.review-popup-content .close-btn:hover {
+  color: var(--text-bright);
+  background: var(--bg-elevated);
+}
+
+.review-popup-content h2 {
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  margin-bottom: 0.5rem;
+}
+
+.review-popup-content .subtitle {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.star-rating {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.star-icon {
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.star-icon:hover {
+  transform: scale(1.1);
+}
+
+.review-popup-content textarea {
+  width: 100%;
+  resize: none;
+  margin-bottom: 1.5rem;
+  min-height: 100px;
+}
+
+.submit-review-btn {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  justify-content: center;
+}
+
+.later-btn {
+  width: 100%;
+  background: transparent;
+  color: var(--text-dim);
+  border: none;
+  justify-content: center;
+}
+.later-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-bright);
+}
