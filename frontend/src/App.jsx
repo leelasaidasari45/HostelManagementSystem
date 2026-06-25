@@ -33,6 +33,7 @@ const BankAccountsPage = lazy(() => import('./pages/owner/BankAccountsPage'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsAndConditions = lazy(() => import('./pages/TermsAndConditions'));
 const RefundPolicy = lazy(() => import('./pages/RefundPolicy'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 import { Navigate } from 'react-router-dom';
 import { HostelProvider } from './context/HostelContext';
@@ -201,6 +202,7 @@ function AppContent() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
     </div>
