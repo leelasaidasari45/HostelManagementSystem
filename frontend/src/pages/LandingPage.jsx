@@ -1,7 +1,7 @@
 import React from 'react';
 import { Capacitor } from '@capacitor/core';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, Layers, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play, CalendarCheck } from 'lucide-react';
+import { ArrowRight, Building2, Layers, QrCode, Zap, Shield, BarChart3, Users, Rocket, Menu, X, ArrowUpRight, Mail, Phone, LifeBuoy, Play, CalendarCheck, Star, StarHalf } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import toast from 'react-hot-toast';
@@ -320,18 +320,24 @@ const LandingPage = () => {
         </h2>
         <div className="testimonials-grid">
           {[
-            { quote: "easyPG completely transformed how we run our 5 hostels. The QR onboarding alone saved us hundreds of hours.", name: "Sarah Jenkins", role: "Property Manager", avatar: "SJ" },
-            { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Rahul Verma", role: "Hostel Owner", avatar: "RV" },
-            { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Priya Sharma", role: "Admin", avatar: "PS" }
+            { quote: "easyPG completely transformed how we run our hostels. The QR onboarding alone saved us hundreds of hours.", name: "Tharun", role: "Owner", pg: "Amulya Men's Executive Hostel", avatar: "TH", rating: 5 },
+            { quote: "The automated payment tracking is a lifesaver. I no longer have to chase tenants or maintain messy Excel sheets.", name: "Nagi Reddy", role: "Owner", pg: "Sri Sai Executive Men's Hostel", avatar: "NR", rating: 4.5 },
+            { quote: "Tenants love the app! They can raise complaints and check their dues instantly. Highly recommended.", name: "Aravind", role: "Owner", pg: "Ganesh Boy's Hostel", avatar: "AR", rating: 5 }
           ].map((t, i) => (
             <div key={i} className={`testimonial-card glass-panel scroll-reveal reveal-card delay-${(i % 3 + 1) * 100}`}>
-              <div className="stars">★★★★★</div>
+              <div className="stars" style={{ display: 'flex', gap: '2px', color: '#fbbf24', marginBottom: '1rem' }}>
+                {Array.from({ length: Math.floor(t.rating) }).map((_, idx) => (
+                  <Star key={idx} size={16} fill="currentColor" strokeWidth={0} />
+                ))}
+                {t.rating % 1 !== 0 && <StarHalf size={16} fill="currentColor" strokeWidth={0} />}
+              </div>
               <p className="quote">"{t.quote}"</p>
               <div className="author-info">
                 <div className="author-avatar">{t.avatar}</div>
                 <div className="author-details">
                   <h4>{t.name}</h4>
-                  <span>{t.role}</span>
+                  <span style={{ fontSize: '0.85rem' }}>{t.pg}</span>
+                  <span style={{ display: 'block', fontSize: '0.75rem', opacity: 0.7 }}>{t.role}</span>
                 </div>
               </div>
             </div>
