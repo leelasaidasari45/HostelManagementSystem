@@ -141,8 +141,10 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Gradient text */
 .text-gradient {
-  color: #5C4033; /* Dark Brown / Coffee */
-  background: none;
+  background: linear-gradient(135deg, #d4af37, #f59e0b); /* Elegant Gold to Amber */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: inline-block;
 }
 .text-gradient-gold {
