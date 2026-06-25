@@ -313,17 +313,6 @@
   color: var(--text-bright);
 }
 
-.hero-title .text-gradient {
-  background: linear-gradient(to right, var(--aurora-1), var(--aurora-2), #a855f7, var(--aurora-1));
-  background-size: 300% auto;
-  animation: shimmer 4s linear infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-@keyframes shimmer {
-  to { background-position: 300% center; }
-}
 
 .hero-subtitle {
   font-size: clamp(1rem, 2vw, 1.2rem);

@@ -58,6 +58,7 @@
   --btn-bg: #F5F5DC;
   --btn-text: #1a1a1a;
   --btn-hover: #E8E8D0;
+  --text-highlight: #F5F5DC;
 }
 
 .light-mode {
@@ -91,6 +92,7 @@
   --btn-bg: #334155;
   --btn-text: #ffffff;
   --btn-hover: #1e293b;
+  --text-highlight: #5C4033;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -141,10 +143,8 @@ code, .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* Gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, #d4af37, #f59e0b); /* Elegant Gold to Amber */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-highlight);
+  background: none;
   display: inline-block;
 }
 .text-gradient-gold {
