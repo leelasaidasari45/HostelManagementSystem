@@ -525,12 +525,19 @@ const TenantsPage = () => {
                           </div>
 
                           <div className="tenant-pc-metric">
-                            <span className="tenant-pc-metric-label">Join Date</span>
+                            <span className="tenant-pc-metric-label">Due Date</span>
                             <span className="tenant-pc-metric-value">
                               <Calendar size={14} style={{ color: 'var(--aurora-1)' }} />
                               <span>
                                 {t.admissionDate && t.admissionDate !== 'N/A' && !isNaN(Date.parse(t.admissionDate))
-                                  ? new Date(t.admissionDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                                  ? (() => {
+                                      const joinDate = new Date(t.admissionDate);
+                                      const now = new Date();
+                                      const lastDayOfCurrentMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                                      const day = Math.min(joinDate.getDate(), lastDayOfCurrentMonth);
+                                      const dueDate = new Date(now.getFullYear(), now.getMonth(), day);
+                                      return dueDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                                    })()
                                   : 'N/A'}
                               </span>
                             </span>
